@@ -1,7 +1,7 @@
 [Runtime]
-name=org.freedesktop.Sdk
-runtime=org.freedesktop.Platform/x86_64/1.5
-sdk=org.freedesktop.Sdk/x86_64/1.5
+name=org.freedesktop.Platform
+runtime=org.freedesktop.Platform/@@SDK_ARCH@@/@@SDK_BRANCH@@
+sdk=org.freedesktop.Sdk/@@SDK_ARCH@@/@@SDK_BRANCH@@
 
 [Extension org.freedesktop.Platform.GL]
 directory=lib/GL
@@ -9,7 +9,7 @@ directory=lib/GL
 [Extension org.freedesktop.Platform.Timezones]
 directory=share/zoneinfo
 
-[Extension org.freedesktop.Sdk.Locale]
+[Extension org.freedesktop.Platform.Locale]
 directory=share/runtime/locale
 subdirectories=true
 
