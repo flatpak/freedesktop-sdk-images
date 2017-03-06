@@ -6,15 +6,28 @@
     "runtime": "org.freedesktop.BasePlatform",
     "sdk": "org.freedesktop.BaseSdk",
     "runtime-version": "@@SDK_RUNTIME_VERSION@@",
-    "writable-sdk": true,
     "sdk-extensions": [],
-    "metadata": "metadata.sdk",
-    "metadata-platform": "metadata.platform",
+    "finish-args": [
+        "--extension=org.freedesktop.Platform.GL=directory=lib/GL",
+        "--extension=org.freedesktop.Platform.GL=subdirectories=true",
+        "--extension=org.freedesktop.Platform.GL=no-autodownload=true",
+        "--extension=org.freedesktop.Platform.GL=autodelete=false",
+        "--extension=org.freedesktop.Platform.GL=add-ld-path=lib",
+        "--extension=org.freedesktop.Platform.GL=merge-dirs=vulkan/icd.d;glvnd/egl_vendor.d",
+        "--extension=org.freedesktop.Platform.GL=download-if=active-gl-driver",
+        "--extension=org.freedesktop.Platform.GL=enable-if=active-gl-driver",
+        "--extension=org.freedesktop.Platform.Timezones=directory=share/zoneinfo",
+        "--extension=org.freedesktop.Platform.GStreamer=directory=lib/extensions/gstreamer-1.0",
+        "--extension=org.freedesktop.Platform.GStreamer=subdirectories",
+        "--env=GI_TYPELIB_PATH=/app/lib/girepository-1.0",
+        "--env=GST_PLUGIN_SYSTEM_PATH=/app/lib/gstreamer-1.0:/usr/lib/extensions/gstreamer-1.0:/usr/lib/gstreamer-1.0",
+        "--sdk=org.freedesktop.Sdk//@@SDK_BRANCH@@",
+        "--runtime=org.freedesktop.Platform//@@SDK_BRANCH@@"
+    ],
     "cleanup": [ "/cache",
                  "/man",
                  "/share/doc",
                  "/share/man",
-                 "/share/gtk-doc",
                  "/share/devhelp",
                  "/lib/systemd",
                  "/lib/opkg",
@@ -25,7 +38,8 @@
                           "mkdir -p /usr/lib/GL",
                           "mkdir -p /usr/lib/debug",
                           "ln -s /app/lib/debug /usr/lib/debug/app",
-                          "ln -s ../../run/ /usr/lib/extensions"
+                          "ln -s ../../run/ /usr/lib/extensions",
+                          "ldconfig -C /usr/etc/ld.so.cache"
                         ],
     "cleanup-platform": [ "/include",
                           "/share/aclocal",
@@ -36,6 +50,14 @@
                           "/share/gir-1.0",
                           "/lib/python*/test"
                         ],
+    "cleanup-platform-commands": [ "touch -d @0 /usr/share/fonts",
+                                   "touch -d @0 /usr/share/fonts/*",
+                                   "fc-cache -fs",
+                                   /* Work around gst-python issue */
+                                   "ln -s libpython2.7.so.1.0 /usr/lib/libpython2.7.so",
+                                   "ln -s libpython3.4m.so.1.0 /usr/lib/libpython3.4m.so",
+                                   "ldconfig -C /usr/etc/ld.so.cache"
+                                 ],
     "build-options" : {
         "cflags": "-O2 -g",
         "cxxflags": "-O2 -g",
@@ -730,8 +752,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://dri.freedesktop.org/libdrm/libdrm-2.4.67.tar.gz",
-                     "sha256": "4ae392513c4df30d88f10e69bf425a1dff960a5b4ccd4da621d9fc88523f7acb"
+                     "url": "https://dri.freedesktop.org/libdrm/libdrm-2.4.75.tar.gz",
+                     "sha256": "a411bff814b4336c8908dcbd045cd89fdc7afedc75b795d897d462e467cbb01d"
                  }
             ]
         },
@@ -923,8 +945,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://downloads.sourceforge.net/project/freetype/freetype2/2.6.3/freetype-2.6.3.tar.bz2",
-                     "sha256": "371e707aa522acf5b15ce93f11183c725b8ed1ee8546d7b3af549863045863a2"
+                     "url": "http://downloads.sourceforge.net/project/freetype/freetype2/2.6.5/freetype-2.6.5.tar.bz2",
+                     "sha256": "e20a6e1400798fd5e3d831dd821b61c35b1f9a6465d6b18a53a9df4cf441acf0"
                  }
             ]
         },
@@ -957,7 +979,7 @@
         },
         {
             "name": "glib2",
-            "config-opts": ["--disable-gtk-doc",  "--with-pcre=system" ],
+            "config-opts": ["--with-pcre=system" ],
             "cleanup-platform": [ "/share/glib-2.0/codegen",
                                   "/bin/gdbus-codegen",
                                   "/bin/glib-*",
@@ -968,8 +990,8 @@
             "sources": [
                 {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/glib/2.48/glib-2.48.1.tar.xz",
-                     "sha256": "74411bff489cb2a3527bac743a51018841a56a4d896cc1e0d0d54f8166a14612"
+                     "url": "https://download.gnome.org/sources/glib/2.48/glib-2.48.2.tar.xz",
+                     "sha256": "f25e751589cb1a58826eac24fbd4186cda4518af772806b666a3f91f66e6d3f4"
                  }
             ]
         },
@@ -1026,6 +1048,7 @@
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
                 "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-Bsymbolic -static-libstdc++",
                 "-DLLVM_LIBDIR_SUFFIX=",
+                "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;PowerPC;NVPTX;SystemZ;AArch64;ARM;Mips;BPF;CppBackend",
                 "-DLLVM_ENABLE_LIBCXX:BOOL=OFF",
                 "-DLLVM_ENABLE_ZLIB:BOOL=ON",
                 "-DLLVM_ENABLE_FFI:BOOL=ON",
@@ -1045,13 +1068,13 @@
                 "-DLLVM_ENABLE_DOXYGEN:BOOL=OFF",
                 "-DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF",
                 "-DLLVM_BUILD_EXTERNAL_COMPILER_RT:BOOL=ON",
-                "-DFFI_INCLUDE_DIR=/usr/lib//libffi-3.2.1/include",
+                "-DFFI_INCLUDE_DIR=/usr/lib/libffi-3.2.1/include",
                 "-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF"],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://llvm.org/releases/3.8.0/llvm-3.8.0.src.tar.xz",
-                    "sha256": "555b028e9ee0f6445ff8f949ea10e9cd8be0d084840e21fbbe1d31d51fc06e46"
+                    "url": "http://llvm.org/releases/3.8.1/llvm-3.8.1.src.tar.xz",
+                    "sha256": "6e82ce4adb54ff3afc18053d6981b6aed1406751b8742582ed50f04b5ab475f9"
                 }
             ]
         },
@@ -1080,8 +1103,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://llvm.org/releases/3.8.0/cfe-3.8.0.src.tar.xz",
-                    "sha256": "04149236de03cf05232d68eb7cb9c50f03062e339b68f4f8a03b650a11536cf9"
+                    "url": "http://llvm.org/releases/3.8.1/cfe-3.8.1.src.tar.xz",
+                    "sha256": "4cd3836dfb4b88b597e075341cae86d61c63ce3963e45c7fe6a8bf59bb382cdf"
                 },
                 {
                     "type": "patch",
@@ -1096,8 +1119,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://wayland.freedesktop.org/releases/wayland-1.10.0.tar.xz",
-                     "sha256": "4bf6e790aa6f50ab3825676282ecd75850ec9c4767af96ecb7127b1f3c3d60dc"
+                     "url": "https://wayland.freedesktop.org/releases/wayland-1.12.0.tar.xz",
+                     "sha256": "d6b4135cba0188abcb7275513c72dede751d6194f6edc5b82183a3ba8b821ab1"
                  }
             ]
         },
@@ -1107,9 +1130,87 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://wayland.freedesktop.org/releases/wayland-protocols-1.3.tar.xz",
-                     "sha256": "6bcd0633fdf9225ef1c7d2831f542e947f7d79811c79fc37f57b2e5375ded82f"
+                     "url": "http://wayland.freedesktop.org/releases/wayland-protocols-1.7.tar.xz",
+                     "sha256": "635f2a937d318f1fecb97b54074ca211486e38af943868dd0fa82ea38d091c1f"
                  }
+            ]
+        },
+        {
+            "name": "vulkan",
+            "cmake": true,
+            "config-opts": [
+                "-DCMAKE_INSTALL_LIBDIR=lib",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_SKIP_RPATH:BOOL=yes",
+                "-DBUILD_VKJSON=OFF",
+                "-DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc",
+                "-DBUILD_WSI_MIR_SUPPORT=OFF",
+                "-DGLSLANG_SPIRV_INCLUDE_DIR=./",
+                "-DBUILD_TESTS=OFF",
+                "-DBUILD_DEMOS=OFF",
+                "-DBUILD_LAYERS=OFF"
+            ],
+            "post-install": [
+                "mkdir -p /usr/lib/GL/vulkan/icd.d",
+                "ln -s /usr/lib/GL/vulkan /usr/etc/vulkan",
+                "mkdir -p /usr/share/vulkan/icd.d"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/archive/sdk-1.0.39.0.tar.gz",
+                    "sha256": "146efb378dc143f9dc15843b29aec8e5a0ad74161628931f0057d9517457a846"
+                }
+            ]
+        },
+        {
+            "name": "libglvnd",
+            "config-opts": [ "--disable-static", "--enable-asm", "--enable-tls" ],
+            "build-options" : {
+                "arch" : {
+                    "i386" : {
+                        "config-opts" : [
+                            "--build=i586-unknown-linux-gnu"
+                        ]
+                    },
+                    "arm" : {
+                        "config-opts" : [
+                            "--build=arm-unknown-linux-gnueabi"
+                        ]
+                    }
+                }
+            },
+            "post-install": [
+                "mkdir -p /usr/lib/GL/glvnd/egl_vendor.d",
+                "ln -s /usr/lib/GL/glvnd /usr/etc/glvnd",
+                "mkdir -p /usr/share/glvnd/egl_vendor.d"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/NVIDIA/libglvnd.git",
+                    "branch": "dc16f8c337703ad141f83583a4004fcf42e07766"
+                },
+                {
+                    "type": "patch",
+                    "path": "libglvnd-OpenGL-Statically-export-a-few-more-things.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "libglvnd-Print-out-host_cpu-when-undetected-for-easier-debugg.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "libglvnd-Fix-compile-errors.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "libglvnd-armv7-make-sure-asm-is-compiled-in-unified-syntax-mo.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "libglvnd-Treat-armv7hl-as-armv7l.patch"
+                }
             ]
         },
         {
@@ -1121,13 +1222,15 @@
 			"config-opts" : [
                             "--build=i586-unknown-linux-gnu",
 			    "--with-gallium-drivers=svga,swrast,nouveau,r600,r300,radeonsi",
-			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965"
+			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965",
+			    "--with-vulkan-drivers=intel"
 			]
 		    },
 		    "x86_64" : {
 			"config-opts" : [
 			    "--with-gallium-drivers=svga,swrast,nouveau,r600,r300,radeonsi",
-			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965"
+			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965",
+			    "--with-vulkan-drivers=intel"
 			]
 		    },
 		    "arm" : {
@@ -1145,6 +1248,7 @@
 		}
             },
             "config-opts": [
+                "--enable-libglvnd",
                 "--disable-selinux",
                 "--disable-osmesa",
                 "--with-dri-driverdir=/usr/lib/dri",
@@ -1164,12 +1268,35 @@
                 "--enable-sysfs"
             ],
             "make-args": [ "MKDEP=/bin/true"],
+            "post-install": [
+                /* Set the default driver to mesa */
+                "ln -s libEGL_mesa.so /usr/lib/libEGL_indirect.so",
+                "ln -s libEGL_mesa.so.0 /usr/lib/libEGL_indirect.so.0",
+                "ln -s libGLX_mesa.so /usr/lib/libGLX_indirect.so",
+                "ln -s libGLX_mesa.so.0 /usr/lib/libGLX_indirect.so.0"
+            ],
             "sources": [
-                 {
-                     "type": "archive",
-                     "url": "https://mesa.freedesktop.org/archive/11.2.2/mesa-11.2.2.tar.xz",
-                     "sha256": "40e148812388ec7c6d7b6657d5a16e2e8dabba8b97ddfceea5197947647bdfb4"
-                 }
+                {
+                    "type": "archive",
+                    "url": "https://mesa.freedesktop.org/archive/13.0.5/mesa-13.0.5.tar.xz",
+                    "sha256": "bfcea7e2c801525a60895c8aff11aa68457ee9aa35d01a4638e1f310a3f5ef87"
+                },
+                {
+                    "type": "patch",
+                    "path": "mesa-egl-glvnd-support.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "mesa-glvnd-fix-gl-dot-pc.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "mesa-Fix-linkage-against-shared-glapi.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "mesa-glapi-Link-with-glapi-when-built-shared.patch"
+                }
             ]
         },
         {
@@ -1243,8 +1370,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-8.0.tar.xz",
-                     "sha256": "690eefe28633466cfd1ab9d85ebfa9376f6b622deec6bfee5091ac9737cd1989"
+                     "url": "http://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-10.0.tar.xz",
+                     "sha256": "a3186824de9f0d2095ded5d0d0db0405dc73133983c2fbb37291547e37462f57"
                  }
             ]
         },
@@ -1359,8 +1486,7 @@
                             "--enable-ps",
                             "--enable-pdf",
                             "--enable-tee",
-                            "--enable-gobject",
-                            "--disable-gtk-doc"
+                            "--enable-gobject"
                            ],
             "cleanup-platform": ["/bin"],
             "sources": [
@@ -1397,7 +1523,6 @@
         {
             "name": "harfbuzz",
             "config-opts": ["--disable-static",
-                            "--disable-gtk-doc",
                             "--with-gobject",
                             "--with-graphite2"
                            ],
@@ -1417,8 +1542,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://downloads.sourceforge.net/project/freetype/freetype2/2.6.3/freetype-2.6.3.tar.bz2",
-                     "sha256": "371e707aa522acf5b15ce93f11183c725b8ed1ee8546d7b3af549863045863a2"
+                     "url": "http://downloads.sourceforge.net/project/freetype/freetype2/2.6.5/freetype-2.6.5.tar.bz2",
+                     "sha256": "e20a6e1400798fd5e3d831dd821b61c35b1f9a6465d6b18a53a9df4cf441acf0"
                  }
             ]
         },
@@ -1448,12 +1573,20 @@
             ]
         },
         {
-            "name": "gtk-doc-stub",
+            "name": "gtk-doc",
             "sources": [
                  {
-                     "type": "git",
-                     "url": "git://git.gnome.org/gtk-doc-stub",
-                     "branch": "1dea266593edb766d6d898c79451ef193eb17cfa"
+                     "type": "shell",
+                     "commands": [
+                         "xmlcatalog --noout --create /etc/xml/catalog",
+                         "xmlcatalog --noout --add nextCatalog '' /etc/xml/docbook-xml.xml /etc/xml/catalog",
+                         "xmlcatalog --noout --add nextCatalog '' /etc/xml/docbook-xsl.xml /etc/xml/catalog"
+                     ]
+                 },
+                 {
+                     "type": "archive",
+                     "url": "https://download.gnome.org/sources/gtk-doc/1.25/gtk-doc-1.25.tar.xz",
+                     "sha256": "1ea46ed400e6501f975acaafea31479cea8f32f911dca4dff036f59e6464fd42"
                  }
             ]
         },
@@ -1484,7 +1617,7 @@
         },
         {
             "name": "libsoup",
-            "config-opts": [ "--disable-static", "--disable-vala", "--disable-gtk-doc" ],
+            "config-opts": [ "--disable-static", "--disable-vala" ],
             "sources": [
                  {
                      "type": "archive",
@@ -1495,7 +1628,6 @@
         },
         {
             "name": "p11-kit",
-            "config-opts": ["--disable-gtk-doc" ],
             "sources": [
                 {
                     "type": "archive",
@@ -1525,6 +1657,23 @@
                  {
                      "type": "file",
                      "path": "gnu-free-serif.conf"
+                 },
+                 {
+                     "type": "file",
+                     "path": "Makefile-fonts",
+                     "dest-filename": "Makefile"
+                 }
+            ]
+        },
+        {
+            "name": "dejavu-fonts",
+            "no-autogen": true,
+            "make-args": ["NAME=dejavu", "SRCPRIO=57", "PRIO=57", "FAMILIES=sans serif sans-mono", "EXTRA_CONFS=20-unhint-small-dejavu-sans.conf 20-unhint-small-dejavu-sans-mono.conf 20-unhint-small-dejavu-serif.conf", "TTFDIR=ttf/", "CONFDIR=fontconfig/"],
+            "sources": [
+                 {
+                     "type": "archive",
+                     "url": "http://sourceforge.net/projects/dejavu/files/dejavu/2.37/dejavu-fonts-ttf-2.37.tar.bz2",
+                     "sha256": "fa9ca4d13871dd122f61258a80d01751d603b4d3ee14095d65453b4e846e17d7"
                  },
                  {
                      "type": "file",
@@ -1619,7 +1768,6 @@
         {
             "name": "gdk-pixbuf2",
             "config-opts": ["--disable-static",
-                            "--disable-gtk-doc",
                             "--without-x11",
                             "--without-libjasper",
                             "--with-included-loaders=png,jpeg" ],
@@ -1634,8 +1782,7 @@
         },
         {
             "name": "orc",
-            "config-opts": ["--disable-static",
-                            "--disable-gtk-doc"],
+            "config-opts": ["--disable-static"],
             "cleanup-platform": [ "/bin" ],
             "sources": [
                  {
@@ -1646,32 +1793,50 @@
             ]
         },
         {
+            "name": "mpg123",
+            "config-opts": [ "-with-default-audio=pulse", "--with-audio=pulse" ],
+            "cleanup": [ "/bin", "/share/man" ],
+            "build-options" : {
+                "arch" : {
+                    "i386" : {
+                        "config-opts" : [
+                            "--build=i586-unknown-linux-gnu"
+                        ]
+                    },
+		    "arm" : {
+                        "config-opts" : [
+                            "--build=arm-unknown-linux-gnueabi"
+			]
+		    }
+                }
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://mpg123.org/download/mpg123-1.23.8.tar.bz2",
+                    "sha256": "de2303c8ecb65593e39815c0a2f2f2d91f708c43b85a55fdd1934c82e677cf8e"
+                }
+            ]
+        },
+        {
             "name": "gstreamer",
-            "config-opts": ["--disable-gtk-doc", "--enable-debug", "--disable-examples" ],
+            "config-opts": ["--enable-debug", "--disable-examples" ],
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.8.2.tar.xz",
-                     "sha256": "9dbebe079c2ab2004ef7f2649fa317cabea1feb4fb5605c24d40744b90918341"
-                 },
-                 {
-                     "type": "patch",
-                     "path": "gstreamer-gi-build-fix.patch"
+                     "url": "https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.8.3.tar.xz",
+                     "sha256": "66b37762d4fdcd63bce5a2bec57e055f92420e95037361609900278c0db7c53f"
                  }
             ]
         },
         {
             "name": "gstreamer-plugins-base",
-            "config-opts": ["--disable-gtk-doc", "--enable-experimental", "--enable-orc" ],
+            "config-opts": ["--enable-experimental", "--enable-orc" ],
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.8.2.tar.xz",
-                     "sha256": "9d7109c8fb0a5dec8edb17b0053c59a46aba7ddf48dc48ea822ebbbd4339d38d"
-                 },
-                 {
-                     "type": "patch",
-                     "path": "gst-plugins-base-gi-build-fix.patch"
+                     "url": "https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.8.3.tar.xz",
+                     "sha256": "114871d4d63606b4af424a8433cd923e4ff66896b244bb7ac97b9da47f71e79e"
                  }
             ]
         },
@@ -1691,8 +1856,7 @@
 		    }
                 }
             },
-            "config-opts": ["--disable-gtk-doc",
-                            "--enable-experimental",
+            "config-opts": ["--enable-experimental",
                             "--enable-orc" ,
                             "--disable-monoscope",
                             "--disable-aalib",
@@ -1703,14 +1867,14 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.8.2.tar.xz",
-                     "sha256": "8d7549118a3b7a009ece6bb38a05b66709c551d32d2adfd89eded4d1d7a23944"
+                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.8.3.tar.xz",
+                     "sha256": "a1d6579ba203a7734927c24b90bf6590d846c5a5fcec01a48201018c8ad2827a"
                  }
             ]
         },
         {
             "name": "gstreamer-plugins-bad",
-            "config-opts": ["--disable-gtk-doc", "--enable-experimental", "--enable-orc" ],
+            "config-opts": ["--enable-experimental", "--enable-orc" ],
             "build-options" : {
                 "arch" : {
                     "i386" : {
@@ -1728,19 +1892,40 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.8.2.tar.xz",
-                     "sha256": "d7995317530c8773ec088f94d9320909d41da61996b801ebacce9a56af493f97"
-                 },
+                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.8.3.tar.xz",
+                     "sha256": "7899fcb18e6a1af2888b19c90213af018a57d741c6e72ec56b133bc73ec8509b"
+                 }
+            ]
+        },
+        {
+            "name": "gstreamer-plugins-ugly",
+            "config-opts": ["--disable-asfdemux", "--disable-dvdlpcmdec", "--disable-dvdsub",
+                            "--disable-xingmux", "--disable-realmedia"],
+            "build-options" : {
+                "arch" : {
+                    "i386" : {
+                        "config-opts" : [
+                            "--build=i586-unknown-linux-gnu"
+                        ]
+                    },
+		    "arm" : {
+                        "config-opts" : [
+                            "--build=arm-unknown-linux-gnueabi"
+			]
+		    }
+                }
+            },
+            "sources": [
                  {
-                     "type": "patch",
-                     "path": "gst-plugins-bad-gi-build-fix.patch"
+                     "type": "archive",
+                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.8.3.tar.xz",
+                     "sha256": "6fa2599fdd072d31fbaf50c34af406e2be944a010b1f4eab67a5fe32a0310693"
                  }
             ]
         },
         {
             "name": "json-glib",
-            "config-opts": [ "--disable-static",
-                             "--disable-gtk-doc" ],
+            "config-opts": [ "--disable-static"],
             "sources": [
                  {
                      "type": "archive",
@@ -1752,8 +1937,7 @@
         {
             "name": "libappstream-glib",
             "cleanup": ["/share/installed-tests"],
-            "config-opts": [ "--disable-gtk-doc",
-                             "--disable-man",
+            "config-opts": [ "--disable-man",
                              "--disable-fonts",
                              "--disable-firmware",
                              "--disable-dep11",
@@ -1762,9 +1946,13 @@
             "sources": [
                 {
                      "type": "archive",
-                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.5.18.tar.xz",
-                    "sha256": "e18c794f2c78af9906a54aacd83e509d3ae1b4bd030ca4c56b31c7a4dcc661e4"
-                 }
+                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.5.19.tar.xz",
+                    "sha256": "eec4cc3010c2160c12e487d9555e9aa7399540c740dcb7a66c39e9bc15c43a75"
+                },
+                {
+                    "type": "patch",
+                    "path": "appstream-compose-Support-appdata-with-no-desktop-fi.patch"
+                }
             ]
         },
         {
@@ -1941,8 +2129,7 @@
         {
             "name": "geoclue2",
             /* TODO: Use --disable-backend when supported (missing .pc file atm) */
-            "config-opts": ["--disable-gtk-doc",
-                            "--disable-3g-source", "--disable-cdma-source",
+            "config-opts": ["--disable-3g-source", "--disable-cdma-source",
                             "--disable-modem-gps-source", "--disable-nmea-source"],
             "cleanup": [ "/share/applications",
                          "/etc/dbus-1/system.d", "/libexec",
@@ -1957,6 +2144,46 @@
                 {
                     "type": "patch",
                     "path": "geoclue-gi-build-fix.patch"
+                }
+            ]
+        },
+        {
+            "name": "libseccomp",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/seccomp/libseccomp/releases/download/v2.3.1/libseccomp-2.3.1.tar.gz",
+                    "sha256": "ff5bdd2168790f1979e24eaa498f8606c2f2d96f08a8dc4006a2e88affa4562b"
+                }
+            ]
+        },
+        {
+            "name": "os-release",
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "os-release"
+                },
+                {
+                    "type": "file",
+                    "path": "issue"
+                },
+                {
+                    "type": "file",
+                    "path": "issue.net"
+                },
+                {
+                    "type": "file",
+                    "path": "org.freedesktop.Sdk.appdata.xml"
+                },
+                {
+                    "type": "file",
+                    "path": "org.freedesktop.Platform.appdata.xml"
+                },
+                {
+                    "type": "file",
+                    "path": "os-release-configure",
+                    "dest-filename": "configure"
                 }
             ]
         }
