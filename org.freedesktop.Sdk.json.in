@@ -8,6 +8,8 @@
     "runtime-version": "@@SDK_RUNTIME_VERSION@@",
     "sdk-extensions": [],
     "finish-args": [
+        "--extension=org.freedesktop.Platform.GL=version=1.4",
+        "--extension=org.freedesktop.Platform.GL=versions=1.6;1.4",
         "--extension=org.freedesktop.Platform.GL=directory=lib/GL",
         "--extension=org.freedesktop.Platform.GL=subdirectories=true",
         "--extension=org.freedesktop.Platform.GL=no-autodownload=true",
@@ -55,7 +57,7 @@
                                    "fc-cache -fs",
                                    /* Work around gst-python issue */
                                    "ln -s libpython2.7.so.1.0 /usr/lib/libpython2.7.so",
-                                   "ln -s libpython3.4m.so.1.0 /usr/lib/libpython3.4m.so",
+                                   "ln -s libpython3.5m.so.1.0 /usr/lib/libpython3.5m.so",
                                    "ldconfig -C /usr/etc/ld.so.cache"
                                  ],
     "build-options" : {
@@ -72,8 +74,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://ftp.acc.umu.se/mirror/gnu.org/gnu/autoconf-archive/autoconf-archive-2016.03.20.tar.xz",
-                    "sha256": "88fb2efff640eddd28a52ae550ff5561bca3bd2bba09e1d7b0580e719875e437"
+                    "url": "http://ftp.acc.umu.se/mirror/gnu.org/gnu/autoconf-archive/autoconf-archive-2016.09.16.tar.xz",
+                    "sha256": "e8f2efd235f842bad2f6938bf4a72240a5e5fcd248e8444335e63beb60fabd82"
                 }
             ]
         },
@@ -83,8 +85,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/util/util-macros-1.19.0.tar.bz2",
-                     "sha256": "2835b11829ee634e19fa56517b4cfc52ef39acea0cd82e15f68096e27cbed0ba"
+                     "url": "http://xorg.freedesktop.org/archive/individual/util/util-macros-1.19.1.tar.bz2",
+                     "sha256": "18d459400558f4ea99527bc9786c033965a3db45bf4c6a32eefdc07aa9e306a6"
                  }
             ]
         },
@@ -224,8 +226,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/proto/inputproto-2.3.1.tar.bz2",
-                     "sha256": "5a47ee62053a6acef3a83f506312494be1461068d0b9269d818839703b95c1d1"
+                     "url": "http://xorg.freedesktop.org/archive/individual/proto/inputproto-2.3.2.tar.bz2",
+                     "sha256": "893a6af55733262058a27b38eeb1edc733669f01d404e8581b167f03c03ef31d"
                  }
             ]
         },
@@ -329,8 +331,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/proto/videoproto-2.3.2.tar.bz2",
-                     "sha256": "8dae168cb820fcd32f564879afb3f24d27c176300d9af66819a18265539bd4b6"
+                     "url": "http://xorg.freedesktop.org/archive/individual/proto/videoproto-2.3.3.tar.bz2",
+                     "sha256": "c7803889fd08e6fcaf7b68cc394fb038b2325d1f315e571a6954577e07cca702"
                  }
             ]
         },
@@ -477,8 +479,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/proto/xproto-7.0.28.tar.bz2",
-                     "sha256": "29e85568d1f68ceef8a2c081dad9bc0e5500a53cfffde24b564dc43d46ddf6ca"
+                     "url": "http://xorg.freedesktop.org/archive/individual/proto/xproto-7.0.31.tar.bz2",
+                     "sha256": "c6f9747da0bd3a95f86b17fb8dd5e717c8f3ab7f0ece3ba1b247899ec1ef7747"
                  }
             ]
         },
@@ -524,8 +526,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/proto/presentproto-1.0.tar.bz2",
-                     "sha256": "812c7d48721f909a0f7a2cb1e91f6eead76159a36c4712f4579ca587552839ce"
+                     "url": "http://xorg.freedesktop.org/archive/individual/proto/presentproto-1.1.tar.bz2",
+                     "sha256": "f69b23a8869f78a5898aaf53938b829c8165e597cda34f06024d43ee1e6d26b9"
                  }
             ]
         },
@@ -567,8 +569,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xcb.freedesktop.org/dist/xcb-proto-1.11.tar.bz2",
-                     "sha256": "b4aceee6502a0ce45fc39b33c541a2df4715d00b72e660ebe8c5bb444771e32e"
+                     "url": "http://xcb.freedesktop.org/dist/xcb-proto-1.12.tar.bz2",
+                     "sha256": "5922aba4c664ab7899a29d92ea91a87aa4c1fc7eb5ee550325c3216c480a4906"
                  }
             ]
         },
@@ -582,8 +584,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://xcb.freedesktop.org/dist/libxcb-1.11.tar.bz2",
-                    "sha256": "03635d70045b9ede90778e67516135828a57de87ac508f987024f43c03620ff7"
+                    "url": "http://xcb.freedesktop.org/dist/libxcb-1.12.tar.bz2",
+                    "sha256": "4adfb1b7c67e99bc9c2ccb110b2f175686576d2f792c8a71b9c8b19014057b5b"
                 },
                 {
                     "type": "file",
@@ -612,8 +614,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libX11-1.6.3.tar.bz2",
-                     "sha256": "cf31a7c39f2f52e8ebd0db95640384e63451f9b014eed2bb7f5de03e8adc8111"
+                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libX11-1.6.5.tar.bz2",
+                     "sha256": "4d3890db2ba225ba8c55ca63c6409c1ebb078a2806de59fb16342768ae63435d"
                  }
             ]
         },
@@ -634,8 +636,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXv-1.0.10.tar.bz2",
-                     "sha256": "55fe92f8686ce8612e2c1bfaf58c057715534419da700bda8d517b1d97914525"
+                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXv-1.0.11.tar.bz2",
+                     "sha256": "d26c13eac99ac4504c532e8e76a1c8e4bd526471eb8a0a4ff2a88db60cb0b088"
                  }
             ]
         },
@@ -645,8 +647,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXfixes-5.0.1.tar.bz2",
-                     "sha256": "63bec085084fa3caaee5180490dd871f1eb2020ba9e9b39a30f93693ffc34767"
+                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXfixes-5.0.3.tar.bz2",
+                     "sha256": "de1cd33aff226e08cefd0e6759341c2c8e8c9faf8ce9ac6ec38d43e287b22ad6"
                  }
             ]
         },
@@ -675,8 +677,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXi-1.7.4.tar.bz2",
-                     "sha256": "2cffc2686618dc1803725636cd92b36342c512dc60a7a35cba34bf7192a42244"
+                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXi-1.7.9.tar.bz2",
+                     "sha256": "c2e6b8ff84f9448386c1b5510a5cf5a16d788f76db018194dacdc200180faf45"
                  }
             ]
         },
@@ -686,8 +688,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXtst-1.2.2.tar.bz2",
-                     "sha256": "ef0a7ffd577e5f1a25b1663b375679529663a1880151beaa73e9186c8309f6d9"
+                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXtst-1.2.3.tar.bz2",
+                     "sha256": "4655498a1b8e844e3d6f21f3b2c4e2b571effb5fd83199d428a6ba7ea4bf5204"
                  }
             ]
         },
@@ -785,8 +787,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXpm-3.5.11.tar.bz2",
-                     "sha256": "c5bdafa51d1ae30086fac01ab83be8d47fe117b238d3437f8e965434090e041c"
+                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXpm-3.5.12.tar.bz2",
+                     "sha256": "fd6a6de3da48de8d1bb738ab6be4ad67f7cb0986c39bd3f7d51dd24f7854bdec"
                  }
             ]
         },
@@ -796,8 +798,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXrender-0.9.9.tar.bz2",
-                     "sha256": "fc2fe57980a14092426dffcd1f2d9de0987b9d40adea663bd70d6342c0e9be1a"
+                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXrender-0.9.10.tar.bz2",
+                     "sha256": "c06d5979f86e64cabbde57c223938db0b939dff49fdb5a793a1d3d0396650949"
                  }
             ]
         },
@@ -847,8 +849,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXrandr-1.5.0.tar.bz2",
-                     "sha256": "6f864959b7fc35db11754b270d71106ef5b5cf363426aa58589cb8ac8266de58"
+                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libXrandr-1.5.1.tar.bz2",
+                     "sha256": "1ff9e7fa0e4adea912b16a5f0cfa7c1d35b0dcda0e216831f7715c8a3abcf51a"
                  }
             ]
         },
@@ -910,8 +912,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xcb.freedesktop.org/dist/xcb-util-cursor-0.1.2.tar.bz2",
-                     "sha256": "ed65367b810d47ab637011585135f4a84dd12e235dddcd3b26e0cfb3be21fb3a"
+                     "url": "http://xcb.freedesktop.org/dist/xcb-util-cursor-0.1.3.tar.bz2",
+                     "sha256": "05a10a0706a1a789a078be297b5fb663f66a71fb7f7f1b99658264c35926394f"
                  }
             ]
         },
@@ -945,8 +947,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://downloads.sourceforge.net/project/freetype/freetype2/2.6.5/freetype-2.6.5.tar.bz2",
-                     "sha256": "e20a6e1400798fd5e3d831dd821b61c35b1f9a6465d6b18a53a9df4cf441acf0"
+                     "url": "http://download.savannah.gnu.org/releases/freetype/freetype-2.7.1.tar.bz2",
+                     "sha256": "3a3bb2c4e15ffb433f2032f50a5b5a92558206822e22bfe8cbe339af4aa82f88"
                  }
             ]
         },
@@ -957,8 +959,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://fontconfig.org/release/fontconfig-2.11.95.tar.bz2",
-                     "sha256": "7b165eee7aa22dcc1557db56f58d905b6a14b32f9701c79427452474375b4c89"
+                     "url": "http://fontconfig.org/release/fontconfig-2.12.1.tar.bz2",
+                     "sha256": "b449a3e10c47e1d1c7a6ec6e2016cca73d3bd68fbbd4f0ae5cc6b573f7d6c7f3"
                  },
                  {
                      "type": "file",
@@ -990,8 +992,8 @@
             "sources": [
                 {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/glib/2.48/glib-2.48.2.tar.xz",
-                     "sha256": "f25e751589cb1a58826eac24fbd4186cda4518af772806b666a3f91f66e6d3f4"
+                     "url": "https://download.gnome.org/sources/glib/2.50/glib-2.50.3.tar.xz",
+                     "sha256": "82ee94bf4c01459b6b00cb9db0545c2237921e3060c0b74cff13fbc020cfd999"
                  }
             ]
         },
@@ -1001,8 +1003,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/data/xkeyboard-config/xkeyboard-config-2.15.tar.bz2",
-                     "sha256": "0e443cf7ca2f0b40846472c029647a05933fc705d611e1478c4db8a48a6f38bf"
+                     "url": "http://xorg.freedesktop.org/archive/individual/data/xkeyboard-config/xkeyboard-config-2.20.tar.bz2",
+                     "sha256": "d1bfc72553c4e3ef1cd6f13eec0488cf940498b612ab8a0b362e7090c94bc134"
                  }
             ]
         },
@@ -1012,8 +1014,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xkbcommon.org/download/libxkbcommon-0.5.0.tar.xz",
-                     "sha256": "90bd7824742b9a6f52a6cf80e2cadd6f5349cf600a358d08260772615b89d19c"
+                     "url": "http://xkbcommon.org/download/libxkbcommon-0.7.1.tar.xz",
+                     "sha256": "ba59305d2e19e47c27ea065c2e0df96ebac6a3c6e97e28ae5620073b6084e68b"
                  }
             ]
         },
@@ -1158,8 +1160,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/archive/sdk-1.0.39.0.tar.gz",
-                    "sha256": "146efb378dc143f9dc15843b29aec8e5a0ad74161628931f0057d9517457a846"
+                    "url": "https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/archive/sdk-1.0.42.0.tar.gz",
+                    "sha256": "305d3070f559a3f5ad332aff285a3ea0618f9d0696cde81a58765fcb5c7c4e42"
                 }
             ]
         },
@@ -1189,27 +1191,11 @@
                 {
                     "type": "git",
                     "url": "https://github.com/NVIDIA/libglvnd.git",
-                    "branch": "dc16f8c337703ad141f83583a4004fcf42e07766"
+                    "branch": "4ba5345742d6c98b528ac28fb7127006d2cc3f75"
                 },
                 {
                     "type": "patch",
                     "path": "libglvnd-OpenGL-Statically-export-a-few-more-things.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "libglvnd-Print-out-host_cpu-when-undetected-for-easier-debugg.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "libglvnd-Fix-compile-errors.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "libglvnd-armv7-make-sure-asm-is-compiled-in-unified-syntax-mo.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "libglvnd-Treat-armv7hl-as-armv7l.patch"
                 }
             ]
         },
@@ -1278,12 +1264,16 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://mesa.freedesktop.org/archive/13.0.5/mesa-13.0.5.tar.xz",
-                    "sha256": "bfcea7e2c801525a60895c8aff11aa68457ee9aa35d01a4638e1f310a3f5ef87"
+                    "url": "https://mesa.freedesktop.org/archive/mesa-17.0.1.tar.xz",
+                    "sha256": "96fd70ef5f31d276a17e424e7e1bb79447ccbbe822b56844213ef932e7ad1b0c"
                 },
                 {
                     "type": "patch",
-                    "path": "mesa-egl-glvnd-support.patch"
+                    "path": "mesa-EGL-Implement-the-libglvnd-interface-for-EGL-v2.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "mesa-fixup-EGL-Implement-the-libglvnd-interface-for-EGL-v.patch"
                 },
                 {
                     "type": "patch",
@@ -1306,8 +1296,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://www.freedesktop.org/software/vaapi/releases/libva/libva-1.6.2.tar.bz2",
-                    "sha256": "c417f09cdeef549e54f4be5f9876026513afeac395c5be28750b431d848c8bd0"
+                    "url": "http://www.freedesktop.org/software/vaapi/releases/libva/libva-1.7.3.tar.bz2",
+                    "sha256": "22bc139498065a7950d966dbdb000cad04905cbd3dc8f3541f80d36c4670b9d9"
                 }
             ]
         },
@@ -1339,8 +1329,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://dbus.freedesktop.org/releases/dbus/dbus-1.10.8.tar.gz",
-                     "sha256": "baf3d22baa26d3bdd9edc587736cd5562196ce67996d65b82103bedbe1f0c014"
+                     "url": "http://dbus.freedesktop.org/releases/dbus/dbus-1.10.16.tar.gz",
+                     "sha256": "a7b0ba6ea3e8d0e08afec5e3030d0245614268276620c536726f8fa6e5c43388"
                  }
             ]
         },
@@ -1383,8 +1373,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://pkgs.fedoraproject.org/repo/pkgs/alsa-lib/alsa-lib-1.1.0.tar.bz2/69515ca73c3c4a212ef45160dea846c1/alsa-lib-1.1.0.tar.bz2",
-                    "sha256": "dfde65d11e82b68f82e562ab6228c1fb7c78854345d3c57e2c68a9dd3dae1f15"
+                    "url": "http://pkgs.fedoraproject.org/repo/pkgs/alsa-lib/alsa-lib-1.1.3.tar.bz2/eefe5992567ba00d6110a540657aaf5c/alsa-lib-1.1.3.tar.bz2",
+                    "sha256": "71282502184c592c1a008e256c22ed0ba5728ca65e05273ceb480c70f515969c"
                 },
                 {
                     "type": "script",
@@ -1401,8 +1391,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://pkgs.fedoraproject.org/repo/pkgs/alsa-plugins/alsa-plugins-1.1.0.tar.bz2/b123e42ed881b9adbc99e4040f257c39/alsa-plugins-1.1.0.tar.bz2",
-                    "sha256": "3b83c329953bef99f5fe25ae04ec4a455fe6514939f3b45a5321966652b2c9ee"
+                    "url": "http://pkgs.fedoraproject.org/repo/pkgs/alsa-plugins/alsa-plugins-1.1.1.tar.bz2/69f9f3e2de3c97fc71d496e91e271fe5/alsa-plugins-1.1.1.tar.bz2",
+                    "sha256": "8ea4d1e082c36528a896a2581e5eb62d4dc2683238e353050d0d624e65f901f1"
                 },
                 {
                     "type": "script",
@@ -1416,8 +1406,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://github.com/anholt/libepoxy/releases/download/v1.3.1/libepoxy-1.3.1.tar.bz2",
-                     "sha256": "1d8668b0a259c709899e1c4bab62d756d9002d546ce4f59c9665e2fc5f001a64"
+                     "url": "https://github.com/anholt/libepoxy/archive/1.4.1.tar.gz",
+                     "sha256": "da8f42c355b62c2c3ff6bc534c2a24099707b249c2af6eaf8db54b94c364a504"
                  }
             ]
         },
@@ -1438,8 +1428,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://www.freedesktop.org/software/desktop-file-utils/releases/desktop-file-utils-0.22.tar.xz",
-                     "sha256": "843532672692f98e9b2d6ae6cc8658da562dfde1606c7f33d9d227a344de56c5"
+                     "url": "http://www.freedesktop.org/software/desktop-file-utils/releases/desktop-file-utils-0.23.tar.xz",
+                     "sha256": "6c094031bdec46c9f621708f919084e1cb5294e2c5b1e4c883b3e70cb8903385"
                  }
             ]
         },
@@ -1451,8 +1441,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://people.freedesktop.org/~hadess/shared-mime-info-1.6.tar.xz",
-                     "sha256": "b2f8f85b6467933824180d0252bbcaee523f550a8fbc95cc4391bd43c03bc34c"
+                     "url": "http://people.freedesktop.org/~hadess/shared-mime-info-1.8.tar.xz",
+                     "sha256": "2af55ef1a0319805b74ab40d331a3962c905477d76c086f49e34dc96363589e9"
                  }
             ]
         },
@@ -1492,8 +1482,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://cairographics.org/releases/cairo-1.14.6.tar.xz",
-                     "sha256": "613cb38447b76a93ff7235e17acd55a78b52ea84a9df128c3f2257f8eaa7b252"
+                     "url": "http://cairographics.org/releases/cairo-1.14.8.tar.xz",
+                     "sha256": "d1f2d98ae9a4111564f6de4e013d639cf77155baf2556582295a0f00a9bc5e20"
                  }
             ]
         },
@@ -1515,8 +1505,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://downloads.sourceforge.net/project/silgraphite/graphite2/graphite-1.3.6.tgz",
-                     "sha256": "475e7657ac606ed8805518031729c1273cf7d9d422169ac6f7882e01d832af75"
+                     "url": "https://downloads.sourceforge.net/project/silgraphite/graphite2/graphite2-1.3.9.tgz",
+                     "sha256": "ec0185b663059553fd46e8c4a4f0dede60a02f13a7a1fefc2ce70332ea814567"
                  }
             ]
         },
@@ -1529,8 +1519,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://www.freedesktop.org/software/harfbuzz/release/harfbuzz-1.2.6.tar.bz2",
-                     "sha256": "7537bacccb3524df0cd2a4d5bc7e168bcc10e8171e0324f3cd522583868192c1"
+                     "url": "http://www.freedesktop.org/software/harfbuzz/release/harfbuzz-1.4.4.tar.bz2",
+                     "sha256": "35d2f8ca476cbbec64ee824eca6b0209ff8db0334990b9f5af893b94f119d255"
                  }
             ]
         },
@@ -1542,8 +1532,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://downloads.sourceforge.net/project/freetype/freetype2/2.6.5/freetype-2.6.5.tar.bz2",
-                     "sha256": "e20a6e1400798fd5e3d831dd821b61c35b1f9a6465d6b18a53a9df4cf441acf0"
+                     "url": "http://download.savannah.gnu.org/releases/freetype/freetype-2.7.1.tar.bz2",
+                     "sha256": "3a3bb2c4e15ffb433f2032f50a5b5a92558206822e22bfe8cbe339af4aa82f88"
                  }
             ]
         },
@@ -1567,8 +1557,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://pkgs.fedoraproject.org/repo/pkgs/libproxy/libproxy-0.4.11.tar.gz/3cd1ae2a4abecf44b3f24d6639d2cd84/libproxy-0.4.11.tar.gz",
-                     "sha256": "dc3f33de54163718f82b3e7c496a7de97f8862578414b8ecaad3cbfe4821864b"
+                     "url": "http://pkgs.fedoraproject.org/repo/pkgs/libproxy/libproxy-0.4.14.tar.xz/sha512/610d5d8ffb812efd75541a8da2b2ab5882529364b3e736f26c57fba57183464b531f84d04bdc73fabd4d3899a63b909db59ead81081d55753386da511e5381b3/libproxy-0.4.14.tar.xz",
+                     "sha256": "e25d046850346a505c0617646f1e68b660092efadf665548a89c280900262ea6"
                  }
             ]
         },
@@ -1599,8 +1589,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/gobject-introspection/1.48/gobject-introspection-1.48.0.tar.xz",
-                     "sha256": "fa275aaccdbfc91ec0bc9a6fd0562051acdba731e7d584b64a277fec60e75877"
+                     "url": "https://download.gnome.org/sources/gobject-introspection/1.50/gobject-introspection-1.50.0.tar.xz",
+                     "sha256": "1c6597c666f543c70ef3d7c893ab052968afae620efdc080c36657f4226337c5"
                  }
             ]
         },
@@ -1610,8 +1600,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/glib-networking/2.48/glib-networking-2.48.2.tar.xz",
-                     "sha256": "925c0c49d6b2b8b5695f2e33cd952d1dbb7d18d3f2f796413577719315bb3a84"
+                     "url": "https://download.gnome.org/sources/glib-networking/2.50/glib-networking-2.50.0.tar.xz",
+                     "sha256": "3f1a442f3c2a734946983532ce59ed49120319fdb10c938447c373d5e5286bee"
                  }
             ]
         },
@@ -1621,8 +1611,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/libsoup/2.54/libsoup-2.54.0.1.tar.xz",
-                     "sha256": "ade4920166bd036e8890d04acdc135686d877670953949fa6245797c906e38e0"
+                     "url": "https://download.gnome.org/sources/libsoup/2.56/libsoup-2.56.0.tar.xz",
+                     "sha256": "d8216b71de8247bc6f274ec054c08547b2e04369c1f8add713e9350c8ef81fe5"
                  }
             ]
         },
@@ -1689,7 +1679,7 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz",
+                     "url": "http://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz",
                      "sha256": "7890278a6cd17873c57d9cd785c2d230d9abdea837e96516019c5885dd271504"
                  },
                  {
@@ -1775,8 +1765,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/gdk-pixbuf/2.34/gdk-pixbuf-2.34.0.tar.xz",
-                     "sha256": "d55e5b383ee219bd0e23bf6ed4427d56a7db5379729a6e3e0a0e0eba9a8d8879"
+                     "url": "https://download.gnome.org/sources/gdk-pixbuf/2.36/gdk-pixbuf-2.36.5.tar.xz",
+                     "sha256": "7ace06170291a1f21771552768bace072ecdea9bd4a02f7658939b9a314c40fc"
                  }
             ]
         },
@@ -1787,8 +1777,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://gstreamer.freedesktop.org/src/orc/orc-0.4.25.tar.xz",
-                     "sha256": "c1b1d54a58f26d483f0b3881538984789fe5d5460ab8fab74a1cacbd3d1c53d1"
+                     "url": "http://gstreamer.freedesktop.org/src/orc/orc-0.4.26.tar.xz",
+                     "sha256": "7d52fa80ef84988359c3434e1eea302d077a08987abdde6905678ebcad4fa649"
                  }
             ]
         },
@@ -1813,8 +1803,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://mpg123.org/download/mpg123-1.23.8.tar.bz2",
-                    "sha256": "de2303c8ecb65593e39815c0a2f2f2d91f708c43b85a55fdd1934c82e677cf8e"
+                    "url": "http://mpg123.org/download/mpg123-1.24.0.tar.bz2",
+                    "sha256": "55fb169a7711938f5df0497d1ffe28419fbef50011dc01d00b216379e6a2256c"
                 }
             ]
         },
@@ -1824,8 +1814,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.8.3.tar.xz",
-                     "sha256": "66b37762d4fdcd63bce5a2bec57e055f92420e95037361609900278c0db7c53f"
+                     "url": "https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.10.4.tar.xz",
+                     "sha256": "50c2f5af50a6cc6c0a3f3ed43bdd8b5e2bff00bacfb766d4be139ec06d8b5218"
                  }
             ]
         },
@@ -1835,8 +1825,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.8.3.tar.xz",
-                     "sha256": "114871d4d63606b4af424a8433cd923e4ff66896b244bb7ac97b9da47f71e79e"
+                     "url": "https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.10.4.tar.xz",
+                     "sha256": "f6d245b6b3d4cb733f81ebb021074c525ece83db0c10e932794b339b8d935eb7"
                  }
             ]
         },
@@ -1867,8 +1857,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.8.3.tar.xz",
-                     "sha256": "a1d6579ba203a7734927c24b90bf6590d846c5a5fcec01a48201018c8ad2827a"
+                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.10.4.tar.xz",
+                     "sha256": "8a86c61434a8c44665365bd0b3557a040937d1f44bf69caee4e9ea816ce74d7e"
                  }
             ]
         },
@@ -1892,8 +1882,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.8.3.tar.xz",
-                     "sha256": "7899fcb18e6a1af2888b19c90213af018a57d741c6e72ec56b133bc73ec8509b"
+                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.10.4.tar.xz",
+                     "sha256": "23ddae506b3a223b94869a0d3eea3e9a12e847f94d2d0e0b97102ce13ecd6966"
                  }
             ]
         },
@@ -1918,8 +1908,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.8.3.tar.xz",
-                     "sha256": "6fa2599fdd072d31fbaf50c34af406e2be944a010b1f4eab67a5fe32a0310693"
+                     "url": "http://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.10.4.tar.xz",
+                     "sha256": "6386c77ca8459cba431ed0b63da780c7062c7cc48055d222024d8eaf198ffa59"
                  }
             ]
         },
@@ -1929,8 +1919,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/json-glib/1.2/json-glib-1.2.0.tar.xz",
-                     "sha256": "99d6dfbe49c08fd7529f1fe8dcb1893b810a1bb222f1e7b65f41507658b8a7d3"
+                     "url": "https://download.gnome.org/sources/json-glib/1.2/json-glib-1.2.2.tar.xz",
+                     "sha256": "ea128ab52a824fcd06e5448fbb2bd8d9a13740d51c66d445828edba71321a621"
                  }
             ]
         },
@@ -1946,12 +1936,8 @@
             "sources": [
                 {
                      "type": "archive",
-                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.5.19.tar.xz",
-                    "sha256": "eec4cc3010c2160c12e487d9555e9aa7399540c740dcb7a66c39e9bc15c43a75"
-                },
-                {
-                    "type": "patch",
-                    "path": "appstream-compose-Support-appdata-with-no-desktop-fi.patch"
+                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.6.10.tar.xz",
+                    "sha256": "15eaa7bffbd19ed7b52cd4945c2cbefecb3eceaf6408c07b39ec1b7daf52cc5f"
                 }
             ]
         },
@@ -2006,6 +1992,11 @@
                      "type": "file",
                      "path": "Makefile-hunspell-en",
                      "dest-filename": "Makefile"
+                 },
+                 {
+                     "type": "patch",
+                     "strip-components": 0,
+                     "path": "hunspell-en-fixbuild.patch"
                  }
             ]
         },
@@ -2072,8 +2063,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://www.libsdl.org/release/SDL2-2.0.4.tar.gz",
-                     "sha256": "da55e540bf6331824153805d58b590a29c39d2d506c6d02fa409aedeab21174b"
+                     "url": "http://www.libsdl.org/release/SDL2-2.0.5.tar.gz",
+                     "sha256": "442038cf55965969f2ff06d976031813de643af9c9edc9e331bd761c242e8785"
                  }
             ]
         },
@@ -2138,12 +2129,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://www.freedesktop.org/software/geoclue/releases/2.4/geoclue-2.4.3.tar.xz",
-                    "sha256": "ada9dba870dd79e1b21923aeda4d82b66cbda39e57978fbe3d83d356cc3c605e"
-                },
-                {
-                    "type": "patch",
-                    "path": "geoclue-gi-build-fix.patch"
+                    "url": "http://www.freedesktop.org/software/geoclue/releases/2.4/geoclue-2.4.5.tar.xz",
+                    "sha256": "78162d33a2d42477ec241db7fc082439b0e0f9a791eb3a41e5a2aa1eae9145a1"
                 }
             ]
         },
@@ -2152,8 +2139,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/seccomp/libseccomp/releases/download/v2.3.1/libseccomp-2.3.1.tar.gz",
-                    "sha256": "ff5bdd2168790f1979e24eaa498f8606c2f2d96f08a8dc4006a2e88affa4562b"
+                    "url": "https://github.com/seccomp/libseccomp/releases/download/v2.3.2/libseccomp-2.3.2.tar.gz",
+                    "sha256": "3ddc8c037956c0a5ac19664ece4194743f59e1ccd4adde848f4f0dae7f77bca1"
                 }
             ]
         },

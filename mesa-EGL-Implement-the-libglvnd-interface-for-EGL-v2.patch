@@ -1,40 +1,64 @@
-From 06c325b36bd6563a41cbc0261a8f9dd4e00f5572 Mon Sep 17 00:00:00 2001
+From 97b447ee480a09a744094562da36b019a3eeb10f Mon Sep 17 00:00:00 2001
 From: Kyle Brenneman <kbrenneman@nvidia.com>
-Date: Fri, 8 Jul 2016 15:21:17 -0600
-Subject: [PATCH] egl: glvnd support
+Date: Wed, 4 Jan 2017 11:31:58 -0700
+Subject: [PATCH 1/2] EGL: Implement the libglvnd interface for EGL (v2)
 
-[hdegoede@redhat.com: Rebased on 13.0 branch]
+Added separate --enable-libglvnd-glx and --enable-libglvnd-egl configure
+options to enable libglvnd for GLX and EGL. The existing --enable-libglvnd
+option will now enable both EGL and GLX.
+
+The new interface mostly just sits on top of the existing library. The only
+change to the existing EGL code is to split the client extension string into
+platform extensions and everything else. On non-glvnd builds, eglQueryString
+will just concatenate the two strings.
+
+The EGL dispatch stubs are all generated. The script is based on the one used
+to generate entrypoints in libglvnd itself.
+
+v2:
+
+Rebased against master.
+
+Reworked the EGL makefile to use separate libtool targets instead of an
+automake substitution "lib@EGL_LIB@_la_*" in the variable names. Using the
+substitution broke automake's dependency tracking for "make dist".
+
+Made the EGL code generation scripts work with Python 2 or 3.
+
+Change gen_egl_dispatch.py to use argparse for the command line arguments.
+
+Assorted formatting and style cleanup in the Python scripts.
 ---
- configure.ac                         |  159 ++-
- src/egl/Makefile.am                  |   65 +-
+ configure.ac                         |  154 ++-
+ src/egl/Makefile.am                  |   97 +-
  src/egl/generate/egl.xml             | 2412 ++++++++++++++++++++++++++++++++++
- src/egl/generate/eglFunctionList.py  |  191 +++
+ src/egl/generate/eglFunctionList.py  |  197 +++
  src/egl/generate/egl_other.xml       |   47 +
  src/egl/generate/genCommon.py        |  223 ++++
- src/egl/generate/gen_egl_dispatch.py |  223 ++++
- src/egl/main/50_mesa.json.in         |    6 +
+ src/egl/generate/gen_egl_dispatch.py |  250 ++++
+ src/egl/main/50_mesa.json            |    6 +
  src/egl/main/eglapi.c                |    6 +-
  src/egl/main/egldispatchstubs.c      |  110 ++
  src/egl/main/egldispatchstubs.h      |   26 +
- src/egl/main/eglglobals.c            |   42 +-
+ src/egl/main/eglglobals.c            |   47 +-
  src/egl/main/eglglobals.h            |   13 +-
- src/egl/main/eglglvnd.c              |   75 ++
- 14 files changed, 3512 insertions(+), 86 deletions(-)
- create mode 100644 src/egl/generate/egl.xml
+ src/egl/main/eglglvnd.c              |   82 ++
+ 14 files changed, 3576 insertions(+), 94 deletions(-)
+ create mode 100755 src/egl/generate/egl.xml
  create mode 100644 src/egl/generate/eglFunctionList.py
  create mode 100644 src/egl/generate/egl_other.xml
  create mode 100644 src/egl/generate/genCommon.py
- create mode 100644 src/egl/generate/gen_egl_dispatch.py
- create mode 100644 src/egl/main/50_mesa.json.in
+ create mode 100755 src/egl/generate/gen_egl_dispatch.py
+ create mode 100644 src/egl/main/50_mesa.json
  create mode 100644 src/egl/main/egldispatchstubs.c
  create mode 100644 src/egl/main/egldispatchstubs.h
  create mode 100644 src/egl/main/eglglvnd.c
 
 diff --git a/configure.ac b/configure.ac
-index d215b63..e49711d 100644
+index de8af874ec..839b25c057 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -521,8 +521,6 @@ else
+@@ -528,8 +528,6 @@ else
     DEFINES="$DEFINES -DNDEBUG"
  fi
  
@@ -43,7 +67,7 @@ index d215b63..e49711d 100644
  dnl
  dnl Check if linker supports -Bsymbolic
  dnl
-@@ -620,23 +618,6 @@ esac
+@@ -627,23 +625,6 @@ esac
  
  AM_CONDITIONAL(HAVE_COMPAT_SYMLINKS, test "x$HAVE_COMPAT_SYMLINKS" = xyes)
  
@@ -67,7 +91,7 @@ index d215b63..e49711d 100644
  dnl
  dnl library names
  dnl
-@@ -670,36 +651,6 @@ esac
+@@ -677,36 +658,6 @@ esac
  
  AC_SUBST([LIB_EXT])
  
@@ -104,13 +128,12 @@ index d215b63..e49711d 100644
  dnl
  dnl potentially-infringing-but-nobody-knows-for-sure stuff
  dnl
-@@ -1107,31 +1058,98 @@ AM_CONDITIONAL(HAVE_GALLIUM_XLIB_GLX, test "x$enable_glx" = xgallium-xlib)
+@@ -1335,31 +1286,94 @@ AM_CONDITIONAL(HAVE_GALLIUM_XLIB_GLX, test "x$enable_glx" = xgallium-xlib)
  dnl
  dnl Libglvnd configuration
  dnl
 +
 +DEFAULT_GL_LIB_NAME=GL
-+EGL_LIB=EGL
 +
  AC_ARG_ENABLE([libglvnd],
      [AS_HELP_STRING([--enable-libglvnd],
@@ -160,7 +183,6 @@ index d215b63..e49711d 100644
 +            AC_MSG_ERROR([cannot build libglvnd without EGL])
 +        fi
 +        DEFINES="${DEFINES} -DUSE_LIBGLVND_EGL=1"
-+        EGL_LIB=EGL_mesa
 +    else
 +        PKG_CHECK_MODULES([GLVND], libglvnd >= 0.1.0)
 +    fi
@@ -184,8 +206,6 @@ index d215b63..e49711d 100644
 +        DEFAULT_GL_LIB_NAME=GLX_mesa
 +    fi
 +fi
-+
-+AC_SUBST([EGL_LIB])
 +
 +AC_ARG_WITH([gl-lib-name],
 +  [AS_HELP_STRING([--with-gl-lib-name@<:@=NAME@:>@],
@@ -222,15 +242,7 @@ index d215b63..e49711d 100644
  
  # Check for libdrm
  PKG_CHECK_MODULES([LIBDRM], [libdrm >= $LIBDRM_REQUIRED],
-@@ -2685,6 +2703,7 @@ AC_CONFIG_FILES([Makefile
- 		src/compiler/Makefile
- 		src/egl/Makefile
- 		src/egl/main/egl.pc
-+		src/egl/main/50_mesa.json
- 		src/egl/wayland/wayland-drm/Makefile
- 		src/egl/wayland/wayland-egl/Makefile
- 		src/egl/wayland/wayland-egl/wayland-egl.pc
-@@ -2846,11 +2865,15 @@ xgallium-xlib)
+@@ -2759,11 +2773,15 @@ xgallium-xlib)
      echo "        GLX:             $enable_glx"
      ;;
  esac
@@ -247,83 +259,51 @@ index d215b63..e49711d 100644
  
      egl_drivers=""
 diff --git a/src/egl/Makefile.am b/src/egl/Makefile.am
-index 304b0d3..1839155 100644
+index 78cf525951..3bc62d550f 100644
 --- a/src/egl/Makefile.am
 +++ b/src/egl/Makefile.am
-@@ -32,16 +32,53 @@ AM_CFLAGS = \
+@@ -32,19 +32,16 @@ AM_CFLAGS = \
  	$(EGL_CFLAGS) \
  	-D_EGL_NATIVE_PLATFORM=$(EGL_NATIVE_PLATFORM)
  
 -lib_LTLIBRARIES = libEGL.la
-+if USE_LIBGLVND_EGL
-+AM_CFLAGS += \
-+	$(GLVND_CFLAGS)
-+
-+LIBEGL_C_FILES += \
-+	main/eglglvnd.c \
-+	main/egldispatchstubs.h \
-+	main/egldispatchstubs.c \
-+	g_egldispatchstubs.c
-+
-+EGL_LIB_VERSION=0
-+
-+PYTHON_GEN = $(AM_V_GEN)$(PYTHON2) $(PYTHON_FLAGS)
-+g_egldispatchstubs.c: generate/gen_egl_dispatch.py generate/egl.xml \
-+		generate/eglFunctionList.py generate/genCommon.py
-+	$(PYTHON_GEN) $(top_srcdir)/src/egl/generate/gen_egl_dispatch.py source \
-+		$(top_srcdir)/src/egl/generate/eglFunctionList.py \
-+		$(top_srcdir)/src/egl/generate/egl.xml \
-+		$(top_srcdir)/src/egl/generate/egl_other.xml > $@
-+
-+g_egldispatchstubs.h: generate/gen_egl_dispatch.py generate/egl.xml \
-+		generate/eglFunctionList.py generate/genCommon.py
-+	$(PYTHON_GEN) $(top_srcdir)/src/egl/generate/gen_egl_dispatch.py header \
-+		$(top_srcdir)/src/egl/generate/eglFunctionList.py \
-+		$(top_srcdir)/src/egl/generate/egl.xml \
-+		$(top_srcdir)/src/egl/generate/egl_other.xml > $@
-+
-+BUILT_SOURCES = g_egldispatchstubs.c g_egldispatchstubs.h
-+CLEANFILES = $(BUILT_SOURCES)
-+
-+vendorjsondir = @LIBGLVND_DATADIR@/glvnd/egl_vendor.d
-+vendorjson_DATA = main/50_mesa.json
-+
-+else
-+EGL_LIB_VERSION=1:0
-+endif
-+
-+lib_LTLIBRARIES = lib@EGL_LIB@.la
- 
+-
 -libEGL_la_SOURCES = \
-+lib@EGL_LIB@_la_SOURCES = \
++# Depending on whether libglvnd is enabled, we'll build the EGL library as
++# either libEGL.so.1 or libEGL_mesa.so.0. Using an automake substitution
++# in the variable names breaks "make dist" target, so use a conenience library
++# instead.
++noinst_LTLIBRARIES = libEGL_common.la
++libEGL_common_la_SOURCES = \
  	$(LIBEGL_C_FILES)
  
 -libEGL_la_LIBADD = \
-+lib@EGL_LIB@_la_LIBADD = \
++libEGL_common_la_LIBADD = \
  	$(EGL_LIB_DEPS)
 -libEGL_la_LDFLAGS = \
-+lib@EGL_LIB@_la_LDFLAGS = \
- 	-no-undefined \
+-	-no-undefined \
 -	-version-number 1:0 \
-+	-version-number $(EGL_LIB_VERSION) \
- 	$(BSYMBOLIC) \
- 	$(GC_SECTIONS) \
- 	$(LD_NO_UNDEFINED)
-@@ -52,7 +89,7 @@ dri3_backend_FILES =
+-	$(BSYMBOLIC) \
+-	$(GC_SECTIONS) \
+-	$(LD_NO_UNDEFINED)
+ 
+ dri2_backend_FILES =
+ dri3_backend_FILES =
+@@ -52,7 +49,7 @@ dri3_backend_FILES =
  if HAVE_PLATFORM_X11
  AM_CFLAGS += -DHAVE_X11_PLATFORM
  AM_CFLAGS += $(XCB_DRI2_CFLAGS)
 -libEGL_la_LIBADD += $(XCB_DRI2_LIBS)
-+lib@EGL_LIB@_la_LIBADD += $(XCB_DRI2_LIBS)
++libEGL_common_la_LIBADD += $(XCB_DRI2_LIBS)
  dri2_backend_FILES += drivers/dri2/platform_x11.c
  
  if HAVE_DRI3
-@@ -60,22 +97,22 @@ dri3_backend_FILES += \
+@@ -60,22 +57,22 @@ dri3_backend_FILES += \
  	drivers/dri2/platform_x11_dri3.c \
  	drivers/dri2/platform_x11_dri3.h
  
 -libEGL_la_LIBADD += $(top_builddir)/src/loader/libloader_dri3_helper.la
-+lib@EGL_LIB@_la_LIBADD += $(top_builddir)/src/loader/libloader_dri3_helper.la
++libEGL_common_la_LIBADD += $(top_builddir)/src/loader/libloader_dri3_helper.la
  endif
  endif
  
@@ -333,39 +313,112 @@ index 304b0d3..1839155 100644
 -libEGL_la_LIBADD += $(WAYLAND_LIBS)
 -libEGL_la_LIBADD += $(LIBDRM_LIBS)
 -libEGL_la_LIBADD += $(top_builddir)/src/egl/wayland/wayland-drm/libwayland-drm.la
-+lib@EGL_LIB@_la_LIBADD += $(WAYLAND_LIBS)
-+lib@EGL_LIB@_la_LIBADD += $(LIBDRM_LIBS)
-+lib@EGL_LIB@_la_LIBADD += $(top_builddir)/src/egl/wayland/wayland-drm/libwayland-drm.la
++libEGL_common_la_LIBADD += $(WAYLAND_LIBS)
++libEGL_common_la_LIBADD += $(LIBDRM_LIBS)
++libEGL_common_la_LIBADD += $(top_builddir)/src/egl/wayland/wayland-drm/libwayland-drm.la
  dri2_backend_FILES += drivers/dri2/platform_wayland.c
  endif
  
  if HAVE_EGL_PLATFORM_DRM
  AM_CFLAGS += -DHAVE_DRM_PLATFORM
 -libEGL_la_LIBADD += $(top_builddir)/src/gbm/libgbm.la
-+lib@EGL_LIB@_la_LIBADD += $(top_builddir)/src/gbm/libgbm.la
++libEGL_common_la_LIBADD += $(top_builddir)/src/gbm/libgbm.la
  dri2_backend_FILES += drivers/dri2/platform_drm.c
  endif
  
-@@ -100,13 +137,13 @@ AM_CFLAGS += \
+@@ -87,7 +84,7 @@ endif
+ if HAVE_EGL_PLATFORM_ANDROID
+ AM_CFLAGS += -DHAVE_ANDROID_PLATFORM
+ AM_CFLAGS += $(ANDROID_CFLAGS)
+-libEGL_la_LIBADD += $(ANDROID_LIBS)
++libEGL_common_la_LIBADD += $(ANDROID_LIBS)
+ dri2_backend_FILES += drivers/dri2/platform_android.c
+ endif
+ 
+@@ -101,13 +98,68 @@ AM_CFLAGS += \
  	-DDEFAULT_DRIVER_DIR=\"$(DRI_DRIVER_SEARCH_DIR)\" \
  	-D_EGL_BUILT_IN_DRIVER_DRI2
  
 -libEGL_la_SOURCES += \
-+lib@EGL_LIB@_la_SOURCES += \
++libEGL_common_la_SOURCES += \
  	$(dri2_backend_core_FILES) \
  	$(dri2_backend_FILES) \
  	$(dri3_backend_FILES)
  
 -libEGL_la_LIBADD += $(top_builddir)/src/loader/libloader.la
 -libEGL_la_LIBADD += $(DLOPEN_LIBS) $(LIBDRM_LIBS) $(CLOCK_LIB)
-+lib@EGL_LIB@_la_LIBADD += $(top_builddir)/src/loader/libloader.la
-+lib@EGL_LIB@_la_LIBADD += $(DLOPEN_LIBS) $(LIBDRM_LIBS) $(CLOCK_LIB)
- endif
++libEGL_common_la_LIBADD += $(top_builddir)/src/loader/libloader.la
++libEGL_common_la_LIBADD += $(DLOPEN_LIBS) $(LIBDRM_LIBS) $(CLOCK_LIB)
++
++GLVND_GEN_DEPS = generate/gen_egl_dispatch.py \
++	generate/egl.xml generate/eglFunctionList.py generate/genCommon.py \
++	generate/egl_other.xml
++
++PYTHON_GEN = $(AM_V_GEN)$(PYTHON2) $(PYTHON_FLAGS)
++g_egldispatchstubs.c: $(GLVND_GEN_DEPS)
++	$(PYTHON_GEN) $(top_srcdir)/src/egl/generate/gen_egl_dispatch.py source \
++		$(top_srcdir)/src/egl/generate/eglFunctionList.py \
++		$(top_srcdir)/src/egl/generate/egl.xml \
++		$(top_srcdir)/src/egl/generate/egl_other.xml > $@
++
++g_egldispatchstubs.h: $(GLVND_GEN_DEPS)
++	$(PYTHON_GEN) $(top_srcdir)/src/egl/generate/gen_egl_dispatch.py header \
++		$(top_srcdir)/src/egl/generate/eglFunctionList.py \
++		$(top_srcdir)/src/egl/generate/egl.xml \
++		$(top_srcdir)/src/egl/generate/egl_other.xml > $@
++
++BUILT_SOURCES = g_egldispatchstubs.c g_egldispatchstubs.h
++CLEANFILES = $(BUILT_SOURCES)
++
++if USE_LIBGLVND_EGL
++AM_CFLAGS += \
++	$(GLVND_CFLAGS)
++
++vendorjsondir = @LIBGLVND_DATADIR@/glvnd/egl_vendor.d
++vendorjson_DATA = main/50_mesa.json
++
++lib_LTLIBRARIES = libEGL_mesa.la
++libEGL_mesa_la_SOURCES = \
++	main/eglglvnd.c \
++	main/egldispatchstubs.h \
++	main/egldispatchstubs.c \
++	g_egldispatchstubs.c
++libEGL_mesa_la_LIBADD = libEGL_common.la
++libEGL_mesa_la_LDFLAGS = \
++	-no-undefined \
++	-version-number 0 \
++	$(BSYMBOLIC) \
++	$(GC_SECTIONS) \
++	$(LD_NO_UNDEFINED)
++
++else # USE_LIBGLVND_EGL
++
++lib_LTLIBRARIES = libEGL.la
++libEGL_la_SOURCES =
++libEGL_la_LIBADD = libEGL_common.la
++libEGL_la_LDFLAGS = \
++	-no-undefined \
++	-version-number 1:0 \
++	$(BSYMBOLIC) \
++	$(GC_SECTIONS) \
++	$(LD_NO_UNDEFINED)
++
++endif # USE_LIBGLVND_EGL
  
  include $(top_srcdir)/install-lib-links.mk
+ 
+@@ -133,4 +185,7 @@ EXTRA_DIST = \
+ 	SConscript \
+ 	drivers/haiku \
+ 	main/egl.def \
+-	main/README.txt
++	main/README.txt \
++	$(GLVND_GEN_DEPS) \
++	main/50_mesa.json
++
 diff --git a/src/egl/generate/egl.xml b/src/egl/generate/egl.xml
-new file mode 100644
-index 0000000..f6dbbc0
+new file mode 100755
+index 0000000000..f6dbbc0f26
 --- /dev/null
 +++ b/src/egl/generate/egl.xml
 @@ -0,0 +1,2412 @@
@@ -2783,11 +2836,11 @@ index 0000000..f6dbbc0
 +</registry>
 diff --git a/src/egl/generate/eglFunctionList.py b/src/egl/generate/eglFunctionList.py
 new file mode 100644
-index 0000000..39d3dd5
+index 0000000000..b19b5f7193
 --- /dev/null
 +++ b/src/egl/generate/eglFunctionList.py
-@@ -0,0 +1,191 @@
-+#!/usr/bin/python
+@@ -0,0 +1,197 @@
++#!/usr/bin/env python
 +
 +"""
 +Contains a list of EGL functions to generate dispatch functions for.
@@ -2846,7 +2899,7 @@ index 0000000..39d3dd5
 +    """
 +    A convenience function to define an entry in the EGL function list.
 +    """
-+    if (inheader == None):
++    if inheader is None:
 +        inheader = (not public)
 +    values = {
 +        "method" : method,
@@ -2927,6 +2980,9 @@ index 0000000..39d3dd5
 +    # EGL_EXT_swap_buffers_with_damage
 +    _eglFunc("eglSwapBuffersWithDamageEXT",          "display"),
 +
++    # KHR_EXT_swap_buffers_with_damage
++    _eglFunc("eglSwapBuffersWithDamageKHR",          "display"),
++
 +    # EGL_KHR_cl_event2
 +    _eglFunc("eglCreateSync64KHR",                   "display"),
 +
@@ -2976,11 +3032,14 @@ index 0000000..39d3dd5
 +
 +    # EGL_CHROMIUM_get_sync_values
 +    _eglFunc("eglGetSyncValuesCHROMIUM",             "display"),
++
++    # EGL_ANDROID_native_fence_sync
++    _eglFunc("eglDupNativeFenceFDANDROID",           "display"),
 +)
 +
 diff --git a/src/egl/generate/egl_other.xml b/src/egl/generate/egl_other.xml
 new file mode 100644
-index 0000000..7fe3a9e
+index 0000000000..7fe3a9e272
 --- /dev/null
 +++ b/src/egl/generate/egl_other.xml
 @@ -0,0 +1,47 @@
@@ -3033,7 +3092,7 @@ index 0000000..7fe3a9e
 +
 diff --git a/src/egl/generate/genCommon.py b/src/egl/generate/genCommon.py
 new file mode 100644
-index 0000000..5781275
+index 0000000000..d493d7bf29
 --- /dev/null
 +++ b/src/egl/generate/genCommon.py
 @@ -0,0 +1,223 @@
@@ -3064,9 +3123,9 @@ index 0000000..5781275
 +# Authors:
 +#    Kyle Brenneman <kbrenneman@nvidia.com>
 +
-+import sys
 +import collections
 +import re
++import sys
 +import xml.etree.cElementTree as etree
 +
 +MAPI_TABLE_NUM_DYNAMIC = 4096
@@ -3110,7 +3169,7 @@ index 0000000..5781275
 +    # Assign a slot number to each function. This isn't strictly necessary,
 +    # since you can just look at the index in the list, but it makes it easier
 +    # to include the slot when formatting output.
-+    for i in xrange(len(functions)):
++    for i in range(len(functions)):
 +        functions[i] = functions[i]._replace(slot=i)
 +
 +    return functions
@@ -3124,17 +3183,17 @@ index 0000000..5781275
 +    "glesv2".
 +    """
 +    featureNames = _LIBRARY_FEATURE_NAMES[target]
-+    if (featureNames == None):
++    if featureNames is None:
 +        return set(func.name for func in getFunctionsFromRoots(roots))
 +
 +    names = set()
 +    for root in roots:
 +        features = []
 +        for featElem in root.findall("feature"):
-+            if (featElem.get("name") in featureNames):
++            if featElem.get("name") in featureNames:
 +                features.append(featElem)
 +        for featElem in root.findall("extensions/extension"):
-+            if (featElem.get("name") in featureNames):
++            if featElem.get("name") in featureNames:
 +                features.append(featElem)
 +        for featElem in features:
 +            for commandElem in featElem.findall("require/command"):
@@ -3148,7 +3207,7 @@ index 0000000..5781275
 +        Returns a "TYPE NAME" string, suitable for a function prototype.
 +        """
 +        rv = str(self.type)
-+        if(not rv.endswith("*")):
++        if not rv.endswith("*"):
 +            rv += " "
 +        rv += self.name
 +        return rv
@@ -3166,7 +3225,7 @@ index 0000000..5781275
 +        Returns a string with the types and names of the arguments, as you
 +        would use in a function declaration.
 +        """
-+        if(len(self.args) == 0):
++        if not self.args:
 +            return "void"
 +        else:
 +            return ", ".join(arg.dec for arg in self.args)
@@ -3181,7 +3240,7 @@ index 0000000..5781275
 +
 +    @property
 +    def basename(self):
-+        assert(self.name.startswith("gl"))
++        assert self.name.startswith("gl")
 +        return self.name[2:]
 +
 +def _getFunctionList(root):
@@ -3205,10 +3264,10 @@ index 0000000..5781275
 +    text = _flattenText(elem)
 +    text = text.strip()
 +    m = re.match(r"^(.+)\b(\w+)(?:\s*\[\s*(\d*)\s*\])?$", text, re.S)
-+    if (m):
++    if m:
 +        typename = _fixupTypeName(m.group(1))
 +        name = m.group(2)
-+        if (m.group(3)):
++        if m.group(3):
 +            # HACK: glPathGlyphIndexRangeNV defines an argument like this:
 +            # GLuint baseAndCount[2]
 +            # Convert it to a pointer and hope for the best.
@@ -3223,11 +3282,11 @@ index 0000000..5781275
 +    removed.
 +    """
 +    text = ""
-+    if(elem.text != None):
++    if elem.text is not None:
 +        text = elem.text
 +    for ch in elem:
 +        text += _flattenText(ch)
-+        if(ch.tail != None):
++        if ch.tail is not None:
 +            text += ch.tail
 +    return text
 +
@@ -3261,12 +3320,37 @@ index 0000000..5781275
 +    return rv
 +
 diff --git a/src/egl/generate/gen_egl_dispatch.py b/src/egl/generate/gen_egl_dispatch.py
-new file mode 100644
-index 0000000..1e145aa
+new file mode 100755
+index 0000000000..eeb3f3f9a5
 --- /dev/null
 +++ b/src/egl/generate/gen_egl_dispatch.py
-@@ -0,0 +1,223 @@
-+#!/usr/bin/python
+@@ -0,0 +1,250 @@
++#!/usr/bin/env python
++
++# (C) Copyright 2016, NVIDIA CORPORATION.
++# All Rights Reserved.
++#
++# Permission is hereby granted, free of charge, to any person obtaining a
++# copy of this software and associated documentation files (the "Software"),
++# to deal in the Software without restriction, including without limitation
++# on the rights to use, copy, modify, merge, publish, distribute, sub
++# license, and/or sell copies of the Software, and to permit persons to whom
++# the Software is furnished to do so, subject to the following conditions:
++#
++# The above copyright notice and this permission notice (including the next
++# paragraph) shall be included in all copies or substantial portions of the
++# Software.
++#
++# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++# FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.  IN NO EVENT SHALL
++# IBM AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
++# IN THE SOFTWARE.
++#
++# Authors:
++#    Kyle Brenneman <kbrenneman@nvidia.com>
 +
 +"""
 +Generates dispatch functions for EGL.
@@ -3275,26 +3359,28 @@ index 0000000..1e145aa
 +additional information defined in the module eglFunctionList.
 +"""
 +
-+import sys
++import argparse
 +import collections
 +import imp
++import sys
++import textwrap
 +
 +import genCommon
 +
 +def main():
-+    if (len(sys.argv) < 4):
-+        print("Usage: %r source|header <function_list> <xml_file> [xml_file...]" % (sys.argv[0],))
-+        sys.exit(2)
++    parser = argparse.ArgumentParser()
++    parser.add_argument("target", choices=("header", "source"),
++            help="Whether to build the source or header file.")
++    parser.add_argument("func_list_file", help="The function list .py file.")
++    parser.add_argument("xml_files", nargs="+", help="The XML files with the EGL function lists.")
 +
-+    target = sys.argv[1]
-+    funcListFile = sys.argv[2]
-+    xmlFiles = sys.argv[3:]
++    args = parser.parse_args()
 +
 +    # The function list is a Python module, but it's specified on the command
 +    # line.
-+    eglFunctionList = imp.load_source("eglFunctionList", funcListFile)
++    eglFunctionList = imp.load_source("eglFunctionList", args.func_list_file)
 +
-+    xmlFunctions = genCommon.getFunctions(xmlFiles)
++    xmlFunctions = genCommon.getFunctions(args.xml_files)
 +    xmlByName = dict((f.name, f) for f in xmlFunctions)
 +    functions = []
 +    for (name, eglFunc) in eglFunctionList.EGL_FUNCTIONS:
@@ -3305,49 +3391,47 @@ index 0000000..1e145aa
 +    # Sort the function list by name.
 +    functions = sorted(functions, key=lambda f: f[0].name)
 +
-+    if (target == "header"):
++    if args.target == "header":
 +        text = generateHeader(functions)
-+    elif (target == "source"):
++    elif args.target == "source":
 +        text = generateSource(functions)
-+    else:
-+        raise ValueError("Invalid target: %r" % (target,))
 +    sys.stdout.write(text)
 +
 +def fixupEglFunc(func, eglFunc):
 +    result = dict(eglFunc)
-+    if (result.get("prefix") == None):
++    if result.get("prefix") is None:
 +        result["prefix"] = ""
 +
-+    if (result.get("extension") != None):
++    if result.get("extension") is not None:
 +        text = "defined(" + result["extension"] + ")"
 +        result["extension"] = text
 +
-+    if (result["method"] in ("none", "custom")):
++    if result["method"] in ("none", "custom"):
 +        return result
 +
-+    if (result["method"] not in ("display", "device", "current")):
++    if result["method"] not in ("display", "device", "current"):
 +        raise ValueError("Invalid dispatch method %r for function %r" % (result["method"], func.name))
 +
-+    if (func.hasReturn()):
-+        if (result.get("retval") == None):
++    if func.hasReturn():
++        if result.get("retval") is None:
 +            result["retval"] = getDefaultReturnValue(func.rt)
 +
 +    return result
 +
 +def generateHeader(functions):
-+    text = r"""
-+#ifndef G_EGLDISPATCH_STUBS_H
-+#define G_EGLDISPATCH_STUBS_H
++    text = textwrap.dedent(r"""
++    #ifndef G_EGLDISPATCH_STUBS_H
++    #define G_EGLDISPATCH_STUBS_H
 +
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
++    #ifdef __cplusplus
++    extern "C" {
++    #endif
 +
-+#include <EGL/egl.h>
-+#include <EGL/eglext.h>
-+#include "glvnd/libeglabi.h"
++    #include <EGL/egl.h>
++    #include <EGL/eglext.h>
++    #include "glvnd/libeglabi.h"
 +
-+""".lstrip("\n")
++    """.lstrip("\n"))
 +
 +    text += "enum {\n"
 +    for (func, eglFunc) in functions:
@@ -3358,17 +3442,17 @@ index 0000000..1e145aa
 +    text += "};\n"
 +
 +    for (func, eglFunc) in functions:
-+        if (eglFunc["inheader"]):
++        if eglFunc["inheader"]:
 +            text += generateGuardBegin(func, eglFunc)
 +            text += "{f.rt} EGLAPIENTRY {ex[prefix]}{f.name}({f.decArgs});\n".format(f=func, ex=eglFunc)
 +            text += generateGuardEnd(func, eglFunc)
 +
-+    text += r"""
-+#ifdef __cplusplus
-+}
-+#endif
-+#endif // G_EGLDISPATCH_STUBS_H
-+"""
++    text += textwrap.dedent(r"""
++    #ifdef __cplusplus
++    }
++    #endif
++    #endif // G_EGLDISPATCH_STUBS_H
++    """)
 +    return text
 +
 +def generateSource(functions):
@@ -3379,7 +3463,7 @@ index 0000000..1e145aa
 +    text += "\n"
 +
 +    for (func, eglFunc) in functions:
-+        if (eglFunc["method"] not in ("custom", "none")):
++        if eglFunc["method"] not in ("custom", "none"):
 +            text += generateGuardBegin(func, eglFunc)
 +            text += generateDispatchFunc(func, eglFunc)
 +            text += generateGuardEnd(func, eglFunc)
@@ -3396,7 +3480,7 @@ index 0000000..1e145aa
 +    text += "const __eglMustCastToProperFunctionPointerType __EGL_DISPATCH_FUNCS[__EGL_DISPATCH_COUNT + 1] = {\n"
 +    for (func, eglFunc) in functions:
 +        text += generateGuardBegin(func, eglFunc)
-+        if (eglFunc["method"] != "none"):
++        if eglFunc["method"] != "none":
 +            text += "    (__eglMustCastToProperFunctionPointerType) " + eglFunc.get("prefix", "") + func.name + ",\n"
 +        else:
 +            text += "    NULL, // " + func.name + "\n"
@@ -3408,13 +3492,13 @@ index 0000000..1e145aa
 +
 +def generateGuardBegin(func, eglFunc):
 +    ext = eglFunc.get("extension")
-+    if (ext != None):
++    if ext is not None:
 +        return "#if " + ext + "\n"
 +    else:
 +        return ""
 +
 +def generateGuardEnd(func, eglFunc):
-+    if (eglFunc.get("extension") != None):
++    if eglFunc.get("extension") is not None:
 +        return "#endif\n"
 +    else:
 +        return ""
@@ -3422,37 +3506,39 @@ index 0000000..1e145aa
 +def generateDispatchFunc(func, eglFunc):
 +    text = ""
 +
-+    if (eglFunc.get("static")):
++    if eglFunc.get("static"):
 +        text += "static "
-+    elif (eglFunc.get("public")):
++    elif eglFunc.get("public"):
 +        text += "PUBLIC "
-+    text += r"""{f.rt} EGLAPIENTRY {ef[prefix]}{f.name}({f.decArgs})
-+{{
-+    typedef {f.rt} EGLAPIENTRY (* _pfn_{f.name})({f.decArgs});
-+""".format(f=func, ef=eglFunc)
++    text += textwrap.dedent(
++    r"""
++    {f.rt} EGLAPIENTRY {ef[prefix]}{f.name}({f.decArgs})
++    {{
++        typedef {f.rt} EGLAPIENTRY (* _pfn_{f.name})({f.decArgs});
++    """).lstrip("\n").format(f=func, ef=eglFunc)
 +
-+    if (func.hasReturn()):
++    if func.hasReturn():
 +        text += "    {f.rt} _ret = {ef[retval]};\n".format(f=func, ef=eglFunc)
 +
 +    text += "    _pfn_{f.name} _ptr_{f.name} = (_pfn_{f.name}) ".format(f=func)
-+    if (eglFunc["method"] == "current"):
++    if eglFunc["method"] == "current":
 +        text += "__eglDispatchFetchByCurrent(__EGL_DISPATCH_{f.name});\n".format(f=func)
 +
-+    elif (eglFunc["method"] in ("display", "device")):
-+        if (eglFunc["method"] == "display"):
++    elif eglFunc["method"] in ("display", "device"):
++        if eglFunc["method"] == "display":
 +            lookupFunc = "__eglDispatchFetchByDisplay"
 +            lookupType = "EGLDisplay"
 +        else:
-+            assert(eglFunc["method"] == "device")
++            assert eglFunc["method"] == "device"
 +            lookupFunc = "__eglDispatchFetchByDevice"
 +            lookupType = "EGLDeviceEXT"
 +
 +        lookupArg = None
 +        for arg in func.args:
-+            if (arg.type == lookupType):
++            if arg.type == lookupType:
 +                lookupArg = arg.name
 +                break
-+        if (lookupArg == None):
++        if lookupArg is None:
 +            raise ValueError("Can't find %s argument for function %s" % (lookupType, func.name,))
 +
 +        text += "{lookupFunc}({lookupArg}, __EGL_DISPATCH_{f.name});\n".format(
@@ -3462,50 +3548,50 @@ index 0000000..1e145aa
 +
 +    text += "    if(_ptr_{f.name} != NULL) {{\n".format(f=func)
 +    text += "        "
-+    if (func.hasReturn()):
++    if func.hasReturn():
 +        text += "_ret = "
 +    text += "_ptr_{f.name}({f.callArgs});\n".format(f=func)
 +    text += "    }\n"
 +
-+    if (func.hasReturn()):
++    if func.hasReturn():
 +        text += "    return _ret;\n"
 +    text += "}\n"
 +    return text
 +
 +def getDefaultReturnValue(typename):
-+    if (typename.endswith("*")):
++    if typename.endswith("*"):
 +        return "NULL"
-+    elif (typename == "EGLDisplay"):
++    elif typename == "EGLDisplay":
 +        return "EGL_NO_DISPLAY"
-+    elif (typename == "EGLContext"):
++    elif typename == "EGLContext":
 +        return "EGL_NO_CONTEXT"
-+    elif (typename == "EGLSurface"):
++    elif typename == "EGLSurface":
 +        return "EGL_NO_SURFACE"
-+    elif (typename == "EGLBoolean"):
++    elif typename == "EGLBoolean":
 +        return "EGL_FALSE";
 +
 +    return "0"
 +
-+if (__name__ == "__main__"):
++if __name__ == "__main__":
 +    main()
 +
-diff --git a/src/egl/main/50_mesa.json.in b/src/egl/main/50_mesa.json.in
+diff --git a/src/egl/main/50_mesa.json b/src/egl/main/50_mesa.json
 new file mode 100644
-index 0000000..58e2bd2
+index 0000000000..8aaaa100ff
 --- /dev/null
-+++ b/src/egl/main/50_mesa.json.in
++++ b/src/egl/main/50_mesa.json
 @@ -0,0 +1,6 @@
 +{
 +    "file_format_version" : "1.0.0",
 +    "ICD" : {
-+        "library_path" : "lib@EGL_LIB@.so.0"
++        "library_path" : "libEGL_mesa.so.0"
 +    }
 +}
 diff --git a/src/egl/main/eglapi.c b/src/egl/main/eglapi.c
-index 471cf7e..7ee9d87 100644
+index cab05c2301..5f21f3457d 100644
 --- a/src/egl/main/eglapi.c
 +++ b/src/egl/main/eglapi.c
-@@ -644,7 +644,11 @@ eglQueryString(EGLDisplay dpy, EGLint name)
+@@ -651,7 +651,11 @@ eglQueryString(EGLDisplay dpy, EGLint name)
     _EGLDriver *drv;
  
     if (dpy == EGL_NO_DISPLAY && name == EGL_EXTENSIONS) {
@@ -3520,7 +3606,7 @@ index 471cf7e..7ee9d87 100644
     disp = _eglLockDisplay(dpy);
 diff --git a/src/egl/main/egldispatchstubs.c b/src/egl/main/egldispatchstubs.c
 new file mode 100644
-index 0000000..e02abd7
+index 0000000000..e02abd7a9e
 --- /dev/null
 +++ b/src/egl/main/egldispatchstubs.c
 @@ -0,0 +1,110 @@
@@ -3636,7 +3722,7 @@ index 0000000..e02abd7
 +
 diff --git a/src/egl/main/egldispatchstubs.h b/src/egl/main/egldispatchstubs.h
 new file mode 100644
-index 0000000..7861ea5
+index 0000000000..7861ea5e61
 --- /dev/null
 +++ b/src/egl/main/egldispatchstubs.h
 @@ -0,0 +1,26 @@
@@ -3667,7 +3753,7 @@ index 0000000..7861ea5
 +
 +#endif // EGLDISPATCHSTUBS_H
 diff --git a/src/egl/main/eglglobals.c b/src/egl/main/eglglobals.c
-index cb41063..e59e8f3 100644
+index cb41063e32..baf96bb1ec 100644
 --- a/src/egl/main/eglglobals.c
 +++ b/src/egl/main/eglglobals.c
 @@ -29,6 +29,8 @@
@@ -3679,32 +3765,34 @@ index cb41063..e59e8f3 100644
  #include <assert.h>
  #include "c11/threads.h"
  
-@@ -50,8 +52,11 @@ struct _egl_global _eglGlobal =
+@@ -50,9 +52,13 @@ struct _egl_global _eglGlobal =
        _eglFiniDisplay
     },
  
 -   /* ClientExtensionString */
 +   /* ClientOnlyExtensionString */
     "EGL_EXT_client_extensions"
-+   " EGL_KHR_client_get_all_proc_addresses",
+    " EGL_EXT_platform_base"
++   " EGL_KHR_client_get_all_proc_addresses"
++   " EGL_KHR_debug",
 +
 +   /* PlatformExtensionString */
-    " EGL_EXT_platform_base"
  #ifdef HAVE_WAYLAND_PLATFORM
     " EGL_EXT_platform_wayland"
-@@ -65,9 +70,10 @@ struct _egl_global _eglGlobal =
+ #endif
+@@ -65,8 +71,9 @@ struct _egl_global _eglGlobal =
  #ifdef HAVE_SURFACELESS_PLATFORM
     " EGL_MESA_platform_surfaceless"
  #endif
 -   " EGL_KHR_client_get_all_proc_addresses"
-    " EGL_KHR_debug",
- 
-+   NULL, /* ClientExtensionsString */
+-   " EGL_KHR_debug",
++   "",
 +
++   NULL, /* ClientExtensionsString */
+ 
     NULL, /* debugCallback */
     _EGL_DEBUG_BIT_CRITICAL | _EGL_DEBUG_BIT_ERROR, /* debugTypesEnabled */
- };
-@@ -101,3 +107,35 @@ _eglAddAtExitCall(void (*func)(void))
+@@ -101,3 +108,37 @@ _eglAddAtExitCall(void (*func)(void))
        mtx_unlock(_eglGlobal.Mutex);
     }
  }
@@ -3720,7 +3808,7 @@ index cb41063..e59e8f3 100644
 +      size_t clientLen = strlen(_eglGlobal.ClientOnlyExtensionString);
 +      size_t platformLen = strlen(_eglGlobal.PlatformExtensionString);
 +
-+      _eglGlobal.ClientExtensionString = (char *) malloc(clientLen + platformLen + 2);
++      _eglGlobal.ClientExtensionString = (char *) malloc(clientLen + platformLen + 1);
 +      if (_eglGlobal.ClientExtensionString != NULL) {
 +         char *ptr = _eglGlobal.ClientExtensionString;
 +
@@ -3728,7 +3816,9 @@ index cb41063..e59e8f3 100644
 +         ptr += clientLen;
 +
 +         if (platformLen > 0) {
-+            *ptr++ = ' ';
++            // Note that if PlatformExtensionString is not empty, then it will
++            // already have a leading space.
++            assert(_eglGlobal.PlatformExtensionString[0] == ' ');
 +            memcpy(ptr, _eglGlobal.PlatformExtensionString, platformLen);
 +            ptr += platformLen;
 +         }
@@ -3741,10 +3831,10 @@ index cb41063..e59e8f3 100644
 +   return ret;
 +}
 diff --git a/src/egl/main/eglglobals.h b/src/egl/main/eglglobals.h
-index ec4f3d0..e3a7f58 100644
+index ec4f3d04a3..c6ef59d482 100644
 --- a/src/egl/main/eglglobals.h
 +++ b/src/egl/main/eglglobals.h
-@@ -57,12 +57,23 @@ struct _egl_global
+@@ -57,7 +57,15 @@ struct _egl_global
     EGLint NumAtExitCalls;
     void (*AtExitCalls[10])(void);
  
@@ -3761,20 +3851,20 @@ index ec4f3d0..e3a7f58 100644
  
     EGLDEBUGPROCKHR debugCallback;
     unsigned int debugTypesEnabled;
- };
+@@ -76,4 +84,7 @@ static inline unsigned int DebugBitFromType(EGLenum type)
+    return (1 << (type - EGL_DEBUG_MSG_CRITICAL_KHR));
+ }
  
 +extern const char *
 +_eglGetClientExtensionString(void);
 +
- 
- extern struct _egl_global _eglGlobal;
- 
+ #endif /* EGLGLOBALS_INCLUDED */
 diff --git a/src/egl/main/eglglvnd.c b/src/egl/main/eglglvnd.c
 new file mode 100644
-index 0000000..81fdb45
+index 0000000000..6b984ed6c2
 --- /dev/null
 +++ b/src/egl/main/eglglvnd.c
-@@ -0,0 +1,75 @@
+@@ -0,0 +1,82 @@
 +#include <string.h>
 +#include <assert.h>
 +
@@ -3801,8 +3891,15 @@ index 0000000..81fdb45
 +static const char *
 +__eglGLVNDGetVendorString(int name)
 +{
-+   if (name == __EGL_VENDOR_STRING_PLATFORM_EXTENSIONS)
-+      return _eglGlobal.PlatformExtensionString;
++   if (name == __EGL_VENDOR_STRING_PLATFORM_EXTENSIONS) {
++      const char *str = _eglGlobal.PlatformExtensionString;
++      // The platform extension string may have a leading space. If it does,
++      // then skip over it.
++      while (*str == ' ') {
++         str++;
++      }
++      return str;
++   }
 +
 +   return NULL;
 +}
@@ -3851,5 +3948,5 @@ index 0000000..81fdb45
 +}
 +
 -- 
-2.9.3
+2.11.0
 
