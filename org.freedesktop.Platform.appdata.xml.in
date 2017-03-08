@@ -5,6 +5,29 @@
   <project_license>GPL-2.0+</project_license>
   <name>Freedesktop.org Application Platform version @@SDK_BRANCH@@</name>
   <summary>Shared libraries provided by freedesktop.org</summary>
+  <description>
+    <p>
+      The Freedesktop Platform is a basic runtime for flatpak application
+      that contains the most basic libraries and files needed to run
+      a linux desktop application. It is based on the yocto distribution
+      with the latest version of the freedesktop technologies like
+      X11, Mesa, Wayland, dbus, cairo, gstreamer added. It also contains
+      SDL2.
+    </p>
+  </description>
   <url type="homepage">https://www.freedesktop.org/</url>
+  <releases>
+    <release version="1.6" timestamp="1488962033">
+      <description>
+        <p>This is a new stable release based on yocto 2.2. Here are some of the major updates:</p>
+        <ul>
+          <li>Glibc 2.24</li>
+          <li>Python 3.5</li>
+          <li>Mesa 17.0</li>
+          <li>GStreamer 1.10</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
 </component>
 

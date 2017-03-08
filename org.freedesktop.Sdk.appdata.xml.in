@@ -5,6 +5,28 @@
   <project_license>GPL-2.0+</project_license>
   <name>Freedesktop.org Software Development Kit version @@SDK_BRANCH@@</name>
   <summary>Tools and headers for developing applications using the freedesktop.org application platform</summary>
+  <description>
+    <p>
+      The Freedesktop Sdk is the development runtime that you can use to produce applications using
+      the Freedesktop Platform runtime. It contains everything that is in the platform, as well
+      as build and debugging tools and headers for the libraries.
+    </p>
+  </description>
   <url type="homepage">https://www.freedesktop.org/</url>
+  <releases>
+    <release version="1.6" timestamp="1488962033">
+      <description>
+        <p>This is a new stable release based on yocto 2.2. Here are some of the major updates:</p>
+        <ul>
+          <li>Glibc 2.24</li>
+          <li>Python 3.5</li>
+          <li>Mesa 17.0</li>
+          <li>GStreamer 1.10</li>
+          <li>GCC 6.2</li>
+          <li>CMake 3.6</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
 </component>
 
