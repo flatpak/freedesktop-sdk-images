@@ -61,10 +61,11 @@
                                    "ldconfig -C /usr/etc/ld.so.cache"
                                  ],
     "build-options" : {
-        "cflags": "-O2 -g",
-        "cxxflags": "-O2 -g",
+        "cflags": "-O2 -g -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2",
+        "cxxflags": "-O2 -g -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2",
         "env": {
-            "V": "1"
+            "V": "1",
+            "LDFLAGS": "-fstack-protector-strong -Wl,-z,relro,-z,now"
         }
     },
     "modules": [
@@ -1024,8 +1025,8 @@
             "cmake": true,
             "builddir": true,
             "build-options" : {
-                "cflags": "-O2 -g1",
-                "cxxflags": "-O2 -g1"
+                "cflags": "-O2 -g1  -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2",
+                "cxxflags": "-O2 -g1  -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2"
             },
             "cleanup-platform": ["/bin/llvm-*"],
             "build-options" : {
@@ -1085,8 +1086,8 @@
             "cmake": true,
             "builddir": true,
             "build-options" : {
-                "cflags": "-O2 -g1",
-                "cxxflags": "-O2 -g1"
+                "cflags": "-O2 -g1 -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2",
+                "cxxflags": "-O2 -g1 -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2"
             },
             "config-opts": [
                 "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
@@ -1202,7 +1203,9 @@
         {
             "name": "mesa",
             "build-options" : {
-                "cxxflags": "-O2 -g -fno-rtti -fno-exceptions",
+                /* no pie */
+                "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
+                "cxxflags": "-O2 -g -fno-rtti -fno-exceptions  -fstack-protector-strong -D_FORTIFY_SOURCE=2",
 		"arch" : {
 		    "i386" : {
 			"config-opts" : [
