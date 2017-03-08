@@ -1552,6 +1552,11 @@
         },
         {
             "name": "libproxy",
+            /* no pie */
+            "build-options" : {
+                "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
+                "cxxflags": "-O2 -g  -fstack-protector-strong -D_FORTIFY_SOURCE=2"
+            },
             "cmake": true,
             "config-opts": [
                 "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
