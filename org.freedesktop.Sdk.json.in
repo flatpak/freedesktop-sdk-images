@@ -61,8 +61,8 @@
                                    "ldconfig -C /usr/etc/ld.so.cache"
                                  ],
     "build-options" : {
-        "cflags": "-O2 -g -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2",
-        "cxxflags": "-O2 -g -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2",
+        "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
+        "cxxflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
         "env": {
             "V": "1",
             "LDFLAGS": "-fstack-protector-strong -Wl,-z,relro,-z,now"
@@ -729,11 +729,6 @@
         },
         {
             "name": "libvdpau",
-            /* no pie */
-            "build-options" : {
-                "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
-                "cxxflags": "-O2 -g  -fstack-protector-strong -D_FORTIFY_SOURCE=2"
-            },
             "config-opts": [ "--disable-static" ],
             "sources": [
                  {
@@ -1030,8 +1025,8 @@
             "cmake": true,
             "builddir": true,
             "build-options" : {
-                "cflags": "-O2 -g1  -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2",
-                "cxxflags": "-O2 -g1  -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2"
+                "cflags": "-O2 -g1  -fstack-protector-strong -D_FORTIFY_SOURCE=2",
+                "cxxflags": "-O2 -g1  -fstack-protector-strong -D_FORTIFY_SOURCE=2"
             },
             "cleanup-platform": ["/bin/llvm-*"],
             "build-options" : {
@@ -1091,8 +1086,8 @@
             "cmake": true,
             "builddir": true,
             "build-options" : {
-                "cflags": "-O2 -g1 -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2",
-                "cxxflags": "-O2 -g1 -fstack-protector-strong -pie -fpie -D_FORTIFY_SOURCE=2"
+                "cflags": "-O2 -g1 -fstack-protector-strong -D_FORTIFY_SOURCE=2",
+                "cxxflags": "-O2 -g1 -fstack-protector-strong -D_FORTIFY_SOURCE=2"
             },
             "config-opts": [
                 "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
@@ -1208,8 +1203,6 @@
         {
             "name": "mesa",
             "build-options" : {
-                /* no pie */
-                "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
                 "cxxflags": "-O2 -g -fno-rtti -fno-exceptions  -fstack-protector-strong -D_FORTIFY_SOURCE=2",
 		"arch" : {
 		    "i386" : {
@@ -1520,11 +1513,6 @@
         },
         {
             "name": "harfbuzz",
-            /* no pie */
-            "build-options" : {
-                "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
-                "cxxflags": "-O2 -g  -fstack-protector-strong -D_FORTIFY_SOURCE=2"
-            },
             "config-opts": ["--disable-static",
                             "--with-gobject",
                             "--with-graphite2"
@@ -1552,11 +1540,6 @@
         },
         {
             "name": "libproxy",
-            /* no pie */
-            "build-options" : {
-                "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
-                "cxxflags": "-O2 -g  -fstack-protector-strong -D_FORTIFY_SOURCE=2"
-            },
             "cmake": true,
             "config-opts": [
                 "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
@@ -1882,11 +1865,6 @@
         },
         {
             "name": "gstreamer-plugins-bad",
-            /* no pie */
-            "build-options" : {
-                "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
-                "cxxflags": "-O2 -g  -fstack-protector-strong -D_FORTIFY_SOURCE=2"
-            },
             "config-opts": ["--enable-experimental", "--enable-orc" ],
             "build-options" : {
                 "arch" : {
