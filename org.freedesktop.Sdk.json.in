@@ -1882,6 +1882,11 @@
         },
         {
             "name": "gstreamer-plugins-bad",
+            /* no pie */
+            "build-options" : {
+                "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
+                "cxxflags": "-O2 -g  -fstack-protector-strong -D_FORTIFY_SOURCE=2"
+            },
             "config-opts": ["--enable-experimental", "--enable-orc" ],
             "build-options" : {
                 "arch" : {
