@@ -49,6 +49,7 @@
                           "/lib/pkgconfig",
                           "/lib/cmake",
                           "/share/vala",
+                          "/share/gtk-doc",
                           "/share/gir-1.0",
                           "/lib/python*/test"
                         ],
