@@ -30,6 +30,7 @@
                  "/man",
                  "/share/doc",
                  "/share/man",
+                 "/share/gtk-doc",
                  "/share/devhelp",
                  "/lib/systemd",
                  "/lib/opkg",
@@ -49,7 +50,6 @@
                           "/lib/pkgconfig",
                           "/lib/cmake",
                           "/share/vala",
-                          "/share/gtk-doc",
                           "/share/gir-1.0",
                           "/lib/python*/test"
                         ],
