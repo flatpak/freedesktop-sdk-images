@@ -54,7 +54,8 @@
                           "/share/gir-1.0",
                           "/lib/python*/test"
                         ],
-    "cleanup-platform-commands": [ "touch -d @0 /usr/share/fonts",
+    "cleanup-platform-commands": [ "rm /usr/lib/*.a",
+                                   "touch -d @0 /usr/share/fonts",
                                    "touch -d @0 /usr/share/fonts/*",
                                    "fc-cache -fs",
                                    /* Work around gst-python issue */
