@@ -1054,7 +1054,7 @@
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
                 "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-Bsymbolic -static-libstdc++",
                 "-DLLVM_LIBDIR_SUFFIX=",
-                "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;PowerPC;NVPTX;SystemZ;AArch64;ARM;Mips;BPF;CppBackend",
+                "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;PowerPC;NVPTX;SystemZ;AArch64;ARM;Mips;BPF",
                 "-DLLVM_ENABLE_LIBCXX:BOOL=OFF",
                 "-DLLVM_ENABLE_ZLIB:BOOL=ON",
                 "-DLLVM_ENABLE_FFI:BOOL=ON",
@@ -1079,8 +1079,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://llvm.org/releases/3.8.1/llvm-3.8.1.src.tar.xz",
-                    "sha256": "6e82ce4adb54ff3afc18053d6981b6aed1406751b8742582ed50f04b5ab475f9"
+                    "url": "http://llvm.org/releases/4.0.0/llvm-4.0.0.src.tar.xz",
+                    "sha256": "8d10511df96e73b8ff9e7abbfb4d4d432edbdbe965f1f4f07afaf370b8a533be"
                 }
             ]
         },
@@ -1109,8 +1109,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://llvm.org/releases/3.8.1/cfe-3.8.1.src.tar.xz",
-                    "sha256": "4cd3836dfb4b88b597e075341cae86d61c63ce3963e45c7fe6a8bf59bb382cdf"
+                    "url": "http://llvm.org/releases/4.0.0/cfe-4.0.0.src.tar.xz",
+                    "sha256": "cea5f88ebddb30e296ca89130c83b9d46c2d833685e2912303c828054c4dc98a"
                 },
                 {
                     "type": "patch",

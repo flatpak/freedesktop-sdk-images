@@ -1,12 +1,12 @@
-diff -rup cfe-3.8.0.src/lib/Driver/ToolChains.cpp cfe-3.8.0.src-modified/lib/Driver/ToolChains.cpp
---- cfe-3.8.0.src/lib/Driver/ToolChains.cpp	2016-02-16 14:56:48.000000000 -0500
-+++ cfe-3.8.0.src-modified/lib/Driver/ToolChains.cpp	2016-05-09 11:43:42.981145217 -0400
-@@ -1418,16 +1418,17 @@ bool Generic_GCC::GCCInstallationDetecto
+diff -up clang-1/lib/Driver/ToolChains.cpp.orig clang-1/lib/Driver/ToolChains.cpp
+--- clang-1/lib/Driver/ToolChains.cpp.orig	2017-01-10 22:13:08.000000000 +0100
++++ clang-1/lib/Driver/ToolChains.cpp	2017-03-13 21:34:50.461682464 +0100
+@@ -1531,16 +1531,17 @@ bool Generic_GCC::GCCInstallationDetecto
    static const char *const AArch64LibDirs[] = {"/lib64", "/lib"};
    static const char *const AArch64Triples[] = {
        "aarch64-none-linux-gnu", "aarch64-linux-gnu", "aarch64-linux-android",
--      "aarch64-redhat-linux"};
-+      "aarch64-redhat-linux", "aarch64-unknown-linux"};
+-      "aarch64-redhat-linux", "aarch64-suse-linux"};
++      "aarch64-redhat-linux", "aarch64-suse-linux", "aarch64-unknown-linux"};
    static const char *const AArch64beLibDirs[] = {"/lib"};
    static const char *const AArch64beTriples[] = {"aarch64_be-none-linux-gnu",
                                                   "aarch64_be-linux-gnu"};
@@ -22,7 +22,7 @@ diff -rup cfe-3.8.0.src/lib/Driver/ToolChains.cpp cfe-3.8.0.src-modified/lib/Dri
    static const char *const ARMebLibDirs[] = {"/lib"};
    static const char *const ARMebTriples[] = {"armeb-linux-gnueabi",
                                               "armeb-linux-androideabi"};
-@@ -1449,7 +1450,7 @@ bool Generic_GCC::GCCInstallationDetecto
+@@ -1562,7 +1563,7 @@ bool Generic_GCC::GCCInstallationDetecto
        "i386-linux-gnu",       "i386-redhat-linux6E",   "i686-redhat-linux",
        "i586-redhat-linux",    "i386-redhat-linux",     "i586-suse-linux",
        "i486-slackware-linux", "i686-montavista-linux", "i686-linux-android",
