@@ -66,9 +66,9 @@
     "build-options" : {
         "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
         "cxxflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
+        "ldflags": "-fstack-protector-strong -Wl,-z,relro,-z,now",
         "env": {
-            "V": "1",
-            "LDFLAGS": "-fstack-protector-strong -Wl,-z,relro,-z,now"
+            "V": "1"
         }
     },
     "modules": [
@@ -1028,8 +1028,8 @@
             "cmake": true,
             "builddir": true,
             "build-options" : {
-                "cflags": "-O2 -g1  -fstack-protector-strong -D_FORTIFY_SOURCE=2",
-                "cxxflags": "-O2 -g1  -fstack-protector-strong -D_FORTIFY_SOURCE=2"
+                "cflags": "-g1",
+                "cxxflags": "-g1"
             },
             "cleanup-platform": ["/bin/llvm-*"],
             "build-options" : {
@@ -1089,8 +1089,8 @@
             "cmake": true,
             "builddir": true,
             "build-options" : {
-                "cflags": "-O2 -g1 -fstack-protector-strong -D_FORTIFY_SOURCE=2",
-                "cxxflags": "-O2 -g1 -fstack-protector-strong -D_FORTIFY_SOURCE=2"
+                "cflags": "-g1",
+                "cxxflags": "-g1"
             },
             "config-opts": [
                 "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
@@ -1206,7 +1206,7 @@
         {
             "name": "mesa",
             "build-options" : {
-                "cxxflags": "-O2 -g -fno-rtti -fno-exceptions  -fstack-protector-strong -D_FORTIFY_SOURCE=2",
+                "cxxflags": "-fno-rtti -fno-exceptions",
 		"arch" : {
 		    "i386" : {
 			"config-opts" : [
