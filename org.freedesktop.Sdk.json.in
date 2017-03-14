@@ -1054,7 +1054,7 @@
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
                 "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-Bsymbolic -static-libstdc++",
                 "-DLLVM_LIBDIR_SUFFIX=",
-                "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;PowerPC;NVPTX;SystemZ;AArch64;ARM;Mips;BPF",
+                "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;NVPTX;AArch64;ARM;BPF",
                 "-DLLVM_ENABLE_LIBCXX:BOOL=OFF",
                 "-DLLVM_ENABLE_ZLIB:BOOL=ON",
                 "-DLLVM_ENABLE_FFI:BOOL=ON",
