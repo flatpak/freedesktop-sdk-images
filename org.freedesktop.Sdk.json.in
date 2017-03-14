@@ -1049,7 +1049,6 @@
             "config-opts": [
                 "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
                 "-DCMAKE_CXX_FLAGS_RELEASE:STRING=-DNDEBUG",
-                "-DBUILD_SHARED_LIBS:BOOL=ON",
                 "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
                 "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-Bsymbolic -static-libstdc++",
@@ -1072,7 +1071,8 @@
                 "-DLLVM_BUILD_DOCS:BOOL=OFF",
                 "-DLLVM_ENABLE_SPHINX:BOOL=OFF",
                 "-DLLVM_ENABLE_DOXYGEN:BOOL=OFF",
-                "-DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF",
+                "-DLLVM_BUILD_LLVM_DYLIB:BOOL=ON",
+                "-DLLVM_LINK_LLVM_DYLIB:BOOL=ON",
                 "-DLLVM_BUILD_EXTERNAL_COMPILER_RT:BOOL=ON",
                 "-DFFI_INCLUDE_DIR=/usr/lib/libffi-3.2.1/include",
                 "-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF"],
