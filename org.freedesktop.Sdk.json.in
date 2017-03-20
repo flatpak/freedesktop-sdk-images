@@ -88,6 +88,21 @@
             ]
         },
         {
+            "name": "meson",
+            "buildsystem": "simple",
+            "build-commands": [
+                "python3 setup.py install"
+            ],
+            "cleanup-platform": ["*"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/58/89/29dfa3a59b0d144d1262e68382db94dda46d9d7cb43182403fd30cceedc0/meson-0.39.1.tar.gz",
+                    "sha256": "67bf5876d69730dfe031907314a61fdbec0c5c723c79a8093eb64ae2ebcd2650"
+                }
+            ]
+        },
+        {
             "name": "xorg-x11-util-macros",
             "cleanup-platform": [ "*" ],
             "sources": [
