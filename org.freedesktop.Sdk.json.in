@@ -1014,9 +1014,9 @@
                                ],
             "sources": [
                 {
-                     "type": "archive",
-                     "url": "https://download.gnome.org/sources/glib/2.50/glib-2.50.3.tar.xz",
-                     "sha256": "82ee94bf4c01459b6b00cb9db0545c2237921e3060c0b74cff13fbc020cfd999"
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/glib/2.52/glib-2.52.0.tar.xz",
+                    "sha256": "4578e3e077b1b978cafeec8d28b676c680aba0c0475923874c4c993403df311a"
                  }
             ]
         },
@@ -1934,8 +1934,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/json-glib/1.2/json-glib-1.2.2.tar.xz",
-                     "sha256": "ea128ab52a824fcd06e5448fbb2bd8d9a13740d51c66d445828edba71321a621"
+                     "url": "https://download.gnome.org/sources/json-glib/1.2/json-glib-1.2.8.tar.xz",
+                     "sha256": "fd55a9037d39e7a10f0db64309f5f0265fa32ec962bf85066087b83a2807f40a"
                  }
             ]
         },
@@ -1951,8 +1951,8 @@
             "sources": [
                 {
                      "type": "archive",
-                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.6.10.tar.xz",
-                    "sha256": "15eaa7bffbd19ed7b52cd4945c2cbefecb3eceaf6408c07b39ec1b7daf52cc5f"
+                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.6.11.tar.xz",
+                    "sha256": "4a24367d01393e224229faa2a15a28657e997cfd93100713d4d78db206eb0f20"
                 }
             ]
         },
