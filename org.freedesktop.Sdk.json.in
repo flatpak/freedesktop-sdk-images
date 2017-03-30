@@ -1786,6 +1786,39 @@
             ]
         },
         {
+            "name": "libcroco",
+            "config-opts": ["--disable-static"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/libcroco/0.6/libcroco-0.6.11.tar.xz",
+                    "sha256": "132b528a948586b0dfa05d7e9e059901bca5a3be675b6071a90a90b81ae5a056"
+                }
+            ]
+        },
+        {
+            "name": "pango",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.4.tar.xz",
+                    "sha256": "f8fdc5fc66356dc4edf915048cceeee065a0e0cb70b3b2598f62bda320129a3e"
+                }
+            ]
+        },
+        {
+            "name": "librsvg",
+            "config-opts": ["--disable-static"],
+            "ensure-writable": ["/lib/gdk-pixbuf-2.0/*/loaders.cache"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/librsvg/2.40/librsvg-2.40.16.tar.xz",
+                    "sha256": "d48bcf6b03fa98f07df10332fb49d8c010786ddca6ab34cbba217684f533ff2e"
+                }
+            ]
+        },
+        {
             "name": "orc",
             "config-opts": ["--disable-static"],
             "cleanup-platform": [ "/bin" ],
