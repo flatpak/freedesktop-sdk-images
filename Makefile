@@ -60,7 +60,16 @@ runtimes: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 		--subject="build of org.freedesktop.Sdk, `date`" \
 		${EXPORT_ARGS} sdk org.freedesktop.Sdk.json
 
-extensions: gfortran-extension
+extensions: extensions-${ARCH}
+
+extensions-${ARCH}:
+
+# It seems like gfortran has issues on arm atm, lets drop it there
+
+extensions-i386: gfortran-extension
+
+extensions-x86_64: gfortran-extension
+
 
 gfortran-extension: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
