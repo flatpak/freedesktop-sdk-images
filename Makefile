@@ -11,7 +11,13 @@ SDK_BRANCH=1.6
 SDK_RUNTIME_VERSION=1.6
 
 # Canned recipe for generating metadata
-SUBST_FILES=org.freedesktop.Sdk.json org.freedesktop.GlxInfo.json os-release issue issue.net org.freedesktop.Sdk.appdata.xml org.freedesktop.Platform.appdata.xml org.freedesktop.Platform.GL.mesa-git.json
+SUBST_FILES=org.freedesktop.Sdk.json \
+	org.freedesktop.GlxInfo.json \
+	os-release issue issue.net \
+	org.freedesktop.Sdk.appdata.xml org.freedesktop.Platform.appdata.xml \
+	org.freedesktop.Platform.GL.mesa-git.json \
+	org.freedesktop.Sdk.Extension.gfortran62.json
+
 define subst-metadata
 	@echo -n "Generating files: ${SUBST_FILES}... ";
 	@for file in ${SUBST_FILES}; do 					\
@@ -26,7 +32,7 @@ endef
 
 all: runtimes
 
-extra: glxinfo gl-drivers-${ARCH}
+extra: glxinfo gl-drivers-${ARCH} extensions
 
 glxinfo: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
@@ -53,6 +59,14 @@ runtimes: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	flatpak-builder --force-clean --ccache --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Sdk, `date`" \
 		${EXPORT_ARGS} sdk org.freedesktop.Sdk.json
+
+extensions: gfortran-extension
+
+gfortran-extension: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
+	$(call subst-metadata)
+	flatpak-builder --force-clean --ccache --require-changes --repo=${REPO} --arch=${ARCH} \
+		--subject="build of org.freedesktop.Sdk.Extension.gfortran62, `date`" \
+		${EXPORT_ARGS} sdk org.freedesktop.Sdk.Extension.gfortran62.json
 
 ${REPO}:
 	ostree  init --mode=archive-z2 --repo=${REPO}
