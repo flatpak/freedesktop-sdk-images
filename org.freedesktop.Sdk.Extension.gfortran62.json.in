@@ -42,6 +42,20 @@
                 "--disable-libsanitizer",
                 "--disable-libssp"
             ],
+            "build-options" : {
+                "arch" : {
+                    "i386" : {
+                        "config-opts" : [
+                            "--build=i586-unknown-linux-gnu"
+                        ]
+                    },
+                    "arm" : {
+                        "config-opts" : [
+                            "--build=arm-unknown-linux-gnueabi"
+                        ]
+                    }
+                }
+            },
             "sources": [
                 {
                     "type": "archive",
