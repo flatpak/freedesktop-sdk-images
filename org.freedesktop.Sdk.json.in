@@ -773,8 +773,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libpciaccess-0.13.4.tar.bz2",
-                     "sha256": "07f864654561e4ac8629a0ef9c8f07fbc1f8592d1b6c418431593e9ba2cf2fcf"
+                     "url": "http://xorg.freedesktop.org/archive/individual/lib/libpciaccess-0.13.5.tar.bz2",
+                     "sha256": "752c54e9b3c311b4347cb50aea8566fa48eab274346ea8a06f7f15de3240b999"
                  }
             ]
         },
@@ -784,8 +784,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://dri.freedesktop.org/libdrm/libdrm-2.4.75.tar.gz",
-                     "sha256": "a411bff814b4336c8908dcbd045cd89fdc7afedc75b795d897d462e467cbb01d"
+                     "url": "https://dri.freedesktop.org/libdrm/libdrm-2.4.79.tar.gz",
+                     "sha256": "7f2594fb5d636e083f7765bfea62a43fcd7c5a12b8aa4f0552fb8fd12aa388a7"
                  }
             ]
         },
@@ -1022,8 +1022,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/glib/2.52/glib-2.52.0.tar.xz",
-                    "sha256": "4578e3e077b1b978cafeec8d28b676c680aba0c0475923874c4c993403df311a"
+                    "url": "https://download.gnome.org/sources/glib/2.52/glib-2.52.1.tar.xz",
+                    "sha256": "948c26b817f2d77e2a6cdd5082c60a51bf5dea854890286a1d5d4ccde5ce586f"
                  }
             ]
         },
@@ -1190,8 +1190,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/archive/sdk-1.0.42.0.tar.gz",
-                    "sha256": "305d3070f559a3f5ad332aff285a3ea0618f9d0696cde81a58765fcb5c7c4e42"
+                    "url": "https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/archive/sdk-1.0.46.0.tar.gz",
+                    "sha256": "439db567f03448f57d7899c4a78986669dc4d930af9699986a85bf2fc3d3acb8"
                 }
             ]
         },
@@ -1296,8 +1296,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://mesa.freedesktop.org/archive/mesa-17.0.1.tar.xz",
-                    "sha256": "96fd70ef5f31d276a17e424e7e1bb79447ccbbe822b56844213ef932e7ad1b0c"
+                    "url": "https://mesa.freedesktop.org/archive/mesa-17.0.3.tar.xz",
+                    "sha256": "ca646f5075a002d60ef9123c8a4331cede155c01712ef945a65c59a5e69fe7ed"
                 },
                 {
                     "type": "patch",
@@ -1621,8 +1621,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/gobject-introspection/1.50/gobject-introspection-1.50.0.tar.xz",
-                     "sha256": "1c6597c666f543c70ef3d7c893ab052968afae620efdc080c36657f4226337c5"
+                     "url": "https://download.gnome.org/sources/gobject-introspection/1.52/gobject-introspection-1.52.1.tar.xz",
+                     "sha256": "2ed0c38d52fe1aa6fc4def0c868fe481cb87b532fc694756b26d6cfab29faff4"
                  }
             ]
         },
@@ -1787,8 +1787,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/gdk-pixbuf/2.36/gdk-pixbuf-2.36.5.tar.xz",
-                     "sha256": "7ace06170291a1f21771552768bace072ecdea9bd4a02f7658939b9a314c40fc"
+                     "url": "https://download.gnome.org/sources/gdk-pixbuf/2.36/gdk-pixbuf-2.36.6.tar.xz",
+                     "sha256": "455eb90c09ed1b71f95f3ebfe1c904c206727e0eeb34fc94e5aaf944663a820c"
                  }
             ]
         },
@@ -1808,8 +1808,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.4.tar.xz",
-                    "sha256": "f8fdc5fc66356dc4edf915048cceeee065a0e0cb70b3b2598f62bda320129a3e"
+                    "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.5.tar.xz",
+                    "sha256": "24748140456c42360b07b2c77a1a2e1216d07c056632079557cd4e815b9d01c9"
                 }
             ]
         },
@@ -1991,8 +1991,8 @@
             "sources": [
                 {
                      "type": "archive",
-                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.6.11.tar.xz",
-                    "sha256": "4a24367d01393e224229faa2a15a28657e997cfd93100713d4d78db206eb0f20"
+                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.6.12.tar.xz",
+                    "sha256": "ef91b3c71fc51dc002218f149cad108abc3d57f9b4a959870224e9256aa62d58"
                 }
             ]
         },
