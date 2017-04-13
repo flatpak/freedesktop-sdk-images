@@ -2220,6 +2220,37 @@
             ]
         },
         {
+            "name": "pcre2",
+            "config-opts": ["--enable-jit",
+                            "--enable-pcre2grep-jit",
+                            "--disable-bsr-anycrlf",
+                            "--disable-coverage",
+                            "--disable-ebcdic",
+                            "--disable-never-backslash-C",
+                            "--enable-newline-is-lf",
+                            "--enable-pcre2-8",
+                            "--enable-pcre2-16",
+                            "--enable-pcre2-32",
+                            "--disable-pcre2test-libedit",
+                            "--enable-pcre2test-libreadline",
+                            "--enable-pcre2grep-callout",
+                            "--disable-pcre2grep-libbz2",
+                            "--disable-pcre2grep-libz",
+                            "--disable-rebuild-chartables",
+                            "--enable-shared",
+                            "--enable-stack-for-recursion",
+                            "--disable-static",
+                            "--enable-unicode",
+                            "--disable-valgrind"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-10.22.tar.gz",
+                    "sha256": "7627f93f2763ee6e11ac58558d8cfbf29e1070757b45571c0ba30ce9e096505c"
+                }
+            ]
+        },
+        {
             "name": "flatpak-xdg-utils",
             "sources": [
                 {
