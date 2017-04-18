@@ -1,0 +1,34 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5784d35..a5a5049 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -360,6 +360,7 @@ SET(SSE_SWITCH "")
+ SET(SSE2_SWITCH "")
+ SET(SSE3_SWITCH "")
+ SET(SSE4_1_SWITCH "")
++SET(FPU_NEON_SWITCH "")
+ IF(NOT MSVC)
+     CHECK_C_COMPILER_FLAG(-msse HAVE_MSSE_SWITCH)
+     IF(HAVE_MSSE_SWITCH)
+@@ -377,6 +378,10 @@ IF(NOT MSVC)
+     IF(HAVE_MSSE4_1_SWITCH)
+         SET(SSE4_1_SWITCH "-msse4.1")
+     ENDIF()
++    CHECK_C_COMPILER_FLAG(-mfpu=neon HAVE_MFPU_NEON_SWITCH)
++    IF(HAVE_MFPU_NEON_SWITCH)
++        SET(FPU_NEON_SWITCH "-mfpu=neon")
++    ENDIF()
+ ENDIF()
+ 
+ CHECK_C_SOURCE_COMPILES("int foo(const char *str, ...) __attribute__((format(printf, 1, 2)));
+@@ -759,6 +764,10 @@ IF(HAVE_ARM_NEON_H)
+     IF(ALSOFT_CPUEXT_NEON)
+         SET(HAVE_NEON 1)
+         SET(ALC_OBJS  ${ALC_OBJS} Alc/mixer_neon.c)
++        IF(FPU_NEON_SWITCH)
++            SET_SOURCE_FILES_PROPERTIES(Alc/mixer_neon.c PROPERTIES
++                                        COMPILE_FLAGS "${FPU_NEON_SWITCH}")
++        ENDIF()
+         SET(CPU_EXTS "${CPU_EXTS}, Neon")
+     ENDIF()
+ ENDIF()
