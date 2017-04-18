@@ -2188,7 +2188,7 @@
                 },
                 {
                     "type": "patch",
-                    "path": "openal-soft-arm_neon-only-for-32bit.patch"
+                    "path": "openal-fpu-neon.patch"
                 }
             ]
         },
