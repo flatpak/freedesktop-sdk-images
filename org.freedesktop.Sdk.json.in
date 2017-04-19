@@ -21,11 +21,16 @@
         "--extension=org.freedesktop.Platform.Timezones=directory=share/zoneinfo",
         "--extension=org.freedesktop.Platform.GStreamer=directory=lib/extensions/gstreamer-1.0",
         "--extension=org.freedesktop.Platform.GStreamer=subdirectories",
+        "--extension=org.freedesktop.Platform.Icontheme=directory=share/runtime/share/icons",
+        "--extension=org.freedesktop.Platform.Icontheme=subdirectories=true",
+        "--extension=org.freedesktop.Platform.Icontheme=no-autodownload=true",
+        "--extension=org.freedesktop.Platform.Icontheme=version=1.0",
         "--extension=org.freedesktop.Sdk.Extension=subdirectories",
         "--extension=org.freedesktop.Sdk.Extension=directory=lib/sdk",
         "--extension=org.freedesktop.Sdk.Extension=no-autodownload=true",
         "--env=GI_TYPELIB_PATH=/app/lib/girepository-1.0",
         "--env=GST_PLUGIN_SYSTEM_PATH=/app/lib/gstreamer-1.0:/usr/lib/extensions/gstreamer-1.0:/usr/lib/gstreamer-1.0",
+        "--env=XDG_DATA_DIRS=/app/share:/usr/share:/usr/share/runtime/share",
         "--sdk=org.freedesktop.Sdk//@@SDK_BRANCH@@",
         "--runtime=org.freedesktop.Platform//@@SDK_BRANCH@@"
     ],
@@ -2269,6 +2274,10 @@
         },
         {
             "name": "os-release",
+            "post-install": [
+                "mkdir -p /usr/share/runtime/share/themes",
+                "mkdir -p /usr/share/runtime/share/icons"
+            ],
             "sources": [
                 {
                     "type": "file",
