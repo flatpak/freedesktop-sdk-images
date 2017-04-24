@@ -102,8 +102,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/58/89/29dfa3a59b0d144d1262e68382db94dda46d9d7cb43182403fd30cceedc0/meson-0.39.1.tar.gz",
-                    "sha256": "67bf5876d69730dfe031907314a61fdbec0c5c723c79a8093eb64ae2ebcd2650"
+                    "url": "https://pypi.python.org/packages/3e/65/6c99b6114ea9a68625146dad961441da67b124ddd969d0a36b9f5fe625a4/meson-0.40.0.tar.gz",
+                    "sha256": "5cbe4031fa78ceb5ceaaa19480645ffaccef20e2e8fc4b331aa7b40f6ff166c1"
                 }
             ]
         },
