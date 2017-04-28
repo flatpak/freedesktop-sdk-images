@@ -2267,10 +2267,17 @@
         },
         {
             "name": "lib32-symlink",
-            "only-arches": ["x86-64"],
-            "build-commands": [
-                "ln -s /app/lib/ld-linux.so.2 /lib/ld-linux.so.2"
-            ]
+            "only-arches": ["x86_64"],
+            "sources": [
+                {
+                    "type": "shell",
+                    "commands": [
+                        "ln -s /app/lib/ld-linux.so.2 /usr/lib/ld-linux.so.2"
+                    ]
+                }
+            ],
+            "buildsystem": "simple",
+            "build-commands": []
         },
         {
             "name": "os-release",
