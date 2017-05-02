@@ -52,7 +52,8 @@
                           "mkdir -p /usr/lib/debug",
                           "ln -s /app/lib/debug /usr/lib/debug/app",
                           "ln -s ../../run/ /usr/lib/extensions",
-                          "ldconfig -C /usr/etc/ld.so.cache"
+                          "ldconfig -C /usr/etc/ld.so.cache",
+                          "cp -d /usr/lib/extra-links/* /usr/lib/ || true"
                         ],
     "cleanup-platform": [ "/include",
                           "/share/aclocal",
@@ -70,7 +71,8 @@
                                    /* Work around gst-python issue */
                                    "ln -s libpython2.7.so.1.0 /usr/lib/libpython2.7.so",
                                    "ln -s libpython3.5m.so.1.0 /usr/lib/libpython3.5m.so",
-                                   "ldconfig -C /usr/etc/ld.so.cache"
+                                   "ldconfig -C /usr/etc/ld.so.cache",
+                                   "cp -d /usr/lib/extra-links/* /usr/lib/ || true"
                                  ],
     "build-options" : {
         "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
@@ -2266,13 +2268,29 @@
             ]
         },
         {
-            "name": "lib32-symlink",
+            "name": "lib32-i386-symlink",
             "only-arches": ["x86_64"],
             "sources": [
                 {
                     "type": "shell",
                     "commands": [
-                        "ln -s /app/lib/ld-linux.so.2 /usr/lib/ld-linux.so.2"
+                        "mkdir -p /usr/lib/extra-links",
+                        "ln -s /app/lib/ld-linux.so.2 /usr/lib/extra-links/ld-linux.so.2"
+                    ]
+                }
+            ],
+            "buildsystem": "simple",
+            "build-commands": []
+        },
+        {
+            "name": "lib32-arm-symlink",
+            "only-arches": ["aarch64"],
+            "sources": [
+                {
+                    "type": "shell",
+                    "commands": [
+                        "mkdir -p /usr/lib/extra-links",
+                        "ln -s /app/lib/ld-linux-armhf.so.3 /usr/lib/extra-links/ld-linux-armhf.so.3"
                     ]
                 }
             ],
