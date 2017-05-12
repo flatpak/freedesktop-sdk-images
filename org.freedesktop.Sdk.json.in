@@ -1303,8 +1303,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://mesa.freedesktop.org/archive/mesa-17.0.3.tar.xz",
-                    "sha256": "ca646f5075a002d60ef9123c8a4331cede155c01712ef945a65c59a5e69fe7ed"
+                    "url": "https://mesa.freedesktop.org/archive/mesa-17.0.5.tar.xz",
+                    "sha256": "668efa445d2f57a26e5c096b1965a685733a3b57d9c736f9d6460263847f9bfe"
                 },
                 {
                     "type": "patch",
