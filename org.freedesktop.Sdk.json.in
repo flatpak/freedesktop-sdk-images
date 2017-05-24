@@ -25,6 +25,11 @@
         "--extension=org.freedesktop.Platform.Icontheme=subdirectories=true",
         "--extension=org.freedesktop.Platform.Icontheme=no-autodownload=true",
         "--extension=org.freedesktop.Platform.Icontheme=version=1.0",
+        "--extension=org.gtk.Gtk3theme=directory=share/runtime/share/themes",
+        "--extension=org.gtk.Gtk3theme=subdirectories=true",
+        "--extension=org.gtk.Gtk3theme=subdirectory-suffix=gtk-3.0",
+        "--extension=org.gtk.Gtk3theme=no-autodownload=true",
+        "--extension=org.gtk.Gtk3theme=version=3.22",
         "--extension=org.freedesktop.Sdk.Extension=subdirectories",
         "--extension=org.freedesktop.Sdk.Extension=directory=lib/sdk",
         "--extension=org.freedesktop.Sdk.Extension=no-autodownload=true",
@@ -1646,13 +1651,13 @@
         },
         {
             "name": "libsoup",
-            "config-opts": [ "--disable-static", "--disable-vala" ],
+            "config-opts": ["--disable-static", "--disable-vala"],
             "sources": [
-                 {
-                     "type": "archive",
-                     "url": "https://download.gnome.org/sources/libsoup/2.56/libsoup-2.56.0.tar.xz",
-                     "sha256": "d8216b71de8247bc6f274ec054c08547b2e04369c1f8add713e9350c8ef81fe5"
-                 }
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/libsoup/2.58/libsoup-2.58.1.tar.xz",
+                    "sha256": "62c669f557de745b7b20ba9d5b74d839c95e4c9cea1a5ab7f3da5531a1aeefb9"
+                }
             ]
         },
         {
@@ -1811,12 +1816,64 @@
             ]
         },
         {
+            "name": "libdatrie",
+            "config-opts": ["--disable-static"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://linux.thai.net/pub/thailinux/software/libthai/libdatrie-0.2.9.tar.xz",
+                    "sha256": "d980713e7ad8e19cf3b54ee0173782b94332af8e7e4e936dde01d2cd72e1da1d"
+                }
+            ]
+        },
+        {
+            "name": "libthai",
+            "config-opts": ["--disable-static"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://linux.thai.net/pub/thailinux/software/libthai/libthai-0.1.22.tar.xz",
+                    "sha256": "bdb291dcc3a6784e86b1b342ec75005e9ab487f8c1decc7c3e7d18d1bbc9b7b7"
+                }
+            ]
+        },
+        {
             "name": "pango",
             "sources": [
                 {
                     "type": "archive",
                     "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.5.tar.xz",
                     "sha256": "24748140456c42360b07b2c77a1a2e1216d07c056632079557cd4e815b9d01c9"
+                }
+            ]
+        },
+        {
+            "name": "atk",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/atk/2.24/atk-2.24.0.tar.xz",
+                    "sha256": "bb2daa9a808c73a7a79d2983f333e0ba74be42fc51e3ba1faf2551a636487a49"
+                }
+            ]
+        },
+        {
+            "name": "at-spi2-core",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/at-spi2-core/2.24/at-spi2-core-2.24.1.tar.xz",
+                    "sha256": "1e90d064b937aacfe79a96232ac7e63d28d716e85bd9ff4333f865305a959b5b"
+                }
+            ]
+        },
+        {
+            "name": "at-spi2-atk",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/at-spi2-atk/2.24/at-spi2-atk-2.24.1.tar.xz",
+                    "sha256": "60dc90ac4f74b8ffe96a9363c25208a443b381bacecfefea6de549f20ed6957d"
                 }
             ]
         },
@@ -1829,6 +1886,29 @@
                     "type": "archive",
                     "url": "https://download.gnome.org/sources/librsvg/2.40/librsvg-2.40.16.tar.xz",
                     "sha256": "d48bcf6b03fa98f07df10332fb49d8c010786ddca6ab34cbba217684f533ff2e"
+                }
+            ]
+        },
+        {
+            "name": "gtk3",
+            "config-opts": [ "--enable-xkb",
+                             "--enable-xinerama",
+                             "--enable-xrandr",
+                             "--enable-xfixes",
+                             "--enable-xcomposite",
+                             "--enable-xdamage",
+                             "--enable-x11-backend",
+                             "--enable-wayland-backend" ],
+            "cleanup-platform": [
+                "/bin/gtk3-*",
+                "/bin/gtk-builder-tool",
+                "/bin/gtk-encode-symbolic-svg"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.15.tar.xz",
+                    "sha256": "c8a012c2a99132629ab043f764a2b7cb6388483a015cd15c7a4288bec3590fdb"
                 }
             ]
         },
