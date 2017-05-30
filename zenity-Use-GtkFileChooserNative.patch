@@ -1,0 +1,148 @@
+From 550805bb78b6e24463dbed77eef96de04add0e5a Mon Sep 17 00:00:00 2001
+From: Patrick Griffis <tingping@tingping.se>
+Date: Mon, 22 May 2017 09:30:49 -0400
+Subject: [PATCH] Use GtkFileChooserNative
+
+---
+ src/fileselection.c | 63 ++++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 43 insertions(+), 20 deletions(-)
+
+diff --git a/src/fileselection.c b/src/fileselection.c
+index 27db0f4..d0a91a0 100644
+--- a/src/fileselection.c
++++ b/src/fileselection.c
+@@ -29,14 +29,18 @@
+ 
+ static ZenityData	*zen_data;
+ 
+-static void zenity_fileselection_dialog_response (GtkWidget *widget, int response, gpointer data);
++static void zenity_fileselection_dialog_response (gpointer obj, int response, gpointer data);
+ 
+ void zenity_fileselection (ZenityData *data, ZenityFileData *file_data)
+ {
+-  GtkWidget *dialog;
+   gchar *dir;
+   gchar *basename;
+   GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
++#if GTK_CHECK_VERSION(3, 20, 0)
++  GtkFileChooserNative *dialog;
++#else
++  GtkWidget *dialog;
++#endif
+ 
+   zen_data = data;
+ 
+@@ -50,17 +54,31 @@ void zenity_fileselection (ZenityData *data, ZenityFileData *file_data)
+       action = GTK_FILE_CHOOSER_ACTION_SAVE;
+   }
+ 
++#if GTK_CHECK_VERSION(3, 20, 0)
++  dialog = gtk_file_chooser_native_new (data->dialog_title ? data->dialog_title : "",
++                                        NULL, /* TODO: Get parent from xid */
++                                        action,
++                                        _ ("_OK"),
++                                        _ ("_Cancel"));
++  if (data->modal)
++    gtk_native_dialog_set_modal (GTK_NATIVE_DIALOG(dialog), TRUE);
++
++  if (data->extra_label)
++    g_warning ("Cannot add extra labels to GtkFileChooserNative");
++#else
+   dialog = gtk_file_chooser_dialog_new (NULL, NULL,
+ 		  			action,
+ 					_("_Cancel"), GTK_RESPONSE_CANCEL,
+-					_("_OK"), GTK_RESPONSE_OK,
++					_("_OK"), GTK_RESPONSE_ACCEPT,
+ 					NULL);
+ 
+-  gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), 
+-                                                  file_data->confirm_overwrite);
++  if (data->dialog_title)
++    gtk_window_set_title (GTK_WINDOW (dialog), data->dialog_title);
+ 
+-  g_signal_connect (G_OBJECT (dialog), "response", 
+-                    G_CALLBACK (zenity_fileselection_dialog_response), file_data);
++  if (data->modal)
++    gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
++
++  zenity_util_set_window_icon (dialog, data->window_icon, ZENITY_IMAGE_FULLPATH ("zenity-file.png"));
+ 
+   if (data->extra_label) {
+     gint i=0;
+@@ -69,14 +87,13 @@ void zenity_fileselection (ZenityData *data, ZenityFileData *file_data)
+       i++;
+     }
+   }
++#endif
+ 
+-  if (data->dialog_title)
+-    gtk_window_set_title (GTK_WINDOW (dialog), data->dialog_title);
+-	
+-  zenity_util_set_window_icon (dialog, data->window_icon, ZENITY_IMAGE_FULLPATH ("zenity-file.png"));
++  gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog),
++                                                  file_data->confirm_overwrite);
+ 
+-  if (data->modal)
+-    gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
++  g_signal_connect (G_OBJECT (dialog), "response",
++                    G_CALLBACK (zenity_fileselection_dialog_response), file_data);
+ 
+   if (file_data->uri) {
+     dir = g_path_get_dirname (file_data->uri);
+@@ -144,7 +161,11 @@ void zenity_fileselection (ZenityData *data, ZenityFileData *file_data)
+     }
+   }
+ 
++#if GTK_CHECK_VERSION(3, 20, 0)
++  gtk_native_dialog_show (GTK_NATIVE_DIALOG(dialog));
++#else
+   zenity_util_show_dialog (dialog, data->attach);
++#endif
+ 
+   if(data->timeout_delay > 0) {
+     g_timeout_add_seconds (data->timeout_delay, (GSourceFunc) zenity_util_timeout_handle, dialog);
+@@ -154,10 +175,10 @@ void zenity_fileselection (ZenityData *data, ZenityFileData *file_data)
+ }
+ 
+ static void
+-zenity_fileselection_dialog_output (GtkWidget *widget, ZenityFileData *file_data)
++zenity_fileselection_dialog_output (GtkFileChooser *chooser, ZenityFileData *file_data)
+ {
+   GSList *selections, *iter;
+-  selections = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (widget));
++  selections = gtk_file_chooser_get_filenames (chooser);
+   for (iter = selections;iter != NULL; iter = iter->next) {
+     g_print ("%s", g_filename_to_utf8 ((gchar*)iter->data, -1, NULL, NULL, NULL));
+     g_free (iter->data);
+@@ -169,13 +190,15 @@ zenity_fileselection_dialog_output (GtkWidget *widget, ZenityFileData *file_data
+ }
+ 
+ static void
+-zenity_fileselection_dialog_response (GtkWidget *widget, int response, gpointer data)
++zenity_fileselection_dialog_response (gpointer obj, int response, gpointer data)
+ {
+   ZenityFileData *file_data = data;
+-  
++  GtkFileChooser *chooser = GTK_FILE_CHOOSER(obj);
++
++  g_print ("response %d\n", response);
+   switch (response) {
+-    case GTK_RESPONSE_OK:
+-      zenity_fileselection_dialog_output (widget, file_data);
++    case GTK_RESPONSE_ACCEPT:
++      zenity_fileselection_dialog_output (chooser, file_data);
+       zenity_util_exit_code_with_data(ZENITY_OK, zen_data);
+       break;
+ 
+@@ -184,7 +207,7 @@ zenity_fileselection_dialog_response (GtkWidget *widget, int response, gpointer
+       break;
+ 
+     case ZENITY_TIMEOUT:
+-      zenity_fileselection_dialog_output (widget, file_data);
++      zenity_fileselection_dialog_output (chooser, file_data);
+       zen_data->exit_code = zenity_util_return_exit_code (ZENITY_TIMEOUT);
+       break;
+ 
+-- 
+2.9.4
+
