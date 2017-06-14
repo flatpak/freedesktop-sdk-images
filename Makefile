@@ -36,7 +36,7 @@ extra: glxinfo gl-drivers-${ARCH} extensions
 
 glxinfo: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
-	flatpak-builder --force-clean --ccache --require-changes --repo=${REPO} --arch=${ARCH} \
+	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 	    --subject="build of org.freedesktop.GlxInfo, `date`" \
 	    ${EXPORT_ARGS} glxinfo org.freedesktop.GlxInfo.json
 
@@ -50,13 +50,13 @@ gl-drivers-x86_64:
 
 mesa-git:
 	$(call subst-metadata)
-	flatpak-builder --force-clean --ccache --require-changes --repo=${REPO} --arch=${ARCH} \
+	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Platform.GL.mesa-git, `date`" \
 		${EXPORT_ARGS} mesa org.freedesktop.Platform.GL.mesa-git.json
 
 runtimes: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
-	flatpak-builder --force-clean --ccache --require-changes --repo=${REPO} --arch=${ARCH} \
+	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Sdk, `date`" \
 		${EXPORT_ARGS} sdk org.freedesktop.Sdk.json
 
@@ -73,7 +73,7 @@ extensions-x86_64: gfortran-extension
 
 gfortran-extension: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
-	flatpak-builder --force-clean --ccache --require-changes --repo=${REPO} --arch=${ARCH} \
+	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Sdk.Extension.gfortran62, `date`" \
 		${EXPORT_ARGS} sdk org.freedesktop.Sdk.Extension.gfortran62.json
 
