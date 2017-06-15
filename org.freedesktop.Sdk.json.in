@@ -2357,9 +2357,9 @@
             "name": "flatpak-xdg-utils",
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://github.com/flatpak/flatpak-xdg-utils/archive/0.1.tar.gz",
-                    "sha256": "9059d0bcb84d01f471b82cae467d92383adaa0361ee178d1384e7372fefe16bd"
+                    "type": "git",
+                    "url": "https://github.com/flatpak/flatpak-xdg-utils.git",
+                    "branch": "0a2666fb34c484ac5f573dad1af361aa8ebbd814"
                 }
             ]
         },
