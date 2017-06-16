@@ -59,6 +59,9 @@ runtimes: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Sdk, `date`" \
 		${EXPORT_ARGS} sdk org.freedesktop.Sdk.json
+	if test "${ARCH}" == "i386" ; then \
+		flatpak build-commit-from --src-ref=runtime/org.freedesktop.Platform/${ARCH}/${SDK_BRANCH} repo runtime/org.freedesktop.Platform.Compat32/x86_64/${SDK_BRANCH} ; \
+	fi
 
 extensions: extensions-${ARCH}
 
