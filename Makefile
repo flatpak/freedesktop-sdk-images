@@ -16,7 +16,8 @@ SUBST_FILES=org.freedesktop.Sdk.json \
 	os-release issue issue.net \
 	org.freedesktop.Sdk.appdata.xml org.freedesktop.Platform.appdata.xml \
 	org.freedesktop.Platform.GL.mesa-git.json \
-	org.freedesktop.Sdk.Extension.gfortran62.json
+	org.freedesktop.Sdk.Extension.gfortran62.json \
+	org.freedesktop.Platform.VAAPI.Intel.json
 
 define subst-metadata
 	@echo -n "Generating files: ${SUBST_FILES}... ";
@@ -53,6 +54,12 @@ mesa-git:
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Platform.GL.mesa-git, `date`" \
 		${EXPORT_ARGS} mesa org.freedesktop.Platform.GL.mesa-git.json
+
+vaapi-intel:
+	$(call subst-metadata)
+	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
+		--subject="build of org.freedesktop.Platform.VAAPI.Intel, `date`" \
+		${EXPORT_ARGS} vaapi-intel org.freedesktop.Platform.VAAPI.Intel.json
 
 runtimes: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
