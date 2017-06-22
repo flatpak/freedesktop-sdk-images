@@ -33,6 +33,8 @@
         "--extension=org.freedesktop.Sdk.Extension=subdirectories",
         "--extension=org.freedesktop.Sdk.Extension=directory=lib/sdk",
         "--extension=org.freedesktop.Sdk.Extension=no-autodownload=true",
+        "--extension=org.freedesktop.Platform.VAAPI.Intel=directory=lib/dri/intel-vaapi-driver",
+        "--extension=org.freedesktop.Platform.VAAPI.Intel=autodelete=false",
         "--env=GI_TYPELIB_PATH=/app/lib/girepository-1.0",
         "--env=GST_PLUGIN_SYSTEM_PATH=/app/lib/gstreamer-1.0:/usr/lib/extensions/gstreamer-1.0:/usr/lib/gstreamer-1.0",
         "--env=XDG_DATA_DIRS=/app/share:/usr/share:/usr/share/runtime/share",
@@ -2387,6 +2389,20 @@
                     "commands": [
                         "mkdir -p /usr/lib/extra-links",
                         "ln -s /app/lib/ld-linux-armhf.so.3 /usr/lib/extra-links/ld-linux-armhf.so.3"
+                    ]
+                }
+            ],
+            "buildsystem": "simple",
+            "build-commands": []
+        },
+        {
+            "name": "intel-vaapi-driver-stub",
+            "sources": [
+                {
+                    "type": "shell",
+                    "commands": [
+                        "mkdir -p /usr/lib/dri/intel-vaapi-driver",
+                        "ln -s /usr/lib/dri/intel-vaapi-driver/i965_drv_video.so /usr/lib/dri/i965_drv_video.so"
                     ]
                 }
             ],
