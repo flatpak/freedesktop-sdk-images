@@ -1412,7 +1412,6 @@
         {
             "name": "alsa-lib",
             "config-opts": [ "--disable-aload", "--disable-alisp", "--disable-old-symbols",
-                             "--disable-rawmidi", "--disable-instr",
                              "--with-pcm-plugins=hw ioplug extplug"],
             "sources": [
                 {
