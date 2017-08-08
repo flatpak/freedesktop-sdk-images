@@ -1036,8 +1036,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/glib/2.52/glib-2.52.3.tar.xz",
-                    "sha256": "25ee7635a7c0fcd4ec91cbc3ae07c7f8f5ce621d8183511f414ded09e7e4e128"
+                    "url": "https://download.gnome.org/sources/glib/2.52/glib-2.52.4.tar.xz",
+                    "sha256": "f26b5565f9c1deba2d76dd5f819f9ed248dd75fcd19aa9fa6f51c5f554790679"
                  }
             ]
         },
