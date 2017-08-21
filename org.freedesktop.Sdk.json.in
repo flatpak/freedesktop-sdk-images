@@ -48,6 +48,12 @@
         "org.freedesktop.Platform.VAAPI.Intel" : {
             "directory": "lib/dri/intel-vaapi-driver",
             "autodelete": false
+        },
+        "org.freedesktop.Sdk.Docs" : {
+            "directory": "share/runtime/docs",
+            "bundle": true,
+            "autodelete": true,
+            "no-autodownload": true
         }
     },
     "finish-args": [
@@ -58,11 +64,7 @@
         "--runtime=org.freedesktop.Platform//@@SDK_BRANCH@@"
     ],
     "cleanup": [ "/cache",
-                 "/man",
                  "/share/doc",
-                 "/share/man",
-                 "/share/gtk-doc/html",
-                 "/share/devhelp",
                  "/lib/systemd",
                  "/lib/opkg",
                  "*.la", "*.a"],
@@ -1944,7 +1946,7 @@
         {
             "name": "mpg123",
             "config-opts": [ "-with-default-audio=pulse", "--with-audio=pulse" ],
-            "cleanup": [ "/bin", "/share/man" ],
+            "cleanup": [ "/bin"],
             "build-options" : {
                 "arch" : {
                     "i386" : {
@@ -2449,7 +2451,12 @@
             "name": "os-release",
             "post-install": [
                 "mkdir -p /usr/share/runtime/share/themes",
-                "mkdir -p /usr/share/runtime/share/icons"
+                "mkdir -p /usr/share/runtime/share/icons",
+                "mkdir -p /usr/share/runtime/docs",
+                "mv /usr/share/man /usr/share/runtime/docs/",
+                "ln -s /usr/share/runtime/docs/man /usr/share/man",
+                "mv /usr/share/gtk-doc /usr/share/runtime/docs/",
+                "ln -s /usr/share/runtime/docs/gtk-doc /usr/share/gtk-doc"
             ],
             "sources": [
                 {
