@@ -1645,7 +1645,7 @@
         },
         {
             "name": "gobject-introspection",
-            "config-opts": ["--disable-gtk-doc", "--disable-static" ],
+            "config-opts": ["--disable-static" ],
             "cleanup-platform": ["/lib/gobject-introspection/giscanner",
                                  "/share/gobject-introspection/giscanner",
                                  "/bin"],
