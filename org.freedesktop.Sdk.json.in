@@ -2097,8 +2097,12 @@
             "sources": [
                 {
                      "type": "archive",
-                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.6.12.tar.xz",
-                    "sha256": "ef91b3c71fc51dc002218f149cad108abc3d57f9b4a959870224e9256aa62d58"
+                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.6.13.tar.xz",
+                    "sha256": "1a3734b2cdaab55ad63c6e3ee31026fdceb122cecae39f9f7126a0305e8836bf"
+                },
+                {
+                    "type": "patch",
+                    "path": "appstream-glib-fix-project-group.patch"
                 }
             ]
         },

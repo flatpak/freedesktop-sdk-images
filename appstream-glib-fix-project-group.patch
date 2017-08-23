@@ -1,0 +1,57 @@
+From fa2fa8d6c53155db4a11e848f6dc93d8f47617c8 Mon Sep 17 00:00:00 2001
+From: Richard Hughes <richard@hughsie.com>
+Date: Fri, 2 Jun 2017 20:30:12 +0100
+Subject: [PATCH 01/38] Do not enforce that the project_group is a valid
+ environment_id
+
+Resolves: https://github.com/hughsie/appstream-glib/issues/168
+---
+ libappstream-glib/as-app.c       | 2 +-
+ libappstream-glib/as-self-test.c | 6 ++----
+ 2 files changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/libappstream-glib/as-app.c b/libappstream-glib/as-app.c
+index cde96a6..1a73068 100644
+--- a/libappstream-glib/as-app.c
++++ b/libappstream-glib/as-app.c
+@@ -2380,7 +2380,7 @@ as_app_set_project_group (AsApp *app, const gchar *project_group)
+ 
+ 	/* check value */
+ 	if (priv->trust_flags != AS_APP_TRUST_FLAG_COMPLETE) {
+-		if (!as_utils_is_environment_id (project_group)) {
++		if (g_strcmp0 (project_group, "") == 0) {
+ 			priv->problems |= AS_APP_PROBLEM_INVALID_PROJECT_GROUP;
+ 			return;
+ 		}
+diff --git a/libappstream-glib/as-self-test.c b/libappstream-glib/as-self-test.c
+index 9783c73..75171ec 100644
+--- a/libappstream-glib/as-self-test.c
++++ b/libappstream-glib/as-self-test.c
+@@ -2178,8 +2178,6 @@ as_test_app_validate_file_bad_func (void)
+ 				    "<p> requires sentence case");
+ 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_STYLE_INCORRECT,
+ 				    "<li> requires sentence case");
+-	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+-				    "<project_group> is not valid");
+ 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+ 				    "<translation> not specified");
+ 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_INVALID,
+@@ -2192,13 +2190,13 @@ as_test_app_validate_file_bad_func (void)
+ 				    "<release> timestamp is in the future");
+ 	as_test_app_validate_check (probs, AS_PROBLEM_KIND_TAG_MISSING,
+ 				    "<content_rating> required for game");
+-	g_assert_cmpint (probs->len, ==, 36);
++	g_assert_cmpint (probs->len, ==, 35);
+ 
+ 	/* again, harder */
+ 	probs2 = as_app_validate (app, AS_APP_VALIDATE_FLAG_STRICT, &error);
+ 	as_test_app_validate_check (probs2, AS_PROBLEM_KIND_TAG_INVALID,
+ 				    "XML data contains unknown tag");
+-	g_assert_cmpint (probs2->len, ==, 42);
++	g_assert_cmpint (probs2->len, ==, 41);
+ }
+ 
+ static void
+-- 
+2.13.5
+
