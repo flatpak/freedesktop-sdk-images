@@ -16,6 +16,7 @@ SUBST_FILES=org.freedesktop.Sdk.json \
 	os-release issue issue.net \
 	org.freedesktop.Sdk.appdata.xml org.freedesktop.Platform.appdata.xml \
 	org.freedesktop.Platform.GL.mesa-git.json \
+	org.freedesktop.Platform.GL.mesa-stable.json \
 	org.freedesktop.Sdk.Extension.gfortran62.json \
 	org.freedesktop.Platform.VAAPI.Intel.json
 
@@ -54,6 +55,12 @@ mesa-git:
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Platform.GL.mesa-git, `date`" \
 		${EXPORT_ARGS} mesa org.freedesktop.Platform.GL.mesa-git.json
+
+mesa-stable:
+	$(call subst-metadata)
+	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
+		--subject="build of org.freedesktop.Platform.GL.mesa-stable, `date`" \
+		${EXPORT_ARGS} mesa org.freedesktop.Platform.GL.mesa-stable.json
 
 vaapi-intel:
 	$(call subst-metadata)
