@@ -2459,8 +2459,9 @@
                 "mkdir -p /usr/share/runtime/docs",
                 "mv /usr/share/man /usr/share/runtime/docs/",
                 "ln -s /usr/share/runtime/docs/man /usr/share/man",
-                "mv /usr/share/gtk-doc /usr/share/runtime/docs/",
-                "ln -s /usr/share/runtime/docs/gtk-doc /usr/share/gtk-doc"
+                "mkdir -p /usr/share/runtime/docs/gtk-doc",
+                "mv /usr/share/gtk-doc/html /usr/share/runtime/docs/gtk-doc/",
+                "ln -s /usr/share/runtime/docs/gtk-doc/html /usr/share/gtk-doc/html"
             ],
             "sources": [
                 {
