@@ -1498,7 +1498,6 @@
         },
         {
             "name": "shared-mime-info",
-            "config-opts": ["--disable-update-mimedb"],
             "cleanup-platform": [ "/bin/update-mime-database" ],
             "no-parallel-make": true,
             "sources": [
