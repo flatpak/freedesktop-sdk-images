@@ -1,0 +1,41 @@
+From 282be0e73d013e97260fd5a0b473c8bfb0eefdd4 Mon Sep 17 00:00:00 2001
+From: Alexander Larsson <alexl@redhat.com>
+Date: Thu, 31 Aug 2017 17:06:13 +0200
+Subject: [PATCH] Optionally read the dbus address from env var
+ AT_SPI_BUS_ADDRESS
+
+This will be used for flatpak to set a custom bus (which is really
+the bus proxy). It can be used for testing purposes too.
+---
+ atspi/atspi-misc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/atspi/atspi-misc.c b/atspi/atspi-misc.c
+index 46d1c11..eebbed4 100644
+--- a/atspi/atspi-misc.c
++++ b/atspi/atspi-misc.c
+@@ -1577,6 +1577,7 @@ atspi_get_a11y_bus (void)
+ {
+   DBusError error;
+   char *address = NULL;
++  const char *address_env = NULL;
+ 
+   if (a11y_bus && dbus_connection_get_is_connected (a11y_bus))
+     return a11y_bus;
+@@ -1585,8 +1586,12 @@ atspi_get_a11y_bus (void)
+     if (!dbus_connection_allocate_data_slot (&a11y_dbus_slot))
+       g_warning ("at-spi: Unable to allocate D-Bus slot");
+ 
++  address_env = g_getenv ("AT_SPI_BUS_ADDRESS");
++  if (address_env != NULL && *address_env != 0)
++    address = g_strdup (address_env);
+ #ifdef HAVE_X11
+-  address = get_accessibility_bus_address_x11 ();
++  if (!address)
++    address = get_accessibility_bus_address_x11 ();
+ #endif
+   if (!address)
+     address = get_accessibility_bus_address_dbus ();
+-- 
+2.13.5
+
