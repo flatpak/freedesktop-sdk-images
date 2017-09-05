@@ -2460,7 +2460,7 @@
                             "--disable-setup", "--disable-ui", "--disable-engine", "--disable-libnotify", "--disable-emoji-dict",
                             "--disable-appindicator", "--disable-tests"],
             "cleanup": [
-                "/bin", "/libexec", "/share/bash-completion", "/share/dbus-1", "/share/gtk-doc",
+                "/bin", "/libexec", "/share/bash-completion", "/share/dbus-1",
                 "/share/icons", "/share/man", "/share/ibus" ],
             "post-install": [ "gtk-query-immodules-3.0 --update-cache" ],
 
