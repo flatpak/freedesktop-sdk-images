@@ -2354,8 +2354,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-10.22.tar.gz",
-                    "sha256": "7627f93f2763ee6e11ac58558d8cfbf29e1070757b45571c0ba30ce9e096505c"
+                    "url": "http://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-10.23.tar.gz",
+                    "sha256": "bd62f955146a41815d6e2ce011bb75740825c32906b06e377f478599f54ee0dd"
                 }
             ]
         },
