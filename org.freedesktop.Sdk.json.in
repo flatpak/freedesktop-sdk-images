@@ -1963,8 +1963,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://mpg123.org/download/mpg123-1.24.0.tar.bz2",
-                    "sha256": "55fb169a7711938f5df0497d1ffe28419fbef50011dc01d00b216379e6a2256c"
+                    "url": "http://mpg123.org/download/mpg123-1.25.6.tar.bz2",
+                    "sha256": "0f0458c9b87799bc2c9bf9455279cc4d305e245db43b51a39ef27afe025c5a8e"
                 }
             ]
         },
