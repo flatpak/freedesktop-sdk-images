@@ -1183,8 +1183,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://wayland.freedesktop.org/releases/wayland-1.12.0.tar.xz",
-                     "sha256": "d6b4135cba0188abcb7275513c72dede751d6194f6edc5b82183a3ba8b821ab1"
+                     "url": "https://wayland.freedesktop.org/releases/wayland-1.14.0.tar.xz",
+                     "sha256": "ed80cabc0961a759a42092e2c39aabfc1ec9a13c86c98bbe2b812f008da27ab8"
                  }
             ]
         },
@@ -1194,8 +1194,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://wayland.freedesktop.org/releases/wayland-protocols-1.7.tar.xz",
-                     "sha256": "635f2a937d318f1fecb97b54074ca211486e38af943868dd0fa82ea38d091c1f"
+                     "url": "https://wayland.freedesktop.org/releases/wayland-protocols-1.10.tar.xz",
+                     "sha256": "5719c51d7354864983171c5083e93a72ac99229e2b460c4bb10513de08839c0a"
                  }
             ]
         },
