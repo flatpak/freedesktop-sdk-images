@@ -1432,8 +1432,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://pkgs.fedoraproject.org/repo/pkgs/alsa-lib/alsa-lib-1.1.3.tar.bz2/eefe5992567ba00d6110a540657aaf5c/alsa-lib-1.1.3.tar.bz2",
-                    "sha256": "71282502184c592c1a008e256c22ed0ba5728ca65e05273ceb480c70f515969c"
+                    "url": "http://pkgs.fedoraproject.org/repo/pkgs/alsa-lib/alsa-lib-1.1.4.1.tar.bz2/29fa3e69122d3cf3e8f0e01a0cb1d183/alsa-lib-1.1.4.1.tar.bz2",
+                    "sha256": "91bb870c14d1c7c269213285eeed874fa3d28112077db061a3af8010d0885b76"
                 },
                 {
                     "type": "script",
