@@ -1817,8 +1817,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://download.gnome.org/sources/gdk-pixbuf/2.36/gdk-pixbuf-2.36.6.tar.xz",
-                     "sha256": "455eb90c09ed1b71f95f3ebfe1c904c206727e0eeb34fc94e5aaf944663a820c"
+                     "url": "https://download.gnome.org/sources/gdk-pixbuf/2.36/gdk-pixbuf-2.36.9.tar.xz",
+                     "sha256": "8013b271ff1a691514b5bbc9b99f6ed456422d4da4a721a9db0b783abe8e740a"
                  }
             ]
         },
@@ -1860,8 +1860,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.5.tar.xz",
-                    "sha256": "24748140456c42360b07b2c77a1a2e1216d07c056632079557cd4e815b9d01c9"
+                    "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.12.tar.xz",
+                    "sha256": "75f1a9a8e4e2b28cbc078b50c1fa927ee4ded994d1ade97c5603e2d1f3161cfc"
                 }
             ]
         },
@@ -1929,8 +1929,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.16.tar.xz",
-                    "sha256": "3e0c3ad01f3c8c5c9b1cc1ae00852bd55164c8e5a9c1f90ba5e07f14f175fe2c"
+                    "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.20.tar.xz",
+                    "sha256": "70c90998a7809f60dc0a7439a68c34e59077dadb631657a6f9cab6a5539c02d9"
                 }
             ]
         },
