@@ -1328,8 +1328,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://mesa.freedesktop.org/archive/mesa-17.0.5.tar.xz",
-                    "sha256": "668efa445d2f57a26e5c096b1965a685733a3b57d9c736f9d6460263847f9bfe"
+                    "url": "https://mesa.freedesktop.org/archive/mesa-17.0.7.tar.xz",
+                    "sha256": "f6d75304a229c8d10443e219d6b6c0c342567dbab5a879ebe7cfa3c9139c4492"
                 },
                 {
                     "type": "patch",
@@ -1346,10 +1346,6 @@
                 {
                     "type": "patch",
                     "path": "mesa-Fix-linkage-against-shared-glapi.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "mesa-glapi-Link-with-glapi-when-built-shared.patch"
                 }
             ]
         },
