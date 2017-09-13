@@ -885,7 +885,7 @@
         },
         {
             "name": "libXcursor",
-            "config-opts": [ "--disable-static" ],
+            "config-opts": [ "--disable-static", "--with-cursorpath=~/.icons:${datadir}/icons:${datadir}/pixmaps:/app/share/icons" ],
             "sources": [
                  {
                      "type": "archive",
