@@ -885,7 +885,8 @@
         },
         {
             "name": "libXcursor",
-            "config-opts": [ "--disable-static" ],
+            "config-opts": [ "--disable-static",
+                             "--with-cursorpath=~/.icons:/app/share/icons:${datadir}/icons:${datadir}/pixmaps:/usr/share/runtime/share/icons" ],
             "sources": [
                  {
                      "type": "archive",
