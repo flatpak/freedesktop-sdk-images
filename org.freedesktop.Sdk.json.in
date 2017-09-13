@@ -59,7 +59,7 @@
     "finish-args": [
         "--env=GI_TYPELIB_PATH=/app/lib/girepository-1.0",
         "--env=GST_PLUGIN_SYSTEM_PATH=/app/lib/gstreamer-1.0:/usr/lib/extensions/gstreamer-1.0:/usr/lib/gstreamer-1.0",
-        "--env=XDG_DATA_DIRS=/app/share:/usr/share:/usr/share/runtime/share",
+        "--env=XDG_DATA_DIRS=/app/share:/usr/share:/usr/share/runtime/share:/run/host/share",
         "--sdk=org.freedesktop.Sdk//@@SDK_BRANCH@@",
         "--runtime=org.freedesktop.Platform//@@SDK_BRANCH@@"
     ],
@@ -886,7 +886,7 @@
         {
             "name": "libXcursor",
             "config-opts": [ "--disable-static",
-                             "--with-cursorpath=~/.icons:/app/share/icons:${datadir}/icons:${datadir}/pixmaps:/usr/share/runtime/share/icons" ],
+                             "--with-cursorpath=~/.icons:/app/share/icons:${datadir}/icons:${datadir}/pixmaps:/usr/share/runtime/share/icons:/run/host/share/icons" ],
             "sources": [
                  {
                      "type": "archive",
