@@ -2137,32 +2137,14 @@
             ]
         },
         {
-            "name": "hunspell-en",
-            "no-autogen": true,
+            "name": "mythes",
+            "config-opts": ["--disable-static"],
             "sources": [
-                 {
-                     "type": "archive",
-                     "url": "http://pkgs.fedoraproject.org/repo/pkgs/hunspell-en/wordlist-20121024.tar.xz/10a7ff0b2209af7d22b14b219b98c9b5/wordlist-20121024.tar.xz",
-                     "strip-components": 0,
-                     "sha256": "0e3e127bfa2a8068f6913949d137e75c4d025ecb9cf1748b80a8176cdee53148"
-                 },
-                 {
-                     "type": "archive",
-                     "strip-components": 0,
-                     "dest": "en_GB",
-                     "url": "http://pkgs.fedoraproject.org/repo/pkgs/hunspell-en/en_GB.zip/218909136738f4564b81ecd145ade6ee/en_GB.zip",
-                     "sha256": "5869d8bd80eb2eb328ebe36b356348de4ae2acb1db6df39d1717d33f89f63728"
-                 },
-                 {
-                     "type": "file",
-                     "path": "Makefile-hunspell-en",
-                     "dest-filename": "Makefile"
-                 },
-                 {
-                     "type": "patch",
-                     "strip-components": 0,
-                     "path": "hunspell-en-fixbuild.patch"
-                 }
+                {
+                    "type": "archive",
+                    "url": "http://downloads.sourceforge.net/hunspell/mythes-1.2.4.tar.gz",
+                    "sha256": "1e81f395d8c851c3e4e75b568e20fa2fa549354e75ab397f9de4b0e0790a305f"
+                }
             ]
         },
         {
@@ -2174,7 +2156,9 @@
                     "url": "http://downloads.sourceforge.net/hunspell/hyphen-2.8.8.tar.gz",
                     "sha256": "304636d4eccd81a14b6914d07b84c79ebb815288c76fe027b9ebff6ff24d5705"
                 }
-            ]
+            ],
+            /* This is in the regular dictionaries */
+            "post-install": [ "rm /usr/share/hyphen/hyph_en_US.dic"]
         },
         {
             "name": "xdg-user-dirs",
@@ -2511,6 +2495,29 @@
                     "path": "os-release-configure",
                     "dest-filename": "configure"
                 }
+            ]
+        },
+        {
+            "name": "dictionaries",
+            "buildsystem": "simple",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://anongit.freedesktop.org/git/libreoffice/dictionaries.git",
+                    "branch": "libreoffice-5.4.1.1",
+                    "commit": "c0379d0ff639cf4a51244011a944f862703b92df"
+                },
+                {
+                    "type": "file",
+                    "path": "install-dicts.py"
+                },
+                {
+                    "type": "file",
+                    "path": "th_gen_idx.pl"
+                }
+            ],
+            "build-commands": [
+                "./install-dicts.py */dictionaries.xcu"
             ]
         }
     ]
