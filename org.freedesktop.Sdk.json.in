@@ -1554,9 +1554,13 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://cairographics.org/releases/cairo-1.14.10.tar.xz",
-                     "sha256": "7e87878658f2c9951a14fc64114d4958c0e65ac47530b8ac3078b2ce41b66a09"
-                 }
+                     "url": "https://cairographics.org/snapshots/cairo-1.15.8.tar.xz",
+                     "sha256": "3224260a4f8e22e7ea95faf706ae111b974833dd74185be1db5ebc7618a98464"
+                 },
+                {
+                    "type": "patch",
+                    "path": "cairo-color-glyph-source-op.patch"
+                }
             ]
         },
         {
@@ -1815,6 +1819,23 @@
                      "path": "Makefile-fonts",
                      "dest-filename": "Makefile"
                  }
+            ]
+        },
+        {
+            "name": "emoji-one-font",
+            "buildsystem": "simple",
+            "sources": [
+                 {
+                     "type": "file",
+                     /* This is the last version with a free license, do not update */
+                     "url": "https://github.com/emojione/emojione/raw/693a9705f60efd566e40a5c9ec00ca306c9bcbd0/extras/fonts/emojione-android.ttf
+",
+                     "sha256": "6b43a1425844274c6fab96a6e3dad3a903d6f541c43bcbb665a8e09c775aa66d"
+                 }
+            ],
+            "build-commands": [
+                "install -m 0755 -d /usr/share/fonts/eosrei-emojione",
+                "install -p -m 644 emojione-android.ttf  /usr/share/fonts/eosrei-emojione"
             ]
         },
         {
