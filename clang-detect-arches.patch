@@ -1,7 +1,7 @@
-diff -up clang-1/lib/Driver/ToolChains.cpp.orig clang-1/lib/Driver/ToolChains.cpp
---- clang-1/lib/Driver/ToolChains.cpp.orig	2017-01-10 22:13:08.000000000 +0100
-+++ clang-1/lib/Driver/ToolChains.cpp	2017-03-13 21:34:50.461682464 +0100
-@@ -1531,16 +1531,17 @@ bool Generic_GCC::GCCInstallationDetecto
+diff -ur cfe-5.0.0.src.old/lib/Driver/ToolChains/Gnu.cpp cfe-5.0.0.src/lib/Driver/ToolChains/Gnu.cpp
+--- cfe-5.0.0.src.old/lib/Driver/ToolChains/Gnu.cpp	2017-08-11 03:47:32.000000000 +0200
++++ cfe-5.0.0.src/lib/Driver/ToolChains/Gnu.cpp	2017-09-23 22:39:55.660966861 +0200
+@@ -1802,18 +1802,19 @@
    static const char *const AArch64LibDirs[] = {"/lib64", "/lib"};
    static const char *const AArch64Triples[] = {
        "aarch64-none-linux-gnu", "aarch64-linux-gnu", "aarch64-linux-android",
@@ -16,13 +16,15 @@ diff -up clang-1/lib/Driver/ToolChains.cpp.orig clang-1/lib/Driver/ToolChains.cp
 +  static const char *const ARMTriples[] = {"arm-linux-gnueabi", "arm-unknown-linux-gnueabi",
                                             "arm-linux-androideabi"};
    static const char *const ARMHFTriples[] = {"arm-linux-gnueabihf",
--                                             "armv7hl-redhat-linux-gnueabi"};
-+                                             "armv7hl-redhat-linux-gnueabi",
-+                                             "arm-unknown-linux-gnueabi" };
+                                              "armv7hl-redhat-linux-gnueabi",
+                                              "armv6hl-suse-linux-gnueabi",
+-                                             "armv7hl-suse-linux-gnueabi"};
++                                             "armv7hl-suse-linux-gnueabi",
++                                             "arm-unknown-linux-gnueabi"};
    static const char *const ARMebLibDirs[] = {"/lib"};
    static const char *const ARMebTriples[] = {"armeb-linux-gnueabi",
                                               "armeb-linux-androideabi"};
-@@ -1562,7 +1563,7 @@ bool Generic_GCC::GCCInstallationDetecto
+@@ -1835,7 +1836,7 @@
        "i386-linux-gnu",       "i386-redhat-linux6E",   "i686-redhat-linux",
        "i586-redhat-linux",    "i386-redhat-linux",     "i586-suse-linux",
        "i486-slackware-linux", "i686-montavista-linux", "i686-linux-android",
@@ -31,3 +33,15 @@ diff -up clang-1/lib/Driver/ToolChains.cpp.orig clang-1/lib/Driver/ToolChains.cp
  
    static const char *const MIPSLibDirs[] = {"/lib"};
    static const char *const MIPSTriples[] = {"mips-linux-gnu", "mips-mti-linux",
+@@ -2174,7 +2175,10 @@
+     // FIXME: It may be worthwhile to generalize this and look for a second
+     // triple.
+     {"i386-linux-gnu/gcc/" + CandidateTriple.str(), "../../..",
+-      TargetArch == llvm::Triple::x86}
++      TargetArch == llvm::Triple::x86},
++
++    // Freedesktop SDK images
++    {CandidateTriple.str(), "..", true}
+   };
+ 
+   for (auto &Suffix : Suffixes) {

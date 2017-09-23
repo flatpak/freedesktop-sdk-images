@@ -1120,8 +1120,7 @@
                 }
             },
             "config-opts": [
-                "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
-                "-DCMAKE_CXX_FLAGS_RELEASE:STRING=-DNDEBUG",
+                "-DLLVM_ENABLE_ASSERTIONS:BOOL=OFF",
                 "-DBUILD_SHARED_LIBS:BOOL=ON",
                 "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
@@ -1134,12 +1133,11 @@
                 "-DLLVM_BUILD_RUNTIME:BOOL=ON",
                 "-DLLVM_INCLUDE_TOOLS:BOOL=ON",
                 "-DLLVM_BUILD_TOOLS:BOOL=ON",
-                "-DLLVM_INCLUDE_TESTS:BOOL=OFF",
                 "-DLLVM_BUILD_TESTS:BOOL=OFF",
                 "-DLLVM_INCLUDE_EXAMPLES:BOOL=OFF",
                 "-DLLVM_BUILD_EXAMPLES:BOOL=OFF",
                 "-DLLVM_INCLUDE_UTILS:BOOL=ON",
-                "-DLLVM_INSTALL_UTILS:BOOL=OFF",
+                "-DLLVM_INSTALL_UTILS:BOOL=ON",
                 "-DLLVM_INCLUDE_DOCS:BOOL=OFF",
                 "-DLLVM_BUILD_DOCS:BOOL=OFF",
                 "-DLLVM_ENABLE_SPHINX:BOOL=OFF",
@@ -1151,8 +1149,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://llvm.org/releases/4.0.1/llvm-4.0.1.src.tar.xz",
-                    "sha256": "da783db1f82d516791179fe103c71706046561f7972b18f0049242dee6712b51"
+                    "url": "http://llvm.org/releases/5.0.0/llvm-5.0.0.src.tar.xz",
+                    "sha256": "e35dcbae6084adcf4abb32514127c5eabd7d63b733852ccdb31e06f1373136da"
                 }
             ]
         },
@@ -1181,8 +1179,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://llvm.org/releases/4.0.1/cfe-4.0.1.src.tar.xz",
-                    "sha256": "61738a735852c23c3bdbe52d035488cdb2083013f384d67c1ba36fabebd8769b"
+                    "url": " http://llvm.org/releases/5.0.0/cfe-5.0.0.src.tar.xz",
+                    "sha256": "019f23c2192df793ac746595e94a403908749f8e0c484b403476d2611dd20970"
                 },
                 {
                     "type": "patch",
