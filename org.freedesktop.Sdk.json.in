@@ -2198,7 +2198,9 @@
         {
             "name": "cups",
             "cleanup-platform": [ "/bin/cups-config" ],
-            "config-opts": ["--disable-static",
+            "config-opts": ["CC=gcc",
+                            "CXX=g++",
+                            "--disable-static",
                             "--enable-debug",
                             "--with-components=core",
                             "--with-dbusdir=/etc/dbus-1",
