@@ -1340,16 +1340,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://mesa.freedesktop.org/archive/mesa-17.0.7.tar.xz",
-                    "sha256": "f6d75304a229c8d10443e219d6b6c0c342567dbab5a879ebe7cfa3c9139c4492"
-                },
-                {
-                    "type": "patch",
-                    "path": "mesa-EGL-Implement-the-libglvnd-interface-for-EGL-v2.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "mesa-fixup-EGL-Implement-the-libglvnd-interface-for-EGL-v.patch"
+                    "url": "https://mesa.freedesktop.org/archive/mesa-17.2.1.tar.xz",
+                    "sha256": "77385d17827cff24a3bae134342234f2efe7f7f990e778109682571dbbc9ba1e"
                 },
                 {
                     "type": "patch",
