@@ -1282,14 +1282,14 @@
                             "--build=i586-unknown-linux-gnu",
 			    "--with-gallium-drivers=svga,swrast,nouveau,r600,r300,radeonsi",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965",
-			    "--with-vulkan-drivers=intel"
+			    "--with-vulkan-drivers=intel,radeon"
 			]
 		    },
 		    "x86_64" : {
 			"config-opts" : [
 			    "--with-gallium-drivers=svga,swrast,nouveau,r600,r300,radeonsi",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965",
-			    "--with-vulkan-drivers=intel"
+			    "--with-vulkan-drivers=intel,radeon"
 			]
 		    },
 		    "arm" : {
