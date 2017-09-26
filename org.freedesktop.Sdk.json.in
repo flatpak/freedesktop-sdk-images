@@ -2550,7 +2550,8 @@
                 }
             ],
             "build-commands": [
-                "./install-dicts.py */dictionaries.xcu"
+                "./install-dicts.py */dictionaries.xcu",
+                "ln -s /usr/share/hunspell /usr/share/myspell"
             ]
         }
     ]
