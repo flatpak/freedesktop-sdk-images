@@ -1188,6 +1188,116 @@
             ]
         },
         {
+            "name": "llvm4",
+            "cmake": true,
+            "builddir": true,
+            "build-options" : {
+                "cflags": "-g1",
+                "cxxflags": "-g1"
+            },
+            "cleanup": ["/usr/lib/llvm4/bin/llvm-*"],
+            "build-options" : {
+                "arch" : {
+                    "i386" : {
+                        "config-opts" : [
+                            "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;NVPTX;BPF"
+                        ]
+                    },
+                    "x86_64" : {
+                        "config-opts" : [
+                            "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;NVPTX;BPF"
+                        ]
+                    },
+                    "arm" : {
+                        "config-opts" : [
+                            "-DLLVM_TARGETS_TO_BUILD=ARM;AMDGPU;NVPTX;BPF"
+                        ]
+                    },
+                    "aarch64" : {
+                        "config-opts" : [
+                            "-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;NVPTX;BPF"
+                        ]
+                    }
+                }
+            },
+            "config-opts": [
+                "-DCMAKE_INSTALL_PREFIX:STRING=/usr/lib/llvm4",
+                "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
+                "-DCMAKE_CXX_FLAGS_RELEASE:STRING=-DNDEBUG",
+                "-DBUILD_SHARED_LIBS:BOOL=ON",
+                "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DLLVM_LIBDIR_SUFFIX=",
+                "-DLLVM_ENABLE_LIBCXX:BOOL=OFF",
+                "-DLLVM_ENABLE_ZLIB:BOOL=ON",
+                "-DLLVM_ENABLE_FFI:BOOL=ON",
+                "-DLLVM_ENABLE_RTTI:BOOL=ON",
+                "-DLLVM_BUILD_RUNTIME:BOOL=ON",
+                "-DLLVM_INCLUDE_TOOLS:BOOL=ON",
+                "-DLLVM_BUILD_TOOLS:BOOL=ON",
+                "-DLLVM_INCLUDE_TESTS:BOOL=OFF",
+                "-DLLVM_BUILD_TESTS:BOOL=OFF",
+                "-DLLVM_INCLUDE_EXAMPLES:BOOL=OFF",
+                "-DLLVM_BUILD_EXAMPLES:BOOL=OFF",
+                "-DLLVM_INCLUDE_UTILS:BOOL=ON",
+                "-DLLVM_INSTALL_UTILS:BOOL=OFF",
+                "-DLLVM_INCLUDE_DOCS:BOOL=OFF",
+                "-DLLVM_BUILD_DOCS:BOOL=OFF",
+                "-DLLVM_ENABLE_SPHINX:BOOL=OFF",
+                "-DLLVM_ENABLE_DOXYGEN:BOOL=OFF",
+                "-DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF",
+                "-DLLVM_BUILD_EXTERNAL_COMPILER_RT:BOOL=ON",
+                "-DFFI_INCLUDE_DIR=/usr/lib/libffi-3.2.1/include",
+                "-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://llvm.org/releases/4.0.1/llvm-4.0.1.src.tar.xz",
+                    "sha256": "da783db1f82d516791179fe103c71706046561f7972b18f0049242dee6712b51"
+                }
+            ],
+            "post-install": [
+                "cd /usr/lib && ln -s llvm4/lib/libLLVM*.so.4* ."
+            ]
+        },
+        {
+            "name": "clang4",
+            "cmake": true,
+            "builddir": true,
+            "build-options" : {
+                "cflags": "-g1",
+                "cxxflags": "-g1"
+            },
+            "config-opts": [
+                "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
+                "-DCMAKE_CXX_FLAGS_RELEASE:STRING=-DNDEBUG",
+                "-DBUILD_SHARED_LIBS:BOOL=ON",
+                "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DLLVM_CONFIG:FILEPATH=/usr/lib/llvm4/bin/llvm-config",
+                "-DCLANG_ENABLE_ARCMT:BOOL=ON",
+                "-DCLANG_ENABLE_STATIC_ANALYZER:BOOL=ON",
+                "-DCLANG_INCLUDE_DOCS:BOOL=OFF",
+                "-DCLANG_INCLUDE_TESTS:BOOL=OFF",
+                "-DCLANG_PLUGIN_SUPPORT:BOOL=ON",
+                "-DCLANG_BUILD_EXAMPLES:BOOL=OFF"],
+            "cleanup-platform": [ "*" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://llvm.org/releases/4.0.1/cfe-4.0.1.src.tar.xz",
+                    "sha256": "61738a735852c23c3bdbe52d035488cdb2083013f384d67c1ba36fabebd8769b"
+                },
+                {
+                    "type": "patch",
+                    "path": "clang4-detect-arches.patch"
+                }
+            ],
+            "post-install": [
+                "cd /usr/lib && ln -s llvm4/lib/libclang*.so.4* ."
+            ]
+        },
+        {
             "name": "wayland",
             "config-opts": ["--disable-static", "--disable-documentation"],
             "cleanup-platform": [ "/bin/wayland-scanner" ],
