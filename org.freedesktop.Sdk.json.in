@@ -1087,14 +1087,14 @@
             ]
         },
         {
-            "name": "llvm",
+            "name": "llvm5-static",
             "cmake": true,
             "builddir": true,
             "build-options" : {
                 "cflags": "-g1",
                 "cxxflags": "-g1"
             },
-            "cleanup-platform": ["/bin/llvm-*"],
+            "cleanup-platform": ["*"],
             "build-options" : {
                 "arch" : {
                     "i386" : {
@@ -1120,8 +1120,9 @@
                 }
             },
             "config-opts": [
+                "-DCMAKE_INSTALL_PREFIX:STRING=/usr/lib/llvm5",
                 "-DLLVM_ENABLE_ASSERTIONS:BOOL=OFF",
-                "-DBUILD_SHARED_LIBS:BOOL=ON",
+                "-DBUILD_SHARED_LIBS:BOOL=OFF",
                 "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
                 "-DLLVM_LIBDIR_SUFFIX=",
@@ -1154,48 +1155,14 @@
             ]
         },
         {
-            "name": "clang",
+            "name": "llvm",
             "cmake": true,
             "builddir": true,
             "build-options" : {
                 "cflags": "-g1",
                 "cxxflags": "-g1"
             },
-            "config-opts": [
-                "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
-                "-DCMAKE_CXX_FLAGS_RELEASE:STRING=-DNDEBUG",
-                "-DBUILD_SHARED_LIBS:BOOL=ON",
-                "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
-                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-                "-DLLVM_CONFIG:FILEPATH=/usr/bin/llvm-config",
-                "-DCLANG_ENABLE_ARCMT:BOOL=ON",
-                "-DCLANG_ENABLE_STATIC_ANALYZER:BOOL=ON",
-                "-DCLANG_INCLUDE_DOCS:BOOL=OFF",
-                "-DCLANG_INCLUDE_TESTS:BOOL=OFF",
-                "-DCLANG_PLUGIN_SUPPORT:BOOL=ON",
-                "-DCLANG_BUILD_EXAMPLES:BOOL=OFF"],
-            "cleanup-platform": [ "*" ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": " http://llvm.org/releases/5.0.0/cfe-5.0.0.src.tar.xz",
-                    "sha256": "019f23c2192df793ac746595e94a403908749f8e0c484b403476d2611dd20970"
-                },
-                {
-                    "type": "patch",
-                    "path": "clang-detect-arches.patch"
-                }
-            ]
-        },
-        {
-            "name": "llvm4",
-            "cmake": true,
-            "builddir": true,
-            "build-options" : {
-                "cflags": "-g1",
-                "cxxflags": "-g1"
-            },
-            "cleanup": ["/usr/lib/llvm4/bin/llvm-*"],
+            "cleanup": ["/bin/llvm-*"],
             "build-options" : {
                 "arch" : {
                     "i386" : {
@@ -1221,7 +1188,6 @@
                 }
             },
             "config-opts": [
-                "-DCMAKE_INSTALL_PREFIX:STRING=/usr/lib/llvm4",
                 "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
                 "-DCMAKE_CXX_FLAGS_RELEASE:STRING=-DNDEBUG",
                 "-DBUILD_SHARED_LIBS:BOOL=ON",
@@ -1261,7 +1227,7 @@
             ]
         },
         {
-            "name": "clang4",
+            "name": "clang",
             "cmake": true,
             "builddir": true,
             "build-options" : {
@@ -1290,7 +1256,7 @@
                 },
                 {
                     "type": "patch",
-                    "path": "clang4-detect-arches.patch"
+                    "path": "clang-detect-arches.patch"
                 }
             ],
             "post-install": [
@@ -2605,7 +2571,7 @@
             ],
             "sources": [
                 {
-                    "type": "file",
+                           "type": "file",
                     "path": "os-release"
                 },
                 {
