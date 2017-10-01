@@ -2551,6 +2551,19 @@
             "build-commands": [
                 "./install-dicts.py */dictionaries.xcu"
             ]
+        },
+        {
+            "name": "ldsoconf",
+            "buildsystem": "simple",
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "ld.so.conf"
+                }
+            },
+            "build-commands": [
+                "install -m 0644 ld.so.conf /usr/etc"
+            ]
         }
     ]
 }
