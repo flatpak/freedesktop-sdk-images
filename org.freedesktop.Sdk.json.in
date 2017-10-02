@@ -80,7 +80,8 @@
                           "ldconfig -C /usr/etc/ld.so.cache",
                           "cp -d /usr/lib/extra-links/* /usr/lib/ || true"
                         ],
-    "cleanup-platform": [ "/include",
+    "cleanup-platform": [ "/share/runtime/docs",
+                          "/include",
                           "/share/aclocal",
                           "/share/pkgconfig",
                           "/lib/pkgconfig",
