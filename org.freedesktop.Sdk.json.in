@@ -1438,6 +1438,9 @@
                      "url": "http://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-10.0.tar.xz",
                      "sha256": "a3186824de9f0d2095ded5d0d0db0405dc73133983c2fbb37291547e37462f57"
                  }
+            ],
+            "post-install": [
+                "chrpath -r '$ORIGIN/pulseaudio' /usr/lib/libpulse*.so"
             ]
         },
         {
