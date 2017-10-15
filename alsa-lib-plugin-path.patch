@@ -1,0 +1,41 @@
+diff -ur alsa-lib-1.1.4.1.old/src/dlmisc.c alsa-lib-1.1.4.1/src/dlmisc.c
+--- alsa-lib-1.1.4.1.old/src/dlmisc.c	2017-06-01 08:27:36.000000000 +0200
++++ alsa-lib-1.1.4.1/src/dlmisc.c	2017-10-15 21:55:52.444803512 +0200
+@@ -32,6 +32,7 @@
+ #ifdef HAVE_LIBPTHREAD
+ #include <pthread.h>
+ #endif
++#include <linux/limits.h>
+ 
+ #ifndef DOC_HIDDEN
+ #ifndef PIC
+@@ -76,8 +77,27 @@
+ 	char *filename;
+ 
+ 	if (name && name[0] != '/') {
+-		filename = malloc(sizeof(ALSA_PLUGIN_DIR) + 1 + strlen(name) + 1);
+-		strcpy(filename, ALSA_PLUGIN_DIR);
++                struct link_map* links;
++                Dl_info info;
++                char origin[PATH_MAX];
++
++                if (dladdr1(&snd_dlopen, &info,
++                            (void**)&links, RTLD_DL_LINKMAP)
++                    == 0) {
++                        links = NULL;
++                }
++
++
++                if ((links != NULL)
++                    && (dlinfo(links, RTLD_DI_ORIGIN, origin) == 0)) {
++                      filename = malloc(strlen(origin) + 1 + 8 /*strlen("alsa-lib")*/ +  1 + strlen(name) + 1);
++                      strcpy(filename, origin);
++                      strcpy(filename, "/alsa-lib");
++                } else {
++                      filename = malloc(sizeof(ALSA_PLUGIN_DIR) + 1 + strlen(name) + 1);
++                      strcpy(filename, ALSA_PLUGIN_DIR);
++                }
++
+ 		strcat(filename, "/");
+ 		strcat(filename, name);
+ 		handle = dlopen(filename, mode);
