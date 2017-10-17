@@ -1484,6 +1484,10 @@
                     "dest-filename": "autogen.sh",
                     "commands": [ "autoreconf -i" ]
                 }
+            ],
+            "post-install": [
+                "ln -s /usr/lib/pulseaudio /usr/lib/alsa-lib/pulseaudio",
+                "chrpath -r '$ORIGIN/pulseaudio' /usr/lib/alsa-lib/libasound_module_pcm_pulse.so"
             ]
         },
         {
