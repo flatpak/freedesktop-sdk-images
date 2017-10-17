@@ -1472,7 +1472,11 @@
             "name": "alsa-plugins",
             "config-opts": [ "--disable-jack", "--enable-pulseaudio", "--disable-samplerate",
                              "--disable-avcodec", "--with-speex=no"],
-            "post-install": [ "mv /usr/share/alsa/alsa.conf.d/99-pulseaudio-default.conf.example /usr/share/alsa/alsa.conf.d/99-pulseaudio-default.conf" ],
+            "post-install": [
+                "mv /usr/share/alsa/alsa.conf.d/99-pulseaudio-default.conf.example /usr/share/alsa/alsa.conf.d/99-pulseaudio-default.conf",
+                "ln -s ../pulseaudio /usr/lib/alsa-lib/pulseaudio",
+                "chrpath -r '$ORIGIN/pulseaudio' /usr/lib/alsa-lib/libasound_module_pcm_pulse.so"
+            ],
             "sources": [
                 {
                     "type": "archive",
@@ -1484,10 +1488,6 @@
                     "dest-filename": "autogen.sh",
                     "commands": [ "autoreconf -i" ]
                 }
-            ],
-            "post-install": [
-                "ln -s ../pulseaudio /usr/lib/alsa-lib/pulseaudio",
-                "chrpath -r '$ORIGIN/pulseaudio' /usr/lib/alsa-lib/libasound_module_pcm_pulse.so"
             ]
         },
         {
