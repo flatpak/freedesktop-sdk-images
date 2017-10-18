@@ -1,0 +1,115 @@
+diff -ur alsa-lib-1.1.4.1.old/modules/mixer/simple/sbasedl.c alsa-lib-1.1.4.1/modules/mixer/simple/sbasedl.c
+--- alsa-lib-1.1.4.1.old/modules/mixer/simple/sbasedl.c	2017-06-01 08:27:36.000000000 +0200
++++ alsa-lib-1.1.4.1/modules/mixer/simple/sbasedl.c	2017-10-16 21:42:22.819834082 +0200
+@@ -33,7 +33,7 @@
+ #include "mixer_abst.h"
+ #include "sbase.h"
+ 
+-#define SO_PATH ALSA_PLUGIN_DIR "/smixer"
++#define SO_PATH "smixer"
+ 
+ int mixer_simple_basic_dlopen(snd_mixer_class_t *class,
+ 			      bclass_base_ops_t **ops)
+diff -ur alsa-lib-1.1.4.1.old/src/control/control.c alsa-lib-1.1.4.1/src/control/control.c
+--- alsa-lib-1.1.4.1.old/src/control/control.c	2017-06-01 08:27:36.000000000 +0200
++++ alsa-lib-1.1.4.1/src/control/control.c	2017-10-16 21:42:12.480013374 +0200
+@@ -1331,13 +1331,13 @@
+ 			build_in++;
+ 		}
+ 		if (*build_in == NULL) {
+-			buf1 = malloc(strlen(str) + sizeof(ALSA_PLUGIN_DIR) + 32);
++			buf1 = malloc(strlen(str) + 32);
+ 			if (buf1 == NULL) {
+ 				err = -ENOMEM;
+ 				goto _err;
+ 			}
+ 			lib = buf1;
+-			sprintf(buf1, "%s/libasound_module_ctl_%s.so", ALSA_PLUGIN_DIR, str);
++			sprintf(buf1, "libasound_module_ctl_%s.so", str);
+ 		}
+ 	}
+ #ifndef PIC
+diff -ur alsa-lib-1.1.4.1.old/src/dlmisc.c alsa-lib-1.1.4.1/src/dlmisc.c
+--- alsa-lib-1.1.4.1.old/src/dlmisc.c	2017-06-01 08:27:36.000000000 +0200
++++ alsa-lib-1.1.4.1/src/dlmisc.c	2017-10-17 09:47:23.659893291 +0200
+@@ -32,6 +32,7 @@
+ #ifdef HAVE_LIBPTHREAD
+ #include <pthread.h>
+ #endif
++#include <linux/limits.h>
+ 
+ #ifndef DOC_HIDDEN
+ #ifndef PIC
+@@ -76,8 +77,27 @@
+ 	char *filename;
+ 
+ 	if (name && name[0] != '/') {
+-		filename = malloc(sizeof(ALSA_PLUGIN_DIR) + 1 + strlen(name) + 1);
+-		strcpy(filename, ALSA_PLUGIN_DIR);
++                struct link_map* links;
++                Dl_info info;
++                char origin[PATH_MAX];
++
++                if (dladdr1(&snd_dlopen, &info,
++                            (void**)&links, RTLD_DL_LINKMAP)
++                    == 0) {
++                        links = NULL;
++                }
++
++
++                if ((links != NULL)
++                    && (dlinfo(links, RTLD_DI_ORIGIN, origin) == 0)) {
++                      filename = malloc(strlen(origin) + 1 + 8 /*strlen("alsa-lib")*/ +  1 + strlen(name) + 1);
++                      strcpy(filename, origin);
++                      strcat(filename, "/alsa-lib");
++                } else {
++                      filename = malloc(sizeof(ALSA_PLUGIN_DIR) + 1 + strlen(name) + 1);
++                      strcpy(filename, ALSA_PLUGIN_DIR);
++                }
++
+ 		strcat(filename, "/");
+ 		strcat(filename, name);
+ 		handle = dlopen(filename, mode);
+diff -ur alsa-lib-1.1.4.1.old/src/mixer/simple_abst.c alsa-lib-1.1.4.1/src/mixer/simple_abst.c
+--- alsa-lib-1.1.4.1.old/src/mixer/simple_abst.c	2017-06-01 08:27:36.000000000 +0200
++++ alsa-lib-1.1.4.1/src/mixer/simple_abst.c	2017-10-16 21:42:20.429875375 +0200
+@@ -41,7 +41,7 @@
+ 
+ #ifndef DOC_HIDDEN
+ 
+-#define SO_PATH ALSA_PLUGIN_DIR "/smixer"
++#define SO_PATH "smixer"
+ 
+ typedef struct _class_priv {
+ 	char *device;
+diff -ur alsa-lib-1.1.4.1.old/src/pcm/pcm.c alsa-lib-1.1.4.1/src/pcm/pcm.c
+--- alsa-lib-1.1.4.1.old/src/pcm/pcm.c	2017-06-01 08:27:36.000000000 +0200
++++ alsa-lib-1.1.4.1/src/pcm/pcm.c	2017-10-16 21:41:24.710724708 +0200
+@@ -2432,13 +2432,13 @@
+ 			build_in++;
+ 		}
+ 		if (*build_in == NULL) {
+-			buf1 = malloc(strlen(str) + sizeof(ALSA_PLUGIN_DIR) + 32);
++			buf1 = malloc(strlen(str) + 32);
+ 			if (buf1 == NULL) {
+ 				err = -ENOMEM;
+ 				goto _err;
+ 			}
+ 			lib = buf1;
+-			sprintf(buf1, "%s/libasound_module_pcm_%s.so", ALSA_PLUGIN_DIR, str);
++			sprintf(buf1, "libasound_module_pcm_%s.so", str);
+ 		}
+ 	}
+ #ifndef PIC
+diff -ur alsa-lib-1.1.4.1.old/src/pcm/pcm_rate.c alsa-lib-1.1.4.1/src/pcm/pcm_rate.c
+--- alsa-lib-1.1.4.1.old/src/pcm/pcm_rate.c	2017-06-01 08:27:36.000000000 +0200
++++ alsa-lib-1.1.4.1/src/pcm/pcm_rate.c	2017-10-16 21:42:35.329619399 +0200
+@@ -1269,7 +1269,7 @@
+ 	snprintf(open_conf_name, sizeof(open_conf_name), "_snd_pcm_rate_%s_open_conf", type);
+ 	if (!is_builtin_plugin(type)) {
+ 		snprintf(lib_name, sizeof(lib_name),
+-				 "%s/libasound_module_rate_%s.so", ALSA_PLUGIN_DIR, type);
++				 "libasound_module_rate_%s.so", type);
+ 		lib = lib_name;
+ 	}
+ 
