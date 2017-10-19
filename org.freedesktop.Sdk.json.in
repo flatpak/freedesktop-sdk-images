@@ -94,6 +94,8 @@
                                    "touch -d @0 /usr/share/fonts",
                                    "touch -d @0 /usr/share/fonts/*",
                                    "fc-cache -fs",
+                                   /* Make sure pulseaudio is relocatable for the 32bit extension */
+                                   "chrpath -r '$ORIGIN/pulseaudio' /usr/lib/libpulse*.so",
                                    /* Work around gst-python issue */
                                    "ln -s libpython2.7.so.1.0 /usr/lib/libpython2.7.so",
                                    "ln -s libpython3.5m.so.1.0 /usr/lib/libpython3.5m.so",
@@ -1442,9 +1444,6 @@
                      "url": "http://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-10.0.tar.xz",
                      "sha256": "a3186824de9f0d2095ded5d0d0db0405dc73133983c2fbb37291547e37462f57"
                  }
-            ],
-            "post-install": [
-                "chrpath -r '$ORIGIN/pulseaudio' /usr/lib/libpulse*.so"
             ]
         },
         {
