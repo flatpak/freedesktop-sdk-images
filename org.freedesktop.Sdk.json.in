@@ -78,7 +78,9 @@
                           "ln -s /app/lib/debug /usr/lib/debug/app",
                           "ln -s ../../run/ /usr/lib/extensions",
                           "ldconfig -C /usr/etc/ld.so.cache",
-                          "cp -d /usr/lib/extra-links/* /usr/lib/ || true"
+                          "cp -d /usr/lib/extra-links/* /usr/lib/ || true",
+                          /* We need this in the platform cleanup-commands */
+                          "cp /usr/bin/chrpath /usr/bin/chrpath.platform"
                         ],
     "cleanup-platform": [ "/share/runtime/docs",
                           "/include",
@@ -95,7 +97,9 @@
                                    "touch -d @0 /usr/share/fonts/*",
                                    "fc-cache -fs",
                                    /* Make sure pulseaudio is relocatable for the 32bit extension */
-                                   "chrpath -r '$ORIGIN/pulseaudio' /usr/lib/libpulse*.so",
+                                   "chrpath.platform -r '$ORIGIN/pulseaudio' /usr/lib/libpulse*.so",
+                                   /* Now drop it */
+                                   "rm /usr/bin/chrpath.platform",
                                    /* Work around gst-python issue */
                                    "ln -s libpython2.7.so.1.0 /usr/lib/libpython2.7.so",
                                    "ln -s libpython3.5m.so.1.0 /usr/lib/libpython3.5m.so",
