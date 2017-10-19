@@ -137,8 +137,7 @@
                 "--enable-llvm",
                 "--with-llvm-prefix=/usr/lib/GL/default",
                 "--disable-llvm-shared-libs",
-                "--enable-dri",
-                "--enable-sysfs"
+                "--enable-dri"
             ],
             "make-args": [ "MKDEP=/bin/true"],
             "post-install": [
