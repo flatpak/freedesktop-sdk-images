@@ -162,6 +162,10 @@
                 {
                     "type": "patch",
                     "path": "mesa-Fix-linkage-against-shared-glapi.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "mesa-17.2.2-dri-path.patch"
                 }
             ]
         }
