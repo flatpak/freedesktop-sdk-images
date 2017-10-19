@@ -80,7 +80,8 @@
                           "ldconfig -C /usr/etc/ld.so.cache",
                           "cp -d /usr/lib/extra-links/* /usr/lib/ || true"
                         ],
-    "cleanup-platform": [ "/include",
+    "cleanup-platform": [ "/share/runtime/docs",
+                          "/include",
                           "/share/aclocal",
                           "/share/pkgconfig",
                           "/lib/pkgconfig",
@@ -1359,6 +1360,10 @@
                 {
                     "type": "patch",
                     "path": "mesa-Fix-linkage-against-shared-glapi.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "mesa-dri-path.patch"
                 }
             ]
         },
@@ -1436,6 +1441,9 @@
                      "url": "http://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-10.0.tar.xz",
                      "sha256": "a3186824de9f0d2095ded5d0d0db0405dc73133983c2fbb37291547e37462f57"
                  }
+            ],
+            "post-install": [
+                "chrpath -r '$ORIGIN/pulseaudio' /usr/lib/libpulse*.so"
             ]
         },
         {
@@ -1452,6 +1460,10 @@
                     "type": "script",
                     "dest-filename": "autogen.sh",
                     "commands": [ "autoreconf -i" ]
+                },
+                {
+                    "type": "patch",
+                    "path": "alsa-lib-plugin-path.patch"
                 }
             ]
         },
@@ -1459,7 +1471,11 @@
             "name": "alsa-plugins",
             "config-opts": [ "--disable-jack", "--enable-pulseaudio", "--disable-samplerate",
                              "--disable-avcodec", "--with-speex=no"],
-            "post-install": [ "mv /usr/share/alsa/alsa.conf.d/99-pulseaudio-default.conf.example /usr/share/alsa/alsa.conf.d/99-pulseaudio-default.conf" ],
+            "post-install": [
+                "mv /usr/share/alsa/alsa.conf.d/99-pulseaudio-default.conf.example /usr/share/alsa/alsa.conf.d/99-pulseaudio-default.conf",
+                "ln -s ../pulseaudio /usr/lib/alsa-lib/pulseaudio",
+                "chrpath -r '$ORIGIN/pulseaudio' /usr/lib/alsa-lib/libasound_module_pcm_pulse.so"
+            ],
             "sources": [
                 {
                     "type": "archive",
@@ -2244,8 +2260,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://www.libsdl.org/release/SDL2-2.0.5.tar.gz",
-                     "sha256": "442038cf55965969f2ff06d976031813de643af9c9edc9e331bd761c242e8785"
+                     "url": "http://www.libsdl.org/release/SDL2-2.0.6.tar.gz",
+                     "sha256": "03658b5660d16d7b31263a691e058ed37acdab155d68dabbad79998fb552c5df"
                  }
             ]
         },
@@ -2549,7 +2565,8 @@
                 }
             ],
             "build-commands": [
-                "./install-dicts.py */dictionaries.xcu"
+                "./install-dicts.py */dictionaries.xcu",
+                "ln -s /usr/share/hunspell /usr/share/myspell"
             ]
         },
         {
