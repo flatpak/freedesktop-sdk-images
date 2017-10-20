@@ -97,7 +97,7 @@
                                    "touch -d @0 /usr/share/fonts/*",
                                    "fc-cache -fs",
                                    /* Make sure pulseaudio is relocatable for the 32bit extension */
-                                   'F=`echo /usr/lib/libpulse*.so` && cp -ip "$F" "$F.tmp" && mv "$F.tmp" "$F"',
+                                   'for F in `echo /usr/lib/libpulse*.so`; do cp -ip "$F" "$F.tmp" && mv "$F.tmp" "$F"; done',
                                    "chrpath.platform -r '$ORIGIN/pulseaudio' /usr/lib/libpulse*.so",
                                    /* Now drop it */
                                    "rm /usr/bin/chrpath.platform",
