@@ -31,22 +31,22 @@
                 "arch" : {
                     "i386" : {
                         "config-opts" : [
-                            "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;NVPTX;BPF"
+                            "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;NVPTX"
                         ]
                     },
                     "x86_64" : {
                         "config-opts" : [
-                            "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;NVPTX;BPF"
+                            "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;NVPTX"
                         ]
                     },
                     "arm" : {
                         "config-opts" : [
-                            "-DLLVM_TARGETS_TO_BUILD=ARM;AMDGPU;NVPTX;BPF"
+                            "-DLLVM_TARGETS_TO_BUILD=ARM;AMDGPU;NVPTX"
                         ]
                     },
                     "aarch64" : {
                         "config-opts" : [
-                            "-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;NVPTX;BPF"
+                            "-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;NVPTX"
                         ]
                     }
                 }
