@@ -97,8 +97,7 @@
                                    "touch -d @0 /usr/share/fonts/*",
                                    "fc-cache -fs",
                                    /* Make sure pulseaudio is relocatable for the 32bit extension */
-                                   "for F in `echo /usr/lib/libpulse*.so`; do cp -ip \"$F\" \"$F.tmp\" && mv \"$F.tmp\" \"$F\"; done",
-                                   "chrpath.platform -r '$ORIGIN/pulseaudio' /usr/lib/libpulse*.so",
+                                   "for F in /usr/lib/libpulse*.so; do real=\"$(readlink -f \"${F}\")\" && cp -ip \"${real}\" \"${real}\".tmp && mv \"${real}\".tmp \"${real}\" && chrpath.platform -r '$ORIGIN/pulseaudio' \"${real}\"; done",
                                    /* Now drop it */
                                    "rm /usr/bin/chrpath.platform",
                                    /* Work around gst-python issue */
