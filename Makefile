@@ -61,6 +61,9 @@ mesa-stable:
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Platform.GL.mesa-stable, `date`" \
 		${EXPORT_ARGS} mesa org.freedesktop.Platform.GL.mesa-stable.json
+	if test "${ARCH}" == "i386" ; then \
+		flatpak build-commit-from ${EXPORT_ARGS} --src-ref=runtime/org.freedesktop.Platform.GL.default/${ARCH}/${SDK_BRANCH} ${REPO} runtime/org.freedesktop.Platform.GL32.default/x86_64/${SDK_BRANCH} ; \
+	fi
 
 vaapi-intel:
 	$(call subst-metadata)

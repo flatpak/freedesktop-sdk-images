@@ -1,0 +1,162 @@
+diff -ur mesa-17.2.2.old/src/egl/drivers/dri2/egl_dri2.c mesa-17.2.2/src/egl/drivers/dri2/egl_dri2.c
+--- mesa-17.2.2.old/src/egl/drivers/dri2/egl_dri2.c	2017-10-02 17:49:02.000000000 +0200
++++ mesa-17.2.2/src/egl/drivers/dri2/egl_dri2.c	2017-10-19 09:59:38.718386837 +0200
+@@ -478,12 +478,32 @@
+    return ret;
+ }
+ 
++static
++int get_origin_path(char* origin)
++{
++    struct link_map* links;
++    Dl_info info;
++
++    if (dladdr1(&get_origin_path, &info, (void**)&links, RTLD_DL_LINKMAP)
++        == 0) {
++        return 0;
++    }
++
++    if (dlinfo(links, RTLD_DI_ORIGIN, origin)
++        != 0) {
++        return 0;
++    }
++
++    return 1;
++}
++
+ static const __DRIextension **
+ dri2_open_driver(_EGLDisplay *disp)
+ {
+    struct dri2_egl_display *dri2_dpy = dri2_egl_display(disp);
+    const __DRIextension **extensions = NULL;
+    char path[PATH_MAX], *search_paths, *next, *end;
++   char origin_path[PATH_MAX];
+    char *get_extensions_name;
+    const __DRIextension **(*get_extensions)(void);
+ 
+@@ -492,6 +512,14 @@
+       /* don't allow setuid apps to use LIBGL_DRIVERS_PATH */
+       search_paths = getenv("LIBGL_DRIVERS_PATH");
+    }
++   if (search_paths == NULL) {
++       if (get_origin_path(origin_path)) {
++           if (strlen(origin_path) < (PATH_MAX - 4)) {
++               strcat(origin_path, "/dri");
++               search_paths = origin_path;
++           }
++       }
++   }
+    if (search_paths == NULL)
+       search_paths = DEFAULT_DRIVER_DIR;
+ 
+diff -ur mesa-17.2.2.old/src/gbm/backends/dri/gbm_dri.c mesa-17.2.2/src/gbm/backends/dri/gbm_dri.c
+--- mesa-17.2.2.old/src/gbm/backends/dri/gbm_dri.c	2017-10-02 17:49:02.000000000 +0200
++++ mesa-17.2.2/src/gbm/backends/dri/gbm_dri.c	2017-10-19 09:58:55.808938340 +0200
+@@ -300,11 +300,31 @@
+    return ret;
+ }
+ 
++static
++int get_origin_path(char* origin)
++{
++    struct link_map* links;
++    Dl_info info;
++
++    if (dladdr1(&get_origin_path, &info, (void**)&links, RTLD_DL_LINKMAP)
++        == 0) {
++        return 0;
++    }
++
++    if (dlinfo(links, RTLD_DI_ORIGIN, origin)
++        != 0) {
++        return 0;
++    }
++
++    return 1;
++}
++
+ static const __DRIextension **
+ dri_open_driver(struct gbm_dri_device *dri)
+ {
+    const __DRIextension **extensions = NULL;
+    char path[PATH_MAX], *search_paths, *p, *next, *end;
++   char origin_path[PATH_MAX];
+    char *get_extensions_name;
+ 
+    search_paths = NULL;
+@@ -322,6 +342,14 @@
+          search_paths = getenv("LIBGL_DRIVERS_PATH");
+       }
+    }
++   if (search_paths == NULL) {
++       if (get_origin_path(origin_path)) {
++           if (strlen(origin_path) < (PATH_MAX - 4)) {
++               strcat(origin_path, "/dri");
++               search_paths = origin_path;
++           }
++       }
++   }
+    if (search_paths == NULL)
+       search_paths = DEFAULT_DRIVER_DIR;
+ 
+diff -ur mesa-17.2.2.old/src/glx/dri_common.c mesa-17.2.2/src/glx/dri_common.c
+--- mesa-17.2.2.old/src/glx/dri_common.c	2017-10-02 17:49:02.000000000 +0200
++++ mesa-17.2.2/src/glx/dri_common.c	2017-10-19 09:58:55.808938340 +0200
+@@ -38,6 +38,7 @@
+ #include <unistd.h>
+ #include <dlfcn.h>
+ #include <stdarg.h>
++#include <linux/limits.h>
+ #include "glxclient.h"
+ #include "dri_common.h"
+ #include "loader.h"
+@@ -82,6 +83,25 @@
+ #define DEFAULT_DRIVER_DIR "/usr/local/lib/dri"
+ #endif
+ 
++static
++int get_origin_path(char* origin)
++{
++    struct link_map* links;
++    Dl_info info;
++
++    if (dladdr1(&get_origin_path, &info, (void**)&links, RTLD_DL_LINKMAP)
++        == 0) {
++        return 0;
++    }
++
++    if (dlinfo(links, RTLD_DI_ORIGIN, origin)
++        != 0) {
++        return 0;
++    }
++
++    return 1;
++}
++
+ /**
+  * Try to \c dlopen the named driver.
+  *
+@@ -99,6 +119,7 @@
+ {
+    void *glhandle, *handle;
+    const char *libPaths, *p, *next;
++   char origin_path[PATH_MAX];
+    char realDriverName[200];
+    int len;
+ 
+@@ -112,6 +133,15 @@
+       if (!libPaths)
+          libPaths = getenv("LIBGL_DRIVERS_DIR");        /* deprecated */
+    }
++   if (libPaths == NULL) {
++       if (get_origin_path(origin_path)) {
++           if (strlen(origin_path) < (PATH_MAX - 4)) {
++               strcat(origin_path, "/dri");
++               libPaths = origin_path;
++           }
++       }
++   }
++
+    if (libPaths == NULL)
+       libPaths = DEFAULT_DRIVER_DIR;
+ 
