@@ -1132,7 +1132,6 @@
                 "-DBUILD_SHARED_LIBS:BOOL=ON",
                 "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-                "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-Bsymbolic -static-libstdc++",
                 "-DLLVM_LIBDIR_SUFFIX=",
                 "-DLLVM_ENABLE_LIBCXX:BOOL=OFF",
                 "-DLLVM_ENABLE_ZLIB:BOOL=ON",
@@ -2138,23 +2137,29 @@
             ]
         },
         {
-            "name": "libappstream-glib",
-            "cleanup": ["/share/installed-tests"],
-            "config-opts": [ "--disable-man",
-                             "--disable-fonts",
-                             "--disable-firmware",
-                             "--disable-dep11",
-                             "--disable-static",
-                             "--disable-dependency-tracking" ],
+            "name": "gcab",
+            "config-opts": [ "--disable-static" ],
             "sources": [
                 {
                      "type": "archive",
-                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.6.13.tar.xz",
-                    "sha256": "1a3734b2cdaab55ad63c6e3ee31026fdceb122cecae39f9f7126a0305e8836bf"
-                },
+                    "url": "https://download.gnome.org/sources/gcab/0.7/gcab-0.7.tar.xz",
+                    "sha256": "a16e5ef88f1c547c6c8c05962f684ec127e078d302549f3dfd2291e167d4adef"
+                }
+            ]
+        },
+        {
+            "name": "libappstream-glib",
+            "buildsystem": "meson",
+            "cleanup": ["/share/installed-tests"],
+            "config-opts": [ "-Denable-fonts=false",
+                             "-Denable-dep11=false",
+                             "-Denable-rpm=false",
+                             "-Denable-stemmer=false" ],
+            "sources": [
                 {
-                    "type": "patch",
-                    "path": "appstream-glib-fix-project-group.patch"
+                     "type": "archive",
+                    "url": "https://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.7.2.tar.xz",
+                    "sha256": "c3b95171db6f61e9273c0e1e9341f19e487e20d49c466f56cd87f18c1859b77f"
                 }
             ]
         },
