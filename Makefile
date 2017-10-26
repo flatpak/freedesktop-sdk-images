@@ -34,7 +34,7 @@ endef
 
 all: runtimes
 
-extra: glxinfo gl-drivers-${ARCH} extensions
+extra: glxinfo gl-drivers extensions
 
 glxinfo: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
