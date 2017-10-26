@@ -137,8 +137,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/10/44/0899bf05d79a90a345252c38172d5359672119bc6125fe491a8263f173d1/meson-0.42.0.tar.gz",
-                    "sha256": "4ef46250beea2af272a2ab5bdf835dd06e8c8d341c18529d502b5f7be0ac73fe"
+                    "url": "https://pypi.python.org/packages/8f/2d/b82ad8015f68a6a261b458acc07b0252fbb0170d508844bce7fc95793a25/meson-0.43.0.tar.gz",
+                    "sha256": "c1e05a84e7ba34922562b638dbf85ceec817830ec78c776c8d7954b5bf87c562"
                 },
                 {
                     "type": "patch",
