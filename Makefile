@@ -42,7 +42,7 @@ glxinfo: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	    --subject="build of org.freedesktop.GlxInfo, `date`" \
 	    ${EXPORT_ARGS} glxinfo org.freedesktop.GlxInfo.json
 
-gl-drivers: gl-drivers-${ARCH}
+gl-drivers: gl-drivers-${ARCH} mesa-stable
 
 gl-drivers-${ARCH}:
 
