@@ -9,6 +9,8 @@
     "separate-locales": false,
     "cleanup": [  "/include", "/share/man" ],
     "build-options" : {
+        "no-debuginfo": true,
+        "strip": true,
         "cflags": "-O2 -g",
         "cxxflags": "-O2 -g",
         "prefix": "/usr/lib/GL/default",
