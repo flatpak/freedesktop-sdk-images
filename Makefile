@@ -42,13 +42,13 @@ glxinfo: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	    --subject="build of org.freedesktop.GlxInfo, `date`" \
 	    ${EXPORT_ARGS} glxinfo org.freedesktop.GlxInfo.json
 
-gl-drivers: gl-drivers-${ARCH} mesa-stable
+gl-drivers: gl-drivers-${ARCH}
 
 gl-drivers-${ARCH}:
 
-gl-drivers-i386:
+gl-drivers-i386: mesa-stable
 
-gl-drivers-x86_64:
+gl-drivers-x86_64: mesa-stable
 
 mesa-git:
 	$(call subst-metadata)
