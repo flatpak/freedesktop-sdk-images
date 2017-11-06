@@ -1977,8 +1977,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.20.tar.xz",
-                    "sha256": "70c90998a7809f60dc0a7439a68c34e59077dadb631657a6f9cab6a5539c02d9"
+                    "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.25.tar.xz",
+                    "sha256": "e25eaed5ab0775ddc211898fbfdc873b19e4a7ab03c0dbe88dff1938b433739e"
                 }
             ]
         },
