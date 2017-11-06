@@ -34,7 +34,7 @@ endef
 
 all: runtimes
 
-extra: glxinfo gl-drivers-${ARCH} extensions
+extra: glxinfo gl-drivers extensions
 
 glxinfo: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
@@ -46,9 +46,9 @@ gl-drivers: gl-drivers-${ARCH}
 
 gl-drivers-${ARCH}:
 
-gl-drivers-i386:
+gl-drivers-i386: mesa-stable
 
-gl-drivers-x86_64:
+gl-drivers-x86_64: mesa-stable
 
 mesa-git:
 	$(call subst-metadata)
@@ -61,7 +61,7 @@ mesa-stable:
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Platform.GL.mesa-stable, `date`" \
 		${EXPORT_ARGS} mesa org.freedesktop.Platform.GL.mesa-stable.json
-	if test "${ARCH}" == "i386" ; then \
+	if test "${ARCH}" = "i386" ; then \
 		flatpak build-commit-from ${EXPORT_ARGS} --src-ref=runtime/org.freedesktop.Platform.GL.default/${ARCH}/${SDK_BRANCH} ${REPO} runtime/org.freedesktop.Platform.GL32.default/x86_64/${SDK_BRANCH} ; \
 	fi
 

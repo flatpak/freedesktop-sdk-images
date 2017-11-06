@@ -97,8 +97,7 @@
                                    "touch -d @0 /usr/share/fonts/*",
                                    "fc-cache -fs",
                                    /* Make sure pulseaudio is relocatable for the 32bit extension */
-                                   "for F in `echo /usr/lib/libpulse*.so`; do cp -ip \"$F\" \"$F.tmp\" && mv \"$F.tmp\" \"$F\"; done",
-                                   "chrpath.platform -r '$ORIGIN/pulseaudio' /usr/lib/libpulse*.so",
+                                   "for F in /usr/lib/libpulse*.so; do real=\"$(readlink -f \"${F}\")\" && cp -ip \"${real}\" \"${real}\".tmp && mv \"${real}\".tmp \"${real}\" && chrpath.platform -r '$ORIGIN/pulseaudio' \"${real}\"; done",
                                    /* Now drop it */
                                    "rm /usr/bin/chrpath.platform",
                                    /* Work around gst-python issue */
@@ -131,14 +130,14 @@
             "name": "meson",
             "buildsystem": "simple",
             "build-commands": [
-                "python3 setup.py install"
+                "python3 setup.py  install"
             ],
             "cleanup-platform": ["*"],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/10/44/0899bf05d79a90a345252c38172d5359672119bc6125fe491a8263f173d1/meson-0.42.0.tar.gz",
-                    "sha256": "4ef46250beea2af272a2ab5bdf835dd06e8c8d341c18529d502b5f7be0ac73fe"
+                    "url": "https://pypi.python.org/packages/8f/2d/b82ad8015f68a6a261b458acc07b0252fbb0170d508844bce7fc95793a25/meson-0.43.0.tar.gz",
+                    "sha256": "c1e05a84e7ba34922562b638dbf85ceec817830ec78c776c8d7954b5bf87c562"
                 },
                 {
                     "type": "patch",
@@ -1978,8 +1977,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.20.tar.xz",
-                    "sha256": "70c90998a7809f60dc0a7439a68c34e59077dadb631657a6f9cab6a5539c02d9"
+                    "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.25.tar.xz",
+                    "sha256": "e25eaed5ab0775ddc211898fbfdc873b19e4a7ab03c0dbe88dff1938b433739e"
                 }
             ]
         },
