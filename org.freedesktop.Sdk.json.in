@@ -2515,6 +2515,35 @@
             ]
         },
         {
+            "name": "extra-cmake-modules",
+            "cleanup-platform": ["*"],
+            "config-opts": ["-DENABLE_TESTING=OFF", "-DCMAKE_INSTALL_LIBDIR=lib"],
+            "cmake": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.kde.org/stable/frameworks/5.39/extra-cmake-modules-5.39.0.tar.xz",
+                    "sha256": "b80536d7bed8c12fc492857d3d433b3859462402fe231e463efcd3bf44ffbcd1"
+                }
+            ]
+        },
+        {
+            "name": "fcitx",
+            "config-opts": ["-DENABLE_QT=Off", "-DENABLE_PINYIN=Off", "-DENABLE_TABLE=Off", "-DENABLE_GIR=Off", "-DENABLE_GTK3_IM_MODULE=On",
+                            "-DENABLE_OPENCC=Off", "-DENABLE_CAIRO=Off", "-DENABLE_SPELL=Off", "-DENABLE_GTK2_IM_MODULE=Off", "-DENABLE_LIBXML2=Off",
+                            "-DENABLE_X11=Off", "-DENABLE_ENCHANT=Off", "-DENABLE_PRESAGE=Off"],
+            "cleanup": ["/lib/fcitx", "/share", "/bin"],
+            "post-install": [ "gtk-query-immodules-3.0 --update-cache" ],
+            "cmake": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.fcitx-im.org/fcitx/fcitx-4.2.9.5.tar.xz",
+                    "sha256": "9479cef9b66e53df0e874637d55759ec08a195cb8790513e133135d8e49ad911"
+                }
+            ]
+        },
+        {
             "name": "os-release",
             "post-install": [
                 "mkdir -p /usr/share/runtime/share/themes",
