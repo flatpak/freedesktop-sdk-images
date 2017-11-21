@@ -38,7 +38,8 @@
             "subdirectories": true,
             "subdirectory-suffix": "gtk-3.0",
             "no-autodownload": true,
-            "version": "3.22"
+            "version": "3.22",
+            "download-if": "active-gtk-theme"
         },
         "org.freedesktop.Sdk.Extension" : {
             "subdirectories": true,
