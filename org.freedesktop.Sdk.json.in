@@ -2606,6 +2606,29 @@
                 "./install-dicts.py */dictionaries.xcu",
                 "ln -s /usr/share/hunspell /usr/share/myspell"
             ]
+        },
+        {
+            "name": "avahi",
+            "config-opts": [
+                "--with-distro=none",
+                "--disable-qt3",
+                "--disable-qt4",
+                "--disable-gtk",
+                "--disable-mono",
+                "--disable-monodoc",
+                "--disable-doxygen-doc",
+                "--disable-doxygen-dot",
+                "--disable-doxygen-html",
+                "--disable-libdaemon",
+                "--disable-python-dbus"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://avahi.org/download/avahi-0.7.tar.gz",
+                    "sha256": "57a99b5dfe7fdae794e3d1ee7a62973a368e91e414bd0dfa5d84434de5b14804"
+                }
+            ]
         }
     ]
 }
