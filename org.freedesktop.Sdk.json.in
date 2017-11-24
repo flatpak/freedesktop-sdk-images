@@ -48,7 +48,9 @@
         },
         "org.freedesktop.Platform.VAAPI.Intel" : {
             "directory": "lib/dri/intel-vaapi-driver",
-            "autodelete": false
+            "autodelete": false,
+            "no-autodownload": true,
+            "download-if": "have-intel-gpu"
         },
         "org.freedesktop.Sdk.Docs" : {
             "directory": "share/runtime/docs",
