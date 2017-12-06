@@ -366,6 +366,7 @@ main (int argc, char *argv[])
     }
 
   symlink ("libvdpau_nvidia.so." NVIDIA_VERSION, "libvdpau_nvidia.so");
+  symlink ("libcuda.so." NVIDIA_VERSION, "libcuda.so.1");
 
   replace_string_in_file ("vulkan/icd.d/nvidia_icd.json",
                           "__NV_VK_ICD__", "libGLX_nvidia.so.0");
