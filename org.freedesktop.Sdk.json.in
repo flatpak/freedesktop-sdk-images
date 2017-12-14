@@ -1073,6 +1073,22 @@
             ]
         },
         {
+            "name": "dconf",
+            "config-opts": ["--disable-static", "--disable-man"],
+            "cleanup": [ "/libexec/dconf-service", "/share/dbus-1/services/*" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/dconf/0.26/dconf-0.26.1.tar.xz",
+                    "sha256": "d583b1f7fc93b879e2956acc6a26ea05a445a0002158aeef80c8e378e1414535"
+                },
+                {
+                    "type": "patch",
+                    "path": "dconf-override.patch"
+                }
+            ]
+        },
+        {
             "name": "xkeyboard-config",
             "config-opts": [ "--enable-compat-rules", "--with-xkb-base=/usr/share/X11/xkb", "--with-xkb-rules-symlink=xorg"],
             "sources": [
