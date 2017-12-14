@@ -1525,8 +1525,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://github.com/anholt/libepoxy/archive/1.4.3.tar.gz",
-                     "sha256": "7f18518ba0036f7670f837a510bb25be4b3e7fba97d75193b24f7220de55b515"
+                     "url": "https://github.com/anholt/libepoxy/archive/1.4.1.tar.gz",
+                     "sha256": "da8f42c355b62c2c3ff6bc534c2a24099707b249c2af6eaf8db54b94c364a504"
                  }
             ]
         },
