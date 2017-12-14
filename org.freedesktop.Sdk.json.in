@@ -1028,6 +1028,17 @@
             ]
         },
         {
+            "name": "itstool",
+            "cleanup-platform": [ "*" ],
+            "sources": [
+                 {
+                     "type": "archive",
+                     "url": "http://files.itstool.org/itstool/itstool-2.0.2.tar.bz2",
+                     "sha256": "bf909fb59b11a646681a8534d5700fec99be83bb2c57badf8c1844512227033a"
+                 }
+            ]
+        },
+        {
             "name": "fontconfig",
             "config-opts": [ "--disable-static"],
             "post-install": [ "install -m 0644 -p -T fontconfig-flatpak.conf /etc/fonts/conf.d/50-flatpak.conf"],
@@ -1516,17 +1527,6 @@
                      "type": "archive",
                      "url": "https://github.com/anholt/libepoxy/archive/1.4.3.tar.gz",
                      "sha256": "7f18518ba0036f7670f837a510bb25be4b3e7fba97d75193b24f7220de55b515"
-                 }
-            ]
-        },
-        {
-            "name": "itstool",
-            "cleanup-platform": [ "*" ],
-            "sources": [
-                 {
-                     "type": "archive",
-                     "url": "http://files.itstool.org/itstool/itstool-2.0.2.tar.bz2",
-                     "sha256": "bf909fb59b11a646681a8534d5700fec99be83bb2c57badf8c1844512227033a"
                  }
             ]
         },
