@@ -151,8 +151,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://mesa.freedesktop.org/archive/mesa-17.2.2.tar.xz",
-                    "sha256": "cf522244d6a5a1ecde3fc00e7c96935253fe22f808f064cab98be6f3faa65782"
+                    "url": "https://mesa.freedesktop.org/archive/mesa-17.2.7.tar.xz",
+                    "sha256": "50cfdea8df55045797b4d0409591c04c784d9551c4da09b8178874dbe5a37a68"
                 },
                 {
                     "type": "patch",
