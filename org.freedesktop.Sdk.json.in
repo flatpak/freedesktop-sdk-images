@@ -66,23 +66,19 @@
         "--sdk=org.freedesktop.Sdk//@@SDK_BRANCH@@",
         "--runtime=org.freedesktop.Platform//@@SDK_BRANCH@@"
     ],
-    "cleanup": [ "/cache",
-                 "/share/doc",
+    "cleanup": [ "/share/doc",
                  "/lib/systemd",
                  "/lib/opkg",
                  "*.la", "*.a"],
     "cleanup-commands": [ "for i in /usr/lib/*.a; do cp $i $i.tmp; strip -g $i.tmp; mv $i.tmp $i; done",
-                          "touch -d @0 /usr/share/fonts /usr/share/fonts/*",
-                          "fc-cache -fs",
                           "mkdir -p /usr/lib/sdk",
                           "mkdir -p /usr/lib/GL",
                           "mkdir -p /usr/lib/debug",
                           "ln -s /app/lib/debug /usr/lib/debug/app",
                           "ln -s ../../run/ /usr/lib/extensions",
-                          "ldconfig -C /usr/etc/ld.so.cache",
-                          "cp -d /usr/lib/extra-links/* /usr/lib/ || true",
                           /* We need this in the platform cleanup-commands */
-                          "cp /usr/bin/chrpath /usr/bin/chrpath.platform"
+                          "cp /usr/bin/chrpath /usr/bin/chrpath.platform",
+                          "/usr/libexec/freedesktop-post.sh"
                         ],
     "cleanup-platform": [ "/share/runtime/docs",
                           "/include",
@@ -95,8 +91,6 @@
                           "/lib/python*/test"
                         ],
     "cleanup-platform-commands": [ "rm /usr/lib/*.a",
-                                   "touch -d @0 /usr/share/fonts /usr/share/fonts/*",
-                                   "fc-cache -fs",
                                    /* Make sure pulseaudio is relocatable for the 32bit extension */
                                    "for F in /usr/lib/libpulse*.so; do real=\"$(readlink -f \"${F}\")\" && cp -ip \"${real}\" \"${real}\".tmp && mv \"${real}\".tmp \"${real}\" && chrpath.platform -r '$ORIGIN/pulseaudio' \"${real}\"; done",
                                    /* Now drop it */
@@ -104,8 +98,7 @@
                                    /* Work around gst-python issue */
                                    "ln -s libpython2.7.so.1.0 /usr/lib/libpython2.7.so",
                                    "ln -s libpython3.5m.so.1.0 /usr/lib/libpython3.5m.so",
-                                   "ldconfig -C /usr/etc/ld.so.cache",
-                                   "cp -d /usr/lib/extra-links/* /usr/lib/ || true"
+                                   "/usr/libexec/freedesktop-post.sh"
                                  ],
     "build-options" : {
         "cflags": "-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2",
@@ -2601,6 +2594,26 @@
                     "type": "file",
                     "path": "os-release-configure",
                     "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "freedesktop-post",
+            "buildsystem": "simple",
+            "build-commands": [
+                "cp freedesktop-post.sh /usr/libexec"
+            ],
+            "sources": [
+                {
+                    "type": "script",
+                    "dest-filename": "freedesktop-post.sh",
+                    "commands": [
+                        "echo running freedesktop-post.sh",
+                        "touch -d @0 /usr/share/fonts /usr/share/fonts/*",
+                        "fc-cache -rs",
+                        "ldconfig -C /usr/etc/ld.so.cache",
+                        "cp -d /usr/lib/extra-links/* /usr/lib/ || true"
+                    ]
                 }
             ]
         },
