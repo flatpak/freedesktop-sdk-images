@@ -1045,8 +1045,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://fontconfig.org/release/fontconfig-2.12.5.tar.bz2",
-                     "sha256": "e10ccf1e26b0968f61d81037af1147fea28e86bfd159ffd8cfd5a486da126ce4"
+                     "url": "http://pkgs.fedoraproject.org/repo/pkgs/fontconfig/fontconfig-2.12.92.tar.bz2/sha512/4925cde8c988f25f40786b32937df68a9152a9a1e5645d3894aa5b9d70cffb7fd1a7b3e1480d716b93618ad7414bac752be6a77c71f1065dcee57368064030ab/fontconfig-2.12.92.tar.bz2",
+                     "sha256": "ec3eda59039a0f5ebae5595cc952172b7a2968a41d8281852c5622aef4d4993d"
                  },
                  {
                      "type": "file",
