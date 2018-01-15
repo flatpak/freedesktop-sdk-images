@@ -1572,6 +1572,26 @@
             ]
         },
         {
+            "name": "openal",
+            "buildsystem": "cmake",
+            "cleanup": [ "/bin" ],
+            "config-opts": [
+                "-DCMAKE_INSTALL_LIBDIR=lib",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://kcat.strangesoft.net/openal-releases/openal-soft-1.17.2.tar.bz2",
+                    "sha256": "a341f8542f1f0b8c65241a17da13d073f18ec06658e1a1606a8ecc8bbc2b3314"
+                },
+                {
+                    "type": "patch",
+                    "path": "openal-fpu-neon.patch"
+                }
+            ]
+        },
+        {
             "name": "cairo",
             "config-opts": ["--disable-static",
                             "--enable-xlib",
@@ -2335,26 +2355,6 @@
                      "url": "http://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.1.tar.gz",
                      "sha256": "5a24f62a610249d744cbd8d28ee399d8905db7222bf3bdbc8a8b4a76e597695f"
                  }
-            ]
-        },
-        {
-            "name": "openal",
-            "buildsystem": "cmake",
-            "cleanup": [ "/bin" ],
-            "config-opts": [
-                "-DCMAKE_INSTALL_LIBDIR=lib",
-                "-DCMAKE_BUILD_TYPE=Release"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://kcat.strangesoft.net/openal-releases/openal-soft-1.17.2.tar.bz2",
-                    "sha256": "a341f8542f1f0b8c65241a17da13d073f18ec06658e1a1606a8ecc8bbc2b3314"
-                },
-                {
-                    "type": "patch",
-                    "path": "openal-fpu-neon.patch"
-                }
             ]
         },
         {
