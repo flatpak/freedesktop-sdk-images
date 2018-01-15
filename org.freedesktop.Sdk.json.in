@@ -41,6 +41,11 @@
             "version": "3.22",
             "download-if": "active-gtk-theme"
         },
+        "org.freedesktop.Platform.ffmpeg" : {
+            "directory": "lib/ffmpeg",
+            "add-ld-path": "lib",
+            "no-autodownload": true
+        },
         "org.freedesktop.Sdk.Extension" : {
             "subdirectories": true,
             "directory": "lib/sdk",
@@ -74,6 +79,7 @@
                           "mkdir -p /usr/lib/sdk",
                           "mkdir -p /usr/lib/GL",
                           "mkdir -p /usr/lib/debug",
+                          "mkdir -p /usr/lib/ffmpeg",
                           "ln -s /app/lib/debug /usr/lib/debug/app",
                           "ln -s ../../run/ /usr/lib/extensions",
                           /* We need this in the platform cleanup-commands */
