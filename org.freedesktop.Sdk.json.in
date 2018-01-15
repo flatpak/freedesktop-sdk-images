@@ -2119,6 +2119,7 @@
                 "--enable-filter=crop,scale",
                 "--enable-protocol=file"
             ],
+            "post-install": [ "chrpath -d /usr/bin/ffmpeg"],
             "sources": [
                 {
                     "type": "archive",
