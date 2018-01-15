@@ -1049,6 +1049,10 @@
                      "sha256": "ec3eda59039a0f5ebae5595cc952172b7a2968a41d8281852c5622aef4d4993d"
                  },
                  {
+                     "type": "patch",
+                     "path": "fontconfig-fchash-fix.patch"
+                 },
+                 {
                      "type": "file",
                      "path": "fontconfig-flatpak.conf"
                  }
