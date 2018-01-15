@@ -2558,6 +2558,30 @@
             ]
         },
         {
+            "name": "dictionaries",
+            "buildsystem": "simple",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://anongit.freedesktop.org/git/libreoffice/dictionaries.git",
+                    "branch": "libreoffice-5.4.1.1",
+                    "commit": "c0379d0ff639cf4a51244011a944f862703b92df"
+                },
+                {
+                    "type": "file",
+                    "path": "install-dicts.py"
+                },
+                {
+                    "type": "file",
+                    "path": "th_gen_idx.pl"
+                }
+            ],
+            "build-commands": [
+                "./install-dicts.py */dictionaries.xcu",
+                "ln -s /usr/share/hunspell /usr/share/myspell"
+            ]
+        },
+        {
             "name": "os-release",
             "post-install": [
                 "mkdir -p /usr/share/runtime/share/themes",
@@ -2615,30 +2639,6 @@
                         "cp -d /usr/lib/extra-links/* /usr/lib/ || true"
                     ]
                 }
-            ]
-        },
-        {
-            "name": "dictionaries",
-            "buildsystem": "simple",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://anongit.freedesktop.org/git/libreoffice/dictionaries.git",
-                    "branch": "libreoffice-5.4.1.1",
-                    "commit": "c0379d0ff639cf4a51244011a944f862703b92df"
-                },
-                {
-                    "type": "file",
-                    "path": "install-dicts.py"
-                },
-                {
-                    "type": "file",
-                    "path": "th_gen_idx.pl"
-                }
-            ],
-            "build-commands": [
-                "./install-dicts.py */dictionaries.xcu",
-                "ln -s /usr/share/hunspell /usr/share/myspell"
             ]
         }
     ]
