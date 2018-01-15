@@ -2017,6 +2017,28 @@
             ]
         },
         {
+            "name": "SDL2",
+            "config-opts": ["--enable-sdl-dlopen",
+                            "--disable-arts",
+                            "--disable-esd",
+                            "--disable-nas",
+                            "--enable-pulseaudio",
+                            "--disable-alsa",
+                            "--disable-oss",
+                            "--disable-sndio",
+                            "--disable-libudev",
+                            "--enable-video-wayland",
+                            "--enable-wayland-shared=no"],
+            "cleanup-platform": ["/bin/sdl2-config"],
+            "sources": [
+                 {
+                     "type": "archive",
+                     "url": "http://www.libsdl.org/release/SDL2-2.0.6.tar.gz",
+                     "sha256": "03658b5660d16d7b31263a691e058ed37acdab155d68dabbad79998fb552c5df"
+                 }
+            ]
+        },
+        {
             "name": "orc",
             "config-opts": ["--disable-static"],
             "cleanup-platform": [ "/bin" ],
@@ -2283,28 +2305,6 @@
                      "type": "archive",
                      "url": "http://www.cups.org/software/2.1.0/cups-2.1.0-source.tar.bz2",
                      "sha256": "ba0238418442b8d84e09a865d0df6a728a20399826c5b466b14b1e9ab8c6d2c9"
-                 }
-            ]
-        },
-        {
-            "name": "SDL2",
-            "config-opts": ["--enable-sdl-dlopen",
-                            "--disable-arts",
-                            "--disable-esd",
-                            "--disable-nas",
-                            "--enable-pulseaudio",
-                            "--disable-alsa",
-                            "--disable-oss",
-                            "--disable-sndio",
-                            "--disable-libudev",
-                            "--enable-video-wayland",
-                            "--enable-wayland-shared=no"],
-            "cleanup-platform": ["/bin/sdl2-config"],
-            "sources": [
-                 {
-                     "type": "archive",
-                     "url": "http://www.libsdl.org/release/SDL2-2.0.6.tar.gz",
-                     "sha256": "03658b5660d16d7b31263a691e058ed37acdab155d68dabbad79998fb552c5df"
                  }
             ]
         },
