@@ -43,8 +43,7 @@
         },
         "org.freedesktop.Platform.ffmpeg" : {
             "directory": "lib/ffmpeg",
-            "add-ld-path": "lib",
-            "no-autodownload": true
+            "add-ld-path": "lib"
         },
         "org.freedesktop.Sdk.Extension" : {
             "subdirectories": true,
