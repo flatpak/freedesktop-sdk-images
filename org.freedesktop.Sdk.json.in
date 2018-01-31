@@ -16,7 +16,7 @@
             "no-autodownload": true,
             "autodelete": false,
             "add-ld-path": "lib",
-            "merge-dirs": "vulkan/icd.d;glvnd/egl_vendor.d",
+            "merge-dirs": "vulkan/icd.d;glvnd/egl_vendor.d;OpenCL/vendors",
             "download-if": "active-gl-driver",
             "enable-if": "active-gl-driver"
         },
@@ -1277,6 +1277,33 @@
                     "sha256": "ef0c065fa8e5fd496459208c089362bd079989ba519af236c6784b38221a88f0"
                 }
             ]
+        },
+        {
+          "name": "opencl",
+          "sources": [
+               {
+                    "type": "archive",
+                    "url": "https://github.com/OCL-dev/ocl-icd/archive/v2.2.12.tar.gz",
+                    "sha256": "17500e5788304eef5b52dbe784cec197bdae64e05eecf38317840d2d05484272"
+               },
+               {
+                    "type": "file",
+                    "url": "https://www.khronos.org/registry/OpenCL/api/2.1/cl.hpp",
+                    "sha256": "08034743b513512bb6ea3a1e9a59bdf1842d8199fccad73ac1b406a88d60f7e0",
+                    "dest-filename": "khronos-headers/CL/cl.hpp"
+               },
+               {
+                    "type": "file",
+                    "url": "https://github.com/KhronosGroup/OpenCL-CLHPP/releases/download/v2.0.10/cl2.hpp",
+                    "sha256": "7c5bce92a5c38480db1f8d929c965378c8448e956b1e3b41d49c57b3cc0398ec",
+                    "dest-filename": "khronos-headers/CL/cl2.hpp"
+               }
+          ],
+          "post-install": [
+                "cp -r khronos-headers/CL /usr/include"
+                "mkdir -p /usr/lib/GL/OpenCL/vendors",
+                "ln -s /usr/lib/GL/OpenCL /usr/etc/OpenCL"
+          ]
         },
         {
             "name": "libglvnd",
