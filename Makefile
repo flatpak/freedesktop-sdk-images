@@ -1,6 +1,7 @@
 # Override the arch with `make ARCH=i386`
 ARCH   ?= $(shell flatpak --default-arch)
 REPO   ?= repo
+FB_ARGS ?=
 
 # SDK Versions setup here
 #
@@ -40,7 +41,7 @@ glxinfo: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 	    --subject="build of org.freedesktop.GlxInfo, `date`" \
-	    ${EXPORT_ARGS} glxinfo org.freedesktop.GlxInfo.json
+	    ${EXPORT_ARGS} ${FB_ARGS} glxinfo org.freedesktop.GlxInfo.json
 
 gl-drivers: gl-drivers-${ARCH}
 
@@ -54,13 +55,13 @@ mesa-git:
 	$(call subst-metadata)
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Platform.GL.mesa-git, `date`" \
-		${EXPORT_ARGS} mesa org.freedesktop.Platform.GL.mesa-git.json
+		${EXPORT_ARGS} ${FB_ARGS} mesa org.freedesktop.Platform.GL.mesa-git.json
 
 mesa-stable:
 	$(call subst-metadata)
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Platform.GL.mesa-stable, `date`" \
-		${EXPORT_ARGS} mesa org.freedesktop.Platform.GL.mesa-stable.json
+		${EXPORT_ARGS} ${FB_ARGS} mesa org.freedesktop.Platform.GL.mesa-stable.json
 	if test "${ARCH}" = "i386" ; then \
 		flatpak build-commit-from ${EXPORT_ARGS} --src-ref=runtime/org.freedesktop.Platform.GL.default/${ARCH}/${SDK_BRANCH} ${REPO} runtime/org.freedesktop.Platform.GL32.default/x86_64/${SDK_BRANCH} ; \
 	fi
@@ -75,7 +76,7 @@ runtimes: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Sdk, `date`" \
-		${EXPORT_ARGS} sdk org.freedesktop.Sdk.json
+		${EXPORT_ARGS} ${FB_ARGS} sdk org.freedesktop.Sdk.json
 	if test "${ARCH}" = "i386" ; then \
 		flatpak build-commit-from ${EXPORT_ARGS} --src-ref=runtime/org.freedesktop.Platform/${ARCH}/${SDK_BRANCH} ${REPO} runtime/org.freedesktop.Platform.Compat32/x86_64/${SDK_BRANCH} ; \
 	fi
@@ -95,7 +96,7 @@ gfortran-extension: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
 		--subject="build of org.freedesktop.Sdk.Extension.gfortran62, `date`" \
-		${EXPORT_ARGS} sdk org.freedesktop.Sdk.Extension.gfortran62.json
+		${EXPORT_ARGS} ${FB_ARGS} sdk org.freedesktop.Sdk.Extension.gfortran62.json
 
 ${REPO}:
 	ostree  init --mode=archive-z2 --repo=${REPO}
