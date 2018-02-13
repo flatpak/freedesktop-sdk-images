@@ -1539,7 +1539,7 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://pkgs.fedoraproject.org/repo/pkgs/alsa-plugins/alsa-plugins-1.1.4.tar.bz2/de51130a7444b79b2dd3c25e28420754/alsa-plugins-1.1.4.tar.bz2",
+                    "url": "https://people.freedesktop.org/~alexl/alsa-plugins-1.1.4.tar.bz2",
                     "sha256": "530d1c3bdaeb058f2a03607a33b9e16ee5369bfd30a96bc09bd2c69b4ddd1a8a"
                 },
                 {
@@ -1717,7 +1717,7 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "http://pkgs.fedoraproject.org/repo/pkgs/libproxy/libproxy-0.4.14.tar.xz/sha512/610d5d8ffb812efd75541a8da2b2ab5882529364b3e736f26c57fba57183464b531f84d04bdc73fabd4d3899a63b909db59ead81081d55753386da511e5381b3/libproxy-0.4.14.tar.xz",
+                     "url": "https://people.freedesktop.org/~alexl/libproxy-0.4.14.tar.xz",
                      "sha256": "e25d046850346a505c0617646f1e68b660092efadf665548a89c280900262ea6"
                  }
             ]
