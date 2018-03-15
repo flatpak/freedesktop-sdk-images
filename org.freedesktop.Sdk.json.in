@@ -1043,12 +1043,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://people.freedesktop.org/~alexl/fontconfig-2.12.92.tar.bz2",
-                     "sha256": "ec3eda59039a0f5ebae5595cc952172b7a2968a41d8281852c5622aef4d4993d"
-                 },
-                 {
-                     "type": "patch",
-                     "path": "fontconfig-fchash-fix.patch"
+                     "url": "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.0.tar.bz2",
+                     "sha256": "91dde8492155b7f34bb95079e79be92f1df353fcc682c19be90762fd3e12eeb9"
                  },
                  {
                      "type": "file",
