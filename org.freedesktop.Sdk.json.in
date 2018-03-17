@@ -2209,6 +2209,31 @@
             ]
         },
         {
+            "name": "gstreamer-libav",
+            "build-options" : {
+                "arch" : {
+                    "i386" : {
+                        "config-opts" : [
+                            "--build=i586-unknown-linux-gnu"
+                        ]
+                    },
+                    "arm" : {
+                        "config-opts" : [
+                            "--build=arm-unknown-linux-gnueabi"
+                        ]
+                    }
+                }
+            },
+            "config-opts": ["--with-system-libav" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.10.5.tar.xz",
+                     "sha256": "e4d2f315f478d47281fbfdfbd590a63d23704ca37911d7142d5992616f4b28d3"
+                }
+            ]
+        },
+        {
             "name": "gstreamer-plugins-bad",
             "config-opts": ["--enable-experimental", "--enable-orc" ],
             "build-options" : {
