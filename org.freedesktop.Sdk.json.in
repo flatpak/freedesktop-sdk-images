@@ -135,8 +135,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/c0/98/bcbda7862f8ca18dbdaa57b9c51cf7333cdc59b48278ed279217cd6ad8ff/meson-0.44.0.tar.gz",
-                    "sha256": "16d3481ae9e3a8a2eee06f4963d682e4080503743e0ed8dcee24efc563baf8e6"
+                    "url": "https://github.com/mesonbuild/meson/releases/download/0.45.0/meson-0.45.0.tar.gz",
+                    "sha256": "3455abbc30a3fbd9cc8abb6d5fcdc42ce618665b95ac2c3ad7792a4a6ba47ce4"
                 },
                 {
                     "type": "patch",
