@@ -2310,10 +2310,10 @@
             "name": "libappstream-glib",
             "buildsystem": "meson",
             "cleanup": ["/share/installed-tests"],
-            "config-opts": [ "-Denable-fonts=false",
-                             "-Denable-dep11=false",
-                             "-Denable-rpm=false",
-                             "-Denable-stemmer=false" ],
+            "config-opts": [ "-Dfonts=false",
+                             "-Ddep11=false",
+                             "-Drpm=false",
+                             "-Dstemmer=false" ],
             "sources": [
                 {
                      "type": "archive",
