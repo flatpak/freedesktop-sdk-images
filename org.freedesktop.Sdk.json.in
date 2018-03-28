@@ -1550,8 +1550,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://github.com/anholt/libepoxy/archive/1.4.1.tar.gz",
-                     "sha256": "da8f42c355b62c2c3ff6bc534c2a24099707b249c2af6eaf8db54b94c364a504"
+                     "url": "https://github.com/anholt/libepoxy/releases/download/1.5.0/libepoxy-1.5.0.tar.xz",
+                     "sha256": "4c94995398a6ebf691600dda2e9685a0cac261414175c2adf4645cdfab42a5d5"
                  }
             ]
         },
