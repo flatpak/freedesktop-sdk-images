@@ -2680,7 +2680,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://anongit.freedesktop.org/git/libreoffice/dictionaries.git",
+                    "url": "https://github.com/LibreOffice/dictionaries.git",
                     "branch": "libreoffice-5.4.1.1",
                     "commit": "c0379d0ff639cf4a51244011a944f862703b92df"
                 },
