@@ -1098,6 +1098,18 @@
             ]
         },
         {
+            /* This is needed for gtk+ on wayland */
+            "name": "gsettings-desktop-schemas",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/gsettings-desktop-schemas/3.28/gsettings-desktop-schemas-3.28.0.tar.xz",
+                    "sha256": "4cb4cd7790b77e5542ec75275237613ad22f3a1f2f41903a298cf6cc996a9167"
+                }
+            ]
+        },
+
+        {
             "name": "xkeyboard-config",
             "config-opts": [ "--enable-compat-rules", "--with-xkb-base=/usr/share/X11/xkb", "--with-xkb-rules-symlink=xorg"],
             "sources": [
