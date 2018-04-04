@@ -2550,7 +2550,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/flatpak/flatpak-xdg-utils.git",
-                    "branch": "f8ed903c227b37110fc30bd1233d675f1c93c060"
+                    "branch": "44cef4d7284d598ff4b7d239e99471241d70127e"
                 }
             ]
         },
