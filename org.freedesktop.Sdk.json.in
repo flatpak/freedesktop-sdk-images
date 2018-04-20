@@ -2469,7 +2469,7 @@
         },
         {
             "name": "zenity",
-            "cleanup": [ "/share/help" ],
+            "cleanup": [ "/bin/gdialog", "/share/help" ],
             "config-opts": ["--disable-webkitgtk" ],
             "sources": [
                 {
