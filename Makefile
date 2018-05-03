@@ -37,6 +37,9 @@ all: runtimes
 
 extra: glxinfo gl-drivers extensions
 
+$(SUBST_FILES): $(patsubst %,%.in,$(SUBST_FILES))
+	$(call subst-metadata)
+
 glxinfo: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
 	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
