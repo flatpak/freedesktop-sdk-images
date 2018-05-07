@@ -1235,6 +1235,62 @@
             ]
         },
         {
+            "name": "llvm6libs",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "cleanup": ["/lib/llvm6"],
+            "build-options" : {
+                "prefix": "/usr/lib/llvm6",
+                "arch" : {
+                    "i386" : {
+                        "config-opts" : [
+                            "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;NVPTX"
+                        ]
+                    },
+                    "x86_64" : {
+                        "config-opts" : [
+                            "-DLLVM_TARGETS_TO_BUILD=X86;AMDGPU;NVPTX"
+                        ]
+                    },
+                    "arm" : {
+                        "config-opts" : [
+                            "-DLLVM_TARGETS_TO_BUILD=ARM;AMDGPU;NVPTX"
+                        ]
+                    },
+                    "aarch64" : {
+                        "config-opts" : [
+                            "-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;NVPTX"
+                        ]
+                    }
+                }
+            },
+            "config-opts": [
+                "-DLLVM_ENABLE_ASSERTIONS:BOOL=OFF",
+                "-DBUILD_SHARED_LIBS:BOOL=OFF",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DLLVM_LIBDIR_SUFFIX=",
+                "-DLLVM_ENABLE_LIBCXX:BOOL=OFF",
+                "-DLLVM_ENABLE_ZLIB:BOOL=ON",
+                "-DLLVM_ENABLE_FFI:BOOL=ON",
+                "-DLLVM_INCLUDE_TESTS:BOOL=OFF",
+                "-DLLVM_BUILD_TOOLS:BOOL=ON",
+                "-DLLVM_INCLUDE_EXAMPLES:BOOL=OFF",
+                "-DLLVM_INCLUDE_UTILS:BOOL=OFF",
+                "-DLLVM_INCLUDE_DOCS:BOOL=OFF",
+                "-DLLVM_ENABLE_DOXYGEN:BOOL=OFF",
+                "-DLLVM_BUILD_EXTERNAL_COMPILER_RT:BOOL=ON",
+                "-DFFI_INCLUDE_DIR=/usr/lib/libffi-3.2.1/include",
+                "-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://llvm.org/releases/6.0.0/llvm-6.0.0.src.tar.xz",
+                    "sha256": "1ff53c915b4e761ef400b803f07261ade637b0c269d99569f18040f3dcee4408"
+                }
+            ]
+        },
+        {
             "name": "wayland",
             "config-opts": ["--disable-static", "--disable-documentation"],
             "cleanup-platform": [ "/bin/wayland-scanner" ],
@@ -1356,14 +1412,14 @@
                             "--build=i586-unknown-linux-gnu",
 			    "--with-gallium-drivers=svga,swrast,nouveau,r600,r300,radeonsi",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965",
-			    "--with-vulkan-drivers=intel"
+			    "--with-vulkan-drivers=intel,radeon"
 			]
 		    },
 		    "x86_64" : {
 			"config-opts" : [
 			    "--with-gallium-drivers=svga,swrast,nouveau,r600,r300,radeonsi",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965",
-			    "--with-vulkan-drivers=intel"
+			    "--with-vulkan-drivers=intel,radeon"
 			]
 		    },
 		    "arm" : {
@@ -1395,8 +1451,9 @@
                 "--disable-opencl",
                 "--enable-glx-tls",
                 "--enable-texture-float=yes",
-                "--enable-gallium-llvm",
-                "--enable-llvm-shared-libs",
+                "--enable-llvm",
+                "--with-llvm-prefix=/usr/lib/llvm6",
+                "--disable-llvm-shared-libs",
                 "--enable-dri",
                 "--enable-sysfs"
             ],
@@ -1413,16 +1470,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://mesa.freedesktop.org/archive/mesa-17.0.7.tar.xz",
-                    "sha256": "f6d75304a229c8d10443e219d6b6c0c342567dbab5a879ebe7cfa3c9139c4492"
-                },
-                {
-                    "type": "patch",
-                    "path": "mesa-EGL-Implement-the-libglvnd-interface-for-EGL-v2.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "mesa-fixup-EGL-Implement-the-libglvnd-interface-for-EGL-v.patch"
+                    "url": "https://mesa.freedesktop.org/archive/mesa-18.0.2.tar.xz",
+                    "sha256": "98fa159768482dc568b9f8bf0f36c7acb823fa47428ffd650b40784f16b9e7b3"
                 },
                 {
                     "type": "patch",
@@ -1430,11 +1479,7 @@
                 },
                 {
                     "type": "patch",
-                    "path": "mesa-Fix-linkage-against-shared-glapi.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "mesa-dri-path.patch"
+                    "path": "mesa-17.2.2-dri-path.patch"
                 }
             ]
         },
