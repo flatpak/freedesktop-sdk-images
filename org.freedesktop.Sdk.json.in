@@ -1133,7 +1133,7 @@
         },
         {
             "name": "llvm",
-            "cmake": true,
+            "buildsystem": "cmake-ninja",
             "builddir": true,
             "build-options" : {
                 "cflags": "-g1",
@@ -1202,7 +1202,7 @@
         },
         {
             "name": "clang",
-            "cmake": true,
+            "buildsystem": "cmake-ninja",
             "builddir": true,
             "build-options" : {
                 "cflags": "-g1",
