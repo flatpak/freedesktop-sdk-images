@@ -2695,7 +2695,7 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.fcitx-im.org/fcitx/fcitx-4.2.9.5.tar.xz",
+                    "url": "https://people.freedesktop.org/~alexl/fcitx-4.2.9.5.tar.xz",
                     "sha256": "9479cef9b66e53df0e874637d55759ec08a195cb8790513e133135d8e49ad911"
                 }
             ]
