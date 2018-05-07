@@ -1394,7 +1394,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/NVIDIA/libglvnd.git",
-                    "branch": "4ba5345742d6c98b528ac28fb7127006d2cc3f75"
+                    "tag": "v1.0.0"
                 },
                 {
                     "type": "patch",
