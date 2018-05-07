@@ -1336,8 +1336,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/archive/sdk-1.0.57.0.tar.gz",
-                    "sha256": "ef0c065fa8e5fd496459208c089362bd079989ba519af236c6784b38221a88f0"
+                    "url": "https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/archive/sdk-1.1.73.0.tar.gz",
+                    "sha256": "ab6bd8162b246bc5d73dcfb3b69ed7a35b12b739735493f47304b0fc852463e1"
                 }
             ]
         },
