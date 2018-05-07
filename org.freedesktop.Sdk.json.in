@@ -2650,17 +2650,6 @@
             "build-commands": []
         },
         {
-            "name": "s2tc",
-            "config-opts": ["--disable-tools", "--disable-static"],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/divVerent/s2tc.git",
-                    "commit": "f6ec862d7594e29ae80a6e49f66ad4c76cf09abc"
-                }
-            ]
-        },
-        {
             "name": "ibus",
             "config-opts": ["--disable-xim", "--disable-static", "--disable-dconf", "--disable-schemas-compile", "--disable-gtk2",
                             "--disable-setup", "--disable-ui", "--disable-engine", "--disable-libnotify", "--disable-emoji-dict",
