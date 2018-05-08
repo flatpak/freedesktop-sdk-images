@@ -1436,13 +1436,13 @@
 		    },
 		    "arm" : {
 			"config-opts" : [
-			    "--with-gallium-drivers=swrast,nouveau,freedreno,vc4,etnaviv,imx",
+			    "--with-gallium-drivers=swrast,nouveau,freedreno,vc4",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200"
 			]
 		    },
 		    "aarch64" : {
 			"config-opts" : [
-			    "--with-gallium-drivers=swrast,nouveau,freedreno,vc4,etnaviv,imx",
+			    "--with-gallium-drivers=swrast,nouveau,freedreno,vc4",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200"
 			]
 		    }
