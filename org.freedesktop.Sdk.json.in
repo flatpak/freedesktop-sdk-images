@@ -1315,7 +1315,7 @@
         },
         {
             "name": "vulkan",
-            "cmake": true,
+            "buildsystem": "cmake",
             "config-opts": [
                 "-DCMAKE_INSTALL_LIBDIR=lib",
                 "-DCMAKE_BUILD_TYPE=Release",
@@ -1698,7 +1698,7 @@
         },
         {
             "name": "graphite2",
-            "cmake": true,
+            "buildsystem": "cmake",
             "config-opts": [
                 "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
                 "-DCMAKE_CXX_FLAGS_RELEASE:STRING=-DNDEBUG",
@@ -1748,7 +1748,7 @@
         },
         {
             "name": "libproxy",
-            "cmake": true,
+            "buildsystem": "cmake",
             "config-opts": [
                 "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
                 "-DCMAKE_CXX_FLAGS_RELEASE:STRING=-DNDEBUG",
@@ -2675,7 +2675,7 @@
             "name": "extra-cmake-modules",
             "cleanup-platform": ["*"],
             "config-opts": ["-DENABLE_TESTING=OFF", "-DCMAKE_INSTALL_LIBDIR=lib"],
-            "cmake": true,
+            "buildsystem": "cmake",
             "sources": [
                 {
                     "type": "archive",
@@ -2691,7 +2691,7 @@
                             "-DENABLE_X11=Off", "-DENABLE_ENCHANT=Off", "-DENABLE_PRESAGE=Off"],
             "cleanup": ["/lib/fcitx", "/share", "/bin"],
             "post-install": [ "gtk-query-immodules-3.0 --update-cache" ],
-            "cmake": true,
+            "buildsystem": "cmake",
             "sources": [
                 {
                     "type": "archive",
