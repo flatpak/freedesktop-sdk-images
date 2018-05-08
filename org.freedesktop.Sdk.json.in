@@ -1403,6 +1403,18 @@
             ]
         },
         {
+            "name": "libva",
+            "cleanup-platform": ["/bin"],
+
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://www.freedesktop.org/software/vaapi/releases/libva/libva-1.7.3.tar.bz2",
+                    "sha256": "22bc139498065a7950d966dbdb000cad04905cbd3dc8f3541f80d36c4670b9d9"
+                }
+            ]
+        },
+        {
             "name": "mesa",
             "build-options" : {
                 "cxxflags": "-fno-rtti -fno-exceptions",
@@ -1410,27 +1422,27 @@
 		    "i386" : {
 			"config-opts" : [
                             "--build=i586-unknown-linux-gnu",
-			    "--with-gallium-drivers=svga,swrast,nouveau,r600,r300,radeonsi",
+			    "--with-gallium-drivers=svga,swrast,radeonsi,nouveau,r600,r300,radeonsi,virgl",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965",
 			    "--with-vulkan-drivers=intel,radeon"
 			]
 		    },
 		    "x86_64" : {
 			"config-opts" : [
-			    "--with-gallium-drivers=svga,swrast,nouveau,r600,r300,radeonsi",
+			    "--with-gallium-drivers=svga,swrast,radeonsi,nouveau,r600,r300,radeonsi,virgl",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965",
 			    "--with-vulkan-drivers=intel,radeon"
 			]
 		    },
 		    "arm" : {
 			"config-opts" : [
-			    "--with-gallium-drivers=svga,swrast,nouveau,freedreno,vc4",
+			    "--with-gallium-drivers=swrast,nouveau,freedreno,vc4,etnaviv,imx",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200"
 			]
 		    },
 		    "aarch64" : {
 			"config-opts" : [
-			    "--with-gallium-drivers=svga,swrast,nouveau,freedreno,vc4",
+			    "--with-gallium-drivers=swrast,nouveau,freedreno,vc4,etnaviv,imx",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200"
 			]
 		    }
@@ -1444,8 +1456,11 @@
                 "--enable-egl",
                 "--disable-gles1",
                 "--enable-gles2",
+                "--enable-vdpau",
+                "--enable-va",
+                "--enable-xa",
                 "--disable-xvmc",
-                "--with-egl-platforms=x11,drm,surfaceless,wayland",
+                "--with-platforms=x11,drm,surfaceless,wayland",
                 "--enable-shared-glapi",
                 "--enable-gbm",
                 "--disable-opencl",
@@ -1480,18 +1495,6 @@
                 {
                     "type": "patch",
                     "path": "mesa-17.2.2-dri-path.patch"
-                }
-            ]
-        },
-        {
-            "name": "libva",
-            "cleanup-platform": ["/bin"],
-
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://www.freedesktop.org/software/vaapi/releases/libva/libva-1.7.3.tar.bz2",
-                    "sha256": "22bc139498065a7950d966dbdb000cad04905cbd3dc8f3541f80d36c4670b9d9"
                 }
             ]
         },
