@@ -2381,6 +2381,17 @@
             ]
         },
         {
+            "name": "fp-appstream-release",
+            "buildsystem": "simple",
+            "build-commands": [ "install -Dm0755 fp-appstream-release.sh /usr/bin/fp-appstream-release"],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "fp-appstream-release.sh"
+                }
+            ]
+        },
+        {
             "name": "hunspell",
             "config-opts": [ "--disable-static",
                              "--with-readline",
