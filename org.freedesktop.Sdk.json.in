@@ -1135,12 +1135,14 @@
             "name": "llvm",
             "buildsystem": "cmake-ninja",
             "builddir": true,
-            "build-options" : {
-                "cflags": "-g1",
-                "cxxflags": "-g1"
-            },
             "cleanup-platform": ["/bin/llvm-*"],
             "build-options" : {
+                "env": {
+                    /* Override global values */
+                    "CFLAGS": "",
+                    "CXXFLAGS": "",
+                    "LDFLAGS": ""
+                },
                 "arch" : {
                     "i386" : {
                         "config-opts" : [
@@ -1165,11 +1167,9 @@
                 }
             },
             "config-opts": [
-                "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
-                "-DCMAKE_CXX_FLAGS_RELEASE:STRING=-DNDEBUG",
                 "-DBUILD_SHARED_LIBS:BOOL=ON",
                 "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
-                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DCMAKE_BUILD_TYPE=MinSizeRel",
                 "-DLLVM_LIBDIR_SUFFIX=",
                 "-DLLVM_ENABLE_LIBCXX:BOOL=OFF",
                 "-DLLVM_ENABLE_ZLIB:BOOL=ON",
@@ -1205,15 +1205,17 @@
             "buildsystem": "cmake-ninja",
             "builddir": true,
             "build-options" : {
-                "cflags": "-g1",
-                "cxxflags": "-g1"
+                "env": {
+                    /* Override global values */
+                    "CFLAGS": "",
+                    "CXXFLAGS": "",
+                    "LDFLAGS": ""
+                }
             },
             "config-opts": [
-                "-DCMAKE_C_FLAGS_RELEASE:STRING=-DNDEBUG",
-                "-DCMAKE_CXX_FLAGS_RELEASE:STRING=-DNDEBUG",
                 "-DBUILD_SHARED_LIBS:BOOL=ON",
                 "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
-                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DCMAKE_BUILD_TYPE=Release",
                 "-DLLVM_CONFIG:FILEPATH=/usr/bin/llvm-config",
                 "-DCLANG_ENABLE_ARCMT:BOOL=ON",
                 "-DCLANG_ENABLE_STATIC_ANALYZER:BOOL=ON",
@@ -1240,6 +1242,12 @@
             "builddir": true,
             "cleanup": ["/lib/llvm6"],
             "build-options" : {
+                "env": {
+                    /* Override global values */
+                    "CFLAGS": "",
+                    "CXXFLAGS": "",
+                    "LDFLAGS": ""
+                },
                 "prefix": "/usr/lib/llvm6",
                 "arch" : {
                     "i386" : {
