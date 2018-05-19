@@ -50,6 +50,13 @@
             "directory": "lib/sdk",
             "no-autodownload": true
         },
+        "org.freedesktop.Sdk.Tools": {
+            "directory": "bin/sdk",
+            "add-ld-path": "lib",
+            "subdirectories": true,
+            "no-autodownload": true,
+            "autodelete": true
+        },
         "org.freedesktop.Platform.VAAPI.Intel" : {
             "directory": "lib/dri/intel-vaapi-driver",
             "autodelete": false,
@@ -76,6 +83,7 @@
                  "*.la", "*.a"],
     "cleanup-commands": [ "for i in /usr/lib/*.a; do cp $i $i.tmp; strip -g $i.tmp; mv $i.tmp $i; done",
                           "mkdir -p /usr/lib/sdk",
+                          "mkdir -p /usr/bin/sdk",
                           "mkdir -p /usr/lib/GL",
                           "mkdir -p /usr/lib/debug",
                           "mkdir -p /usr/lib/ffmpeg",
