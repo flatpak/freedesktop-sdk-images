@@ -1497,8 +1497,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://mesa.freedesktop.org/archive/mesa-18.0.2.tar.xz",
-                    "sha256": "98fa159768482dc568b9f8bf0f36c7acb823fa47428ffd650b40784f16b9e7b3"
+                    "url": "https://mesa.freedesktop.org/archive/mesa-18.0.4.tar.xz",
+                    "sha256": "1f3bcfe7cef0a5c20dae2b41df5d7e0a985e06be0183fa4d43b6068fcba2920f"
                 },
                 {
                     "type": "patch",
