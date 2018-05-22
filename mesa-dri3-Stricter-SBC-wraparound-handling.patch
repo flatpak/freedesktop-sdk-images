@@ -1,8 +1,27 @@
+From b5789d7e09da64754e3f30b2a521b94d42508334 Mon Sep 17 00:00:00 2001
+Message-Id: <b5789d7e09da64754e3f30b2a521b94d42508334.1526990891.git.jan.steffens@gmail.com>
+From: =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>
+Date: Wed, 16 May 2018 11:10:40 +0200
+Subject: [PATCH] dri3: Stricter SBC wraparound handling
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Prevents spuriously bumping the upper 32 bits of the SBC, which results
+in hangs with the modesetting driver from xserver 1.20.
+
+Bugzilla: https://bugs.freedesktop.org/106351
+Tested-by: Mike Lothian <mike@fireburn.co.uk>
+Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+---
+ src/loader/loader_dri3_helper.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
 diff --git a/src/loader/loader_dri3_helper.c b/src/loader/loader_dri3_helper.c
-index 6db8303d26d..f0ff2f07bde 100644
+index 2e3b6c619e..e1eecb70a9 100644
 --- a/src/loader/loader_dri3_helper.c
 +++ b/src/loader/loader_dri3_helper.c
-@@ -370,9 +370,17 @@ dri3_handle_present_event(struct loader_dri3_drawable *draw,
+@@ -365,9 +365,18 @@ dri3_handle_present_event(struct loader_dri3_drawable *draw,
         * checking for wrap.
         */
        if (ce->kind == XCB_PRESENT_COMPLETE_KIND_PIXMAP) {
@@ -20,6 +39,10 @@ index 6db8303d26d..f0ff2f07bde 100644
 +            draw->recv_sbc = recv_sbc;
 +         else if (recv_sbc == (draw->recv_sbc + 0x100000001ULL))
 +            draw->recv_sbc = recv_sbc - 0x100000000ULL;
- 
-          /* When moving from flip to copy, we assume that we can allocate in
-           * a more optimal way if we don't need to cater for the display
++
+          switch (ce->mode) {
+          case XCB_PRESENT_COMPLETE_MODE_FLIP:
+             draw->flipping = true;
+-- 
+2.17.0
+
