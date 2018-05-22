@@ -1507,10 +1507,6 @@
                 {
                     "type": "patch",
                     "path": "mesa-17.2.2-dri-path.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "mesa-dri3-Stricter-SBC-wraparound-handling.patch"
                 }
             ]
         },
