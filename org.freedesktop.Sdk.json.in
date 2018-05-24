@@ -1047,6 +1047,10 @@
                      "sha256": "91dde8492155b7f34bb95079e79be92f1df353fcc682c19be90762fd3e12eeb9"
                  },
                  {
+                     "type": "patch",
+                     "path": "fontconfig-relocate.patch"
+                 },
+                 {
                      "type": "file",
                      "path": "fontconfig-flatpak.conf"
                  }

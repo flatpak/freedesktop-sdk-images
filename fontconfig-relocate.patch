@@ -1,0 +1,563 @@
+From 664d4a113fcc544f857c9c99a0c3ecb731bd1fa1 Mon Sep 17 00:00:00 2001
+From: Alexander Larsson <alexl@redhat.com>
+Date: Wed, 23 May 2018 15:08:12 +0200
+Subject: [PATCH 1/3] Add FcCacheAllocate() helper
+
+This lets you allocate a chunk of memory that will be freed when the cache
+is freed.
+
+https://bugs.freedesktop.org/show_bug.cgi?id=106618
+---
+ src/fccache.c | 36 ++++++++++++++++++++++++++++++++++++
+ src/fcint.h   |  4 ++++
+ 2 files changed, 40 insertions(+)
+
+diff --git a/src/fccache.c b/src/fccache.c
+index 7abb750..deb79db 100644
+--- a/src/fccache.c
++++ b/src/fccache.c
+@@ -417,6 +417,7 @@ struct _FcCacheSkip {
+     FcCache	    *cache;
+     FcRef	    ref;
+     intptr_t	    size;
++    void	   *allocated;
+     dev_t	    cache_dev;
+     ino_t	    cache_ino;
+     time_t	    cache_mtime;
+@@ -542,6 +543,7 @@ FcCacheInsert (FcCache *cache, struct stat *cache_stat)
+ 
+     s->cache = cache;
+     s->size = cache->size;
++    s->allocated = NULL;
+     FcRefInit (&s->ref, 1);
+     if (cache_stat)
+     {
+@@ -616,6 +618,7 @@ FcCacheRemoveUnlocked (FcCache *cache)
+     FcCacheSkip	    **update[FC_CACHE_MAX_LEVEL];
+     FcCacheSkip	    *s, **next;
+     int		    i;
++    void            *allocated;
+ 
+     /*
+      * Find links along each chain
+@@ -633,6 +636,15 @@ FcCacheRemoveUnlocked (FcCache *cache)
+ 	*update[i] = s->next[i];
+     while (fcCacheMaxLevel > 0 && fcCacheChains[fcCacheMaxLevel - 1] == NULL)
+ 	fcCacheMaxLevel--;
++
++    allocated = s->allocated;
++    while (allocated)
++    {
++	/* First element in allocated chunk is the free list */
++	next = *(void **)allocated;
++	free (allocated);
++	allocated = next;
++    }
+     free (s);
+ }
+ 
+@@ -702,6 +714,30 @@ FcCacheObjectDereference (void *object)
+     unlock_cache ();
+ }
+ 
++void *
++FcCacheAllocate (FcCache *cache, size_t len)
++{
++    FcCacheSkip	*skip;
++    void *allocated = NULL;
++
++    lock_cache ();
++    skip = FcCacheFindByAddrUnlocked (cache);
++    if (skip)
++    {
++      void *chunk = malloc (sizeof (void *) + len);
++      if (chunk)
++      {
++	  /* First element in allocated chunk is the free list */
++	  *(void **)chunk = skip->allocated;
++	  skip->allocated = chunk;
++	  /* Return the rest */
++	  allocated = ((FcChar8 *)chunk) + sizeof (void *);
++      }
++    }
++    unlock_cache ();
++    return allocated;
++}
++
+ void
+ FcCacheFini (void)
+ {
+diff --git a/src/fcint.h b/src/fcint.h
+index 5de311f..c0f4cca 100644
+--- a/src/fcint.h
++++ b/src/fcint.h
+@@ -617,9 +617,13 @@ FcCacheObjectReference (void *object);
+ FcPrivate void
+ FcCacheObjectDereference (void *object);
+ 
++FcPrivate void *
++FcCacheAllocate (FcCache *cache, size_t len);
++
+ FcPrivate void
+ FcCacheFini (void);
+ 
++
+ FcPrivate void
+ FcDirCacheReference (FcCache *cache, int nref);
+ 
+-- 
+2.9.3
+
+From 6deee86033ebf42064892ff4c4c405a9cb514aa6 Mon Sep 17 00:00:00 2001
+From: Alexander Larsson <alexl@redhat.com>
+Date: Wed, 23 May 2018 15:15:33 +0200
+Subject: [PATCH 2/3] Cache: Rewrite relocated paths in earlier
+
+This changes the rewriting of the FC_FILE values for relocated caches to an earlier stage
+while reading the cache. This is better, because it means all APIs will report the
+rewritten paths, not just the once that use the list apis.
+
+We do this by detecting the relocated case and duplicating the FcPattern and FcPatternElm
+in an cache allocation (which will die with the cache) and then reusing the FcValueLists
+from the cache.
+
+This means that in the rewritten case we will use some more memory, but not the full
+size of the cache. In a test here I had 800k of relocated caches, but ~200k of wasted
+on duplicating the objects.
+
+This should fix https://bugs.freedesktop.org/show_bug.cgi?id=106618
+---
+ src/fccfg.c   | 44 +++++++++++++++++++++++++++---------
+ src/fcint.h   |  5 ++++-
+ src/fclist.c  | 36 ------------------------------
+ src/fcmatch.c | 34 ----------------------------
+ src/fcpat.c   | 71 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 5 files changed, 106 insertions(+), 84 deletions(-)
+
+diff --git a/src/fccfg.c b/src/fccfg.c
+index eb0b76d..af19e1c 100644
+--- a/src/fccfg.c
++++ b/src/fccfg.c
+@@ -337,11 +337,15 @@ FcConfigDestroy (FcConfig *config)
+ 
+ FcBool
+ FcConfigAddCache (FcConfig *config, FcCache *cache,
+-		  FcSetName set, FcStrSet *dirSet)
++		  FcSetName set, FcStrSet *dirSet, FcChar8 *forDir)
+ {
+     FcFontSet	*fs;
+     intptr_t	*dirs;
+     int		i;
++    FcBool      relocated = FcFalse;
++
++    if (strcmp ((char *)FcCacheDir(cache), (char *)forDir) != 0)
++      relocated = FcTrue;
+ 
+     /*
+      * Add fonts
+@@ -355,23 +359,43 @@ FcConfigAddCache (FcConfig *config, FcCache *cache,
+ 	{
+ 	    FcPattern	*font = FcFontSetFont (fs, i);
+ 	    FcChar8	*font_file;
++	    FcChar8	*relocated_font_file = NULL;
+ 
+-	    /*
+-	     * Check to see if font is banned by filename
+-	     */
+ 	    if (FcPatternObjectGetString (font, FC_FILE_OBJECT,
+-					  0, &font_file) == FcResultMatch &&
+-		!FcConfigAcceptFilename (config, font_file))
++					  0, &font_file) == FcResultMatch)
+ 	    {
+-		continue;
++		if (relocated)
++		  {
++		    FcChar8 *slash = FcStrLastSlash (font_file);
++		    relocated_font_file = FcStrBuildFilename (forDir, slash + 1, NULL);
++		    font_file = relocated_font_file;
++		  }
++
++		/*
++		 * Check to see if font is banned by filename
++		 */
++		if (!FcConfigAcceptFilename (config, font_file))
++		{
++		    free (relocated_font_file);
++		    continue;
++		}
+ 	    }
+-		
++
+ 	    /*
+ 	     * Check to see if font is banned by pattern
+ 	     */
+ 	    if (!FcConfigAcceptFont (config, font))
++	    {
++		free (relocated_font_file);
+ 		continue;
+-		
++	    }
++
++	    if (relocated_font_file)
++	    {
++	      font = FcPatternCacheRewriteFile (font, cache, relocated_font_file);
++	      free (relocated_font_file);
++	    }
++
+ 	    if (FcFontSetAdd (config->fonts[set], font))
+ 		nref++;
+ 	}
+@@ -426,7 +450,7 @@ FcConfigAddDirList (FcConfig *config, FcSetName set, FcStrSet *dirSet)
+ 	cache = FcDirCacheRead (dir, FcFalse, config);
+ 	if (!cache)
+ 	    continue;
+-	FcConfigAddCache (config, cache, set, dirSet);
++	FcConfigAddCache (config, cache, set, dirSet, dir);
+ 	FcDirCacheUnload (cache);
+     }
+     FcStrListDone (dirlist);
+diff --git a/src/fcint.h b/src/fcint.h
+index c0f4cca..0be965b 100644
+--- a/src/fcint.h
++++ b/src/fcint.h
+@@ -712,7 +712,7 @@ FcConfigModifiedTime (FcConfig *config);
+ 
+ FcPrivate FcBool
+ FcConfigAddCache (FcConfig *config, FcCache *cache,
+-		  FcSetName set, FcStrSet *dirSet);
++		  FcSetName set, FcStrSet *dirSet, FcChar8 *forDir);
+ 
+ FcPrivate FcRuleSet *
+ FcRuleSetCreate (const FcChar8 *name);
+@@ -1154,6 +1154,9 @@ FcPatternAppend (FcPattern *p, FcPattern *s);
+ FcPrivate int
+ FcPatternPosition (const FcPattern *p, const char *object);
+ 
++FcPrivate FcPattern *
++FcPatternCacheRewriteFile (const FcPattern *pat, FcCache *cache, const FcChar8 *relocated_font_file);
++
+ FcPrivate FcChar32
+ FcStringHash (const FcChar8 *s);
+ 
+diff --git a/src/fclist.c b/src/fclist.c
+index 5f92a72..d7e8fc0 100644
+--- a/src/fclist.c
++++ b/src/fclist.c
+@@ -448,41 +448,6 @@ FcListAppend (FcListHashTable	*table,
+ 	e = FcPatternObjectFindElt (font, FcObjectFromName (os->objects[o]));
+ 	if (e)
+ 	{
+-	    if (FcRefIsConst (&font->ref) && !strcmp (os->objects[o], FC_FILE))
+-	    {
+-		FcChar8 *dir, *alias;
+-		FcConfig *config = FcConfigGetCurrent (); /* FIXME: this may need to be exported as API? */
+-
+-		for (v = FcPatternEltValues (e); v->value.type != FcTypeString; v = FcValueListNext (v));
+-		if (!v)
+-		    goto bail2;
+-		dir = FcStrDirname (FcValueString (&v->value));
+-		if (FcHashTableFind (config->alias_table, dir, (void **) &alias))
+-		{
+-		    FcChar8 *base = FcStrBasename (FcValueString (&v->value));
+-		    FcChar8 *s = FcStrBuildFilename (alias, base, NULL);
+-		    FcValue vv;
+-
+-		    FcStrFree (alias);
+-		    FcStrFree (base);
+-		    vv.type = FcTypeString;
+-		    vv.u.s = s;
+-		    if (!FcPatternAdd (bucket->pattern,
+-				       os->objects[o],
+-				       FcValueCanonicalize (&vv),
+-				       FcTrue))
+-		    {
+-			FcStrFree (s);
+-			FcStrFree (dir);
+-			goto bail2;
+-		    }
+-		    FcStrFree (s);
+-		    FcStrFree (dir);
+-		    goto bail3;
+-		}
+-		else
+-		    FcStrFree (dir);
+-	    }
+ 	    for (v = FcPatternEltValues(e), idx = 0; v;
+ 		 v = FcValueListNext(v), ++idx)
+ 	    {
+@@ -491,7 +456,6 @@ FcListAppend (FcListHashTable	*table,
+ 				   FcValueCanonicalize(&v->value), defidx != idx))
+ 		    goto bail2;
+ 	    }
+-	  bail3:;
+ 	}
+     }
+     *prev = bucket;
+diff --git a/src/fcmatch.c b/src/fcmatch.c
+index 62f8e58..4b3f599 100644
+--- a/src/fcmatch.c
++++ b/src/fcmatch.c
+@@ -682,43 +682,9 @@ FcFontRenderPrepare (FcConfig	    *config,
+ 	}
+ 	else
+ 	{
+-	    if (FcRefIsConst (&font->ref) && fe->object == FC_FILE_OBJECT)
+-	    {
+-		FcValueListPtr l = FcPatternEltValues (fe);
+-		FcChar8 *dir, *alias;
+-
+-		while (l->value.type != FcTypeString)
+-		    l = FcValueListNext (l);
+-		if (!l)
+-		    goto bail0;
+-		dir = FcStrDirname (FcValueString (&l->value));
+-		if (!config)
+-		    config = FcConfigGetCurrent ();
+-		if (config && FcHashTableFind (config->alias_table, dir, (void **) &alias))
+-		{
+-		    FcChar8 *base = FcStrBasename (FcValueString (&l->value));
+-		    FcChar8 *s = FcStrBuildFilename (alias, base, NULL);
+-		    FcValue v;
+-
+-		    FcStrFree (alias);
+-		    FcStrFree (base);
+-		    v.type = FcTypeString;
+-		    v.u.s = s;
+-		    FcPatternObjectAddWithBinding (new, fe->object,
+-						   FcValueCanonicalize (&v),
+-						   l->binding,
+-						   FcTrue);
+-		    FcStrFree (s);
+-		    FcStrFree (dir);
+-		    goto bail0;
+-		}
+-		else
+-		    FcStrFree (dir);
+-	    }
+ 	    FcPatternObjectListAdd (new, fe->object,
+ 				    FcValueListDuplicate (FcPatternEltValues (fe)),
+ 				    FcTrue);
+-	  bail0:;
+ 	}
+     }
+     for (i = 0; i < pat->num; i++)
+diff --git a/src/fcpat.c b/src/fcpat.c
+index e624aea..12e0fb1 100644
+--- a/src/fcpat.c
++++ b/src/fcpat.c
+@@ -373,6 +373,71 @@ FcValueListHash (FcValueListPtr l)
+     return hash;
+ }
+ 
++static void *
++FcPatternGetCacheObject (FcPattern *p)
++{
++  /* We use a value to find the cache, instead of the FcPattern object
++   * because the pattern itself may be a cache allocation if we rewrote the path,
++   * so the p may not be in the cached region. */
++  return FcPatternEltValues(&FcPatternElts (p)[0]);
++}
++
++FcPattern *
++FcPatternCacheRewriteFile (const FcPattern *p,
++                           FcCache *cache,
++                           const FcChar8 *relocated_font_file)
++{
++    FcPatternElt *elts = FcPatternElts (p);
++    size_t i,j;
++    FcChar8 *data;
++    FcPattern *new_p;
++    FcPatternElt *new_elts;
++    FcValueList *new_value_list;
++    size_t new_path_len = strlen ((char *)relocated_font_file);
++    FcChar8 *new_path;
++
++    /* Allocate space for the patter, the PatternElt headers and
++     * the FC_FILE FcValueList and path that will be freed with the
++     * cache */
++    data = FcCacheAllocate (cache,
++			    sizeof (FcPattern) +
++			    p->num * sizeof (FcPatternElt) +
++			    sizeof (FcValueList) +
++			    new_path_len + 1);
++
++    new_p = (FcPattern *)data;
++    data += sizeof (FcPattern);
++    new_elts = (FcPatternElt *)(data);
++    data += p->num * sizeof (FcPatternElt);
++    new_value_list = (FcValueList *)data;
++    data += sizeof (FcValueList);
++    new_path = data;
++
++    *new_p = *p;
++    new_p->elts_offset = FcPtrToOffset (new_p, new_elts);
++
++    /* Copy all but the FILE values from the cache */
++    for (i = 0, j = 0; i < p->num; i++)
++    {
++	FcPatternElt *elt = &elts[i];
++	new_elts[j].object = elt->object;
++	if (elt->object != FC_FILE_OBJECT)
++	    new_elts[j++].values = FcPatternEltValues(elt);
++	else
++	    new_elts[j++].values = new_value_list;
++    }
++
++    new_value_list->next = NULL;
++    new_value_list->value.type = FcTypeString;
++    new_value_list->value.u.s = new_path;
++    new_value_list->binding = FcValueBindingWeak;
++
++    /* Add rewritten path at the end */
++    strcpy ((char *)new_path, (char *)relocated_font_file);
++
++    return new_p;
++}
++
+ void
+ FcPatternDestroy (FcPattern *p)
+ {
+@@ -384,10 +449,10 @@ FcPatternDestroy (FcPattern *p)
+ 
+     if (FcRefIsConst (&p->ref))
+     {
+-	FcCacheObjectDereference (p);
++	FcCacheObjectDereference (FcPatternGetCacheObject(p));
+ 	return;
+     }
+-	
++
+     if (FcRefDec (&p->ref) != 1)
+ 	return;
+ 
+@@ -1155,7 +1220,7 @@ FcPatternReference (FcPattern *p)
+     if (!FcRefIsConst (&p->ref))
+ 	FcRefInc (&p->ref);
+     else
+-	FcCacheObjectReference (p);
++	FcCacheObjectReference (FcPatternGetCacheObject(p));
+ }
+ 
+ FcPattern *
+-- 
+2.9.3
+
+From 689fe73f7bd80e3f806ec29caebc7619b114c877 Mon Sep 17 00:00:00 2001
+From: Alexander Larsson <alexl@redhat.com>
+Date: Wed, 23 May 2018 16:00:01 +0200
+Subject: [PATCH 3/3] Cache: Remove alias_table
+
+There is really no need for this anymore
+
+https://bugs.freedesktop.org/show_bug.cgi?id=106618
+---
+ src/fccache.c | 12 +-----------
+ src/fccfg.c   | 15 ++-------------
+ src/fcint.h   |  1 -
+ 3 files changed, 3 insertions(+), 25 deletions(-)
+
+diff --git a/src/fccache.c b/src/fccache.c
+index deb79db..f02486c 100644
+--- a/src/fccache.c
++++ b/src/fccache.c
+@@ -259,19 +259,14 @@ static FcChar8 *
+ FcDirCacheBasenameUUID (const FcChar8 *dir, FcChar8 cache_base[CACHEBASE_LEN], FcConfig *config)
+ {
+     void *u;
+-    FcChar8 *alias;
+ 
+-    if (!FcHashTableFind (config->alias_table, dir, (void **)&alias))
+-	alias = FcStrdup (dir);
+-    if (FcHashTableFind (config->uuid_table, alias, &u))
++    if (FcHashTableFind (config->uuid_table, dir, &u))
+     {
+ 	uuid_unparse (u, (char *) cache_base);
+ 	strcat ((char *) cache_base, "-" FC_ARCHITECTURE FC_CACHE_SUFFIX);
+ 	FcHashUuidFree (u);
+-	FcStrFree (alias);
+ 	return cache_base;
+     }
+-    FcStrFree (alias);
+     return NULL;
+ }
+ #endif
+@@ -991,7 +986,6 @@ FcCache *
+ FcDirCacheLoad (const FcChar8 *dir, FcConfig *config, FcChar8 **cache_file)
+ {
+     FcCache *cache = NULL;
+-    const FcChar8 *d;
+ 
+ #ifndef _WIN32
+     FcDirCacheReadUUID ((FcChar8 *) dir, config);
+@@ -1001,10 +995,6 @@ FcDirCacheLoad (const FcChar8 *dir, FcConfig *config, FcChar8 **cache_file)
+ 			    &cache, cache_file))
+ 	return NULL;
+ 
+-    d = FcCacheDir (cache);
+-    if (FcStrCmp (dir, d))
+-	FcHashTableAdd (config->alias_table, (FcChar8 *) d, (FcChar8 *) dir);
+-
+     return cache;
+ }
+ 
+diff --git a/src/fccfg.c b/src/fccfg.c
+index af19e1c..b1147e2 100644
+--- a/src/fccfg.c
++++ b/src/fccfg.c
+@@ -157,12 +157,6 @@ FcConfigCreate (void)
+ 					    FcHashUuidCopy,
+ 					    (FcDestroyFunc) FcStrFree,
+ 					    FcHashUuidFree);
+-    config->alias_table = FcHashTableCreate ((FcHashFunc) FcStrHashIgnoreCase,
+-					     (FcCompareFunc) FcStrCmp,
+-					     FcHashStrCopy,
+-					     FcHashStrCopy,
+-					     (FcDestroyFunc) FcStrFree,
+-					     (FcDestroyFunc) FcStrFree);
+ 
+     FcRefInit (&config->ref, 1);
+ 
+@@ -326,7 +320,6 @@ FcConfigDestroy (FcConfig *config)
+ 	FcStrFree (config->sysRoot);
+ 
+     FcHashTableDestroy (config->uuid_table);
+-    FcHashTableDestroy (config->alias_table);
+ 
+     free (config);
+ }
+@@ -411,18 +404,14 @@ FcConfigAddCache (FcConfig *config, FcCache *cache,
+ 	for (i = 0; i < cache->dirs_count; i++)
+ 	{
+ 	    const FcChar8 *dir = FcCacheSubdir (cache, i);
+-	    FcChar8 *alias;
+-	    FcChar8 *d = FcStrDirname (dir);
+ 	    FcChar8 *s = NULL;
+ 
+-	    if (FcHashTableFind (config->alias_table, d, (void **)&alias))
++	    if (relocated)
+ 	    {
+ 		FcChar8 *base = FcStrBasename (dir);
+-		dir = s = FcStrBuildFilename (alias, base, NULL);
+-		FcStrFree (alias);
++		dir = s = FcStrBuildFilename (forDir, base, NULL);
+ 		FcStrFree (base);
+ 	    }
+-	    FcStrFree (d);
+ 	    if (FcConfigAcceptFilename (config, dir))
+ 		FcStrSetAddFilename (dirSet, dir);
+ 	    if (s)
+diff --git a/src/fcint.h b/src/fcint.h
+index 0be965b..1ad6896 100644
+--- a/src/fcint.h
++++ b/src/fcint.h
+@@ -566,7 +566,6 @@ struct _FcConfig {
+     FcStrSet	*availConfigFiles;  /* config files available */
+     FcPtrList	*rulesetList;	    /* List of rulesets being installed */
+     FcHashTable *uuid_table;	    /* UUID table for cachedirs */
+-    FcHashTable *alias_table;	    /* alias table for cachedirs */
+ };
+ 
+ typedef struct _FcFileTime {
+-- 
+2.9.3
+
