@@ -18,7 +18,6 @@ SUBST_FILES=org.freedesktop.Sdk.json \
 	org.freedesktop.Sdk.appdata.xml org.freedesktop.Platform.appdata.xml \
 	org.freedesktop.Platform.GL.mesa-git.json \
 	org.freedesktop.Platform.GL.mesa-stable.json \
-	org.freedesktop.Sdk.Extension.gfortran62.json \
 	org.freedesktop.Platform.VAAPI.Intel.json
 
 define subst-metadata
@@ -35,7 +34,7 @@ endef
 
 all: runtimes
 
-extra: glxinfo gl-drivers extensions
+extra: glxinfo gl-drivers
 
 $(SUBST_FILES): $(patsubst %,%.in,$(SUBST_FILES))
 	$(call subst-metadata)
@@ -83,23 +82,6 @@ runtimes: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
 	if test "${ARCH}" = "i386" -a -f ${REPO}/refs/heads/runtime/org.freedesktop.Platform/i386/${SDK_BRANCH}; then \
 		flatpak build-commit-from ${EXPORT_ARGS} --src-ref=runtime/org.freedesktop.Platform/${ARCH}/${SDK_BRANCH} ${REPO} runtime/org.freedesktop.Platform.Compat32/x86_64/${SDK_BRANCH} ; \
 	fi
-
-extensions: extensions-${ARCH}
-
-extensions-${ARCH}:
-
-# It seems like gfortran has issues on arm atm, lets drop it there
-
-extensions-i386: gfortran-extension
-
-extensions-x86_64: gfortran-extension
-
-
-gfortran-extension: ${REPO} $(patsubst %,%.in,$(SUBST_FILES))
-	$(call subst-metadata)
-	flatpak-builder --force-clean --require-changes --repo=${REPO} --arch=${ARCH} \
-		--subject="build of org.freedesktop.Sdk.Extension.gfortran62, `date`" \
-		${EXPORT_ARGS} ${FB_ARGS} sdk org.freedesktop.Sdk.Extension.gfortran62.json
 
 ${REPO}:
 	ostree  init --mode=archive-z2 --repo=${REPO}
