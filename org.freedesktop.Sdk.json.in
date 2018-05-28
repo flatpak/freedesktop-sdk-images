@@ -52,7 +52,6 @@
         },
         "org.freedesktop.Sdk.Tools": {
             "directory": "bin/sdk",
-            "add-ld-path": "lib",
             "subdirectories": true,
             "no-autodownload": true,
             "autodelete": true
