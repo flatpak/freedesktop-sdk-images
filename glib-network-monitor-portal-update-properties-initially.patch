@@ -1,0 +1,60 @@
+From 18997de7e9c3aa5caedd49ba52715d0de5fa4aaf Mon Sep 17 00:00:00 2001
+From: Matthias Clasen <mclasen@redhat.com>
+Date: Thu, 16 Aug 2018 21:36:13 +0000
+Subject: [PATCH] network monitor portal: update properties initially
+
+With version 2, we need to query the values explicitly.
+The properties made this automatic.
+---
+ gio/gnetworkmonitorportal.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/gio/gnetworkmonitorportal.c b/gio/gnetworkmonitorportal.c
+index 16249ac55..bce8a338a 100644
+--- a/gio/gnetworkmonitorportal.c
++++ b/gio/gnetworkmonitorportal.c
+@@ -181,6 +181,15 @@ got_connectivity (GObject *source,
+     }
+ }
+ 
++static void
++update_properties (GDBusProxy *proxy,
++                   GNetworkMonitorPortal *nm)
++{
++  g_dbus_proxy_call (proxy, "GetConnectivity", NULL, 0, -1, NULL, got_connectivity, nm);
++  g_dbus_proxy_call (proxy, "GetMetered", NULL, 0, -1, NULL, got_metered, nm);
++  g_dbus_proxy_call (proxy, "GetAvailable", NULL, 0, -1, NULL, got_available, nm);
++}
++
+ static void
+ proxy_signal (GDBusProxy *proxy,
+               const char *sender,
+@@ -200,9 +209,7 @@ proxy_signal (GDBusProxy *proxy,
+     }
+   else if (nm->priv->version == 2)
+     {
+-      g_dbus_proxy_call (proxy, "GetConnectivity", NULL, 0, -1, NULL, got_connectivity, nm);
+-      g_dbus_proxy_call (proxy, "GetMetered", NULL, 0, -1, NULL, got_metered, nm);
+-      g_dbus_proxy_call (proxy, "GetAvailable", NULL, 0, -1, NULL, got_available, nm);
++      update_properties (proxy, nm);
+     }
+ }
+ 
+@@ -326,7 +333,13 @@ g_network_monitor_portal_initable_init (GInitable     *initable,
+   nm->priv->has_network = glib_network_available_in_sandbox ();
+   nm->priv->version = version;
+ 
+-  return initable_parent_iface->init (initable, cancellable, error);
++  if (!initable_parent_iface->init (initable, cancellable, error))
++    return FALSE;
++
++  if (nm->priv->has_network && nm->priv->version == 2)
++    update_properties (proxy, nm);
++
++  return TRUE;
+ }
+ 
+ static void
+-- 
+2.17.1
+

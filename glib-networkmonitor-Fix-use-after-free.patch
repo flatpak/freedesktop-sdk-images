@@ -1,0 +1,271 @@
+From ca0add4b8a59313517a482a6664ec5ad37182c49 Mon Sep 17 00:00:00 2001
+From: Milan Crha <mcrha@redhat.com>
+Date: Tue, 10 Apr 2018 15:27:00 +0000
+Subject: [PATCH] gnetworkmonitor: Fix use-after-free when using from another
+ thread
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When using g_network_monitor_get_default() from another thread, it’s
+possible for network-changed events to be processed after an instance of
+GNetworkMonitor has been disposed, causing use-after-free problems.
+
+Fix that by moving some of the initialisation into the GInitable.init()
+chain, rather than in a main context idle callback.
+
+This includes a unit test which probabilistically reproduces the bug
+(but can’t do so deterministically due to it being a race condition).
+
+Commit amended by Philip Withnall <withnall@endlessm.com> before
+pushing.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=793727
+---
+ gio/gnetworkmonitorbase.c        | 30 ++++++-----
+ gio/gnetworkmonitornetlink.c     |  5 +-
+ gio/gnetworkmonitorportal.c      |  6 ++-
+ gio/gwin32networkmonitor.c       |  5 +-
+ gio/tests/Makefile.am            |  1 +
+ gio/tests/meson.build            |  1 +
+ gio/tests/network-monitor-race.c | 92 ++++++++++++++++++++++++++++++++
+ 7 files changed, 122 insertions(+), 18 deletions(-)
+ create mode 100644 gio/tests/network-monitor-race.c
+
+diff --git a/gio/gnetworkmonitorbase.c b/gio/gnetworkmonitorbase.c
+index dbded39f8..6ac37c490 100644
+--- a/gio/gnetworkmonitorbase.c
++++ b/gio/gnetworkmonitorbase.c
+@@ -81,7 +81,6 @@ g_network_monitor_base_init (GNetworkMonitorBase *monitor)
+     g_main_context_ref (monitor->priv->context);
+ 
+   monitor->priv->initializing = TRUE;
+-  queue_network_changed (monitor);
+ }
+ 
+ static void
+@@ -349,6 +348,10 @@ g_network_monitor_base_initable_init (GInitable     *initable,
+                                       GCancellable  *cancellable,
+                                       GError       **error)
+ {
++  GNetworkMonitorBase *base = G_NETWORK_MONITOR_BASE (initable);
++
++  base->priv->initializing = FALSE;
++
+   return TRUE;
+ }
+ 
+@@ -364,23 +367,21 @@ emit_network_changed (gpointer user_data)
+   GNetworkMonitorBase *monitor = user_data;
+   gboolean is_available;
+ 
++  if (g_source_is_destroyed (g_main_current_source ()))
++    return FALSE;
++
+   g_object_ref (monitor);
+ 
+-  if (monitor->priv->initializing)
+-    monitor->priv->initializing = FALSE;
+-  else
++  is_available = (monitor->priv->have_ipv4_default_route ||
++                  monitor->priv->have_ipv6_default_route);
++  if (monitor->priv->is_available != is_available)
+     {
+-      is_available = (monitor->priv->have_ipv4_default_route ||
+-                      monitor->priv->have_ipv6_default_route);
+-      if (monitor->priv->is_available != is_available)
+-        {
+-          monitor->priv->is_available = is_available;
+-          g_object_notify (G_OBJECT (monitor), "network-available");
+-        }
+-
+-      g_signal_emit (monitor, network_changed_signal, 0, is_available);
++      monitor->priv->is_available = is_available;
++      g_object_notify (G_OBJECT (monitor), "network-available");
+     }
+ 
++  g_signal_emit (monitor, network_changed_signal, 0, is_available);
++
+   g_source_unref (monitor->priv->network_changed_source);
+   monitor->priv->network_changed_source = NULL;
+ 
+@@ -391,7 +392,8 @@ emit_network_changed (gpointer user_data)
+ static void
+ queue_network_changed (GNetworkMonitorBase *monitor)
+ {
+-  if (!monitor->priv->network_changed_source)
++  if (!monitor->priv->network_changed_source &&
++      !monitor->priv->initializing)
+     {
+       GSource *source;
+ 
+diff --git a/gio/gnetworkmonitornetlink.c b/gio/gnetworkmonitornetlink.c
+index 98c6ab3d6..b308b3b65 100644
+--- a/gio/gnetworkmonitornetlink.c
++++ b/gio/gnetworkmonitornetlink.c
+@@ -39,6 +39,7 @@
+ #include <linux/netlink.h>
+ #include <linux/rtnetlink.h>
+ 
++static GInitableIface *initable_parent_iface;
+ static void g_network_monitor_netlink_iface_init (GNetworkMonitorInterface *iface);
+ static void g_network_monitor_netlink_initable_iface_init (GInitableIface *iface);
+ 
+@@ -149,7 +150,7 @@ g_network_monitor_netlink_initable_init (GInitable     *initable,
+                          (GSourceFunc) read_netlink_messages, nl, NULL);
+   g_source_attach (nl->priv->source, nl->priv->context);
+ 
+-  return TRUE;
++  return initable_parent_iface->init (initable, cancellable, error);
+ }
+ 
+ static gboolean
+@@ -474,5 +475,7 @@ g_network_monitor_netlink_iface_init (GNetworkMonitorInterface *monitor_iface)
+ static void
+ g_network_monitor_netlink_initable_iface_init (GInitableIface *iface)
+ {
++  initable_parent_iface = g_type_interface_peek_parent (iface);
++
+   iface->init = g_network_monitor_netlink_initable_init;
+ }
+diff --git a/gio/gnetworkmonitorportal.c b/gio/gnetworkmonitorportal.c
+index 268683470..856f8aa5b 100644
+--- a/gio/gnetworkmonitorportal.c
++++ b/gio/gnetworkmonitorportal.c
+@@ -25,7 +25,7 @@
+ #include "xdp-dbus.h"
+ #include "gportalsupport.h"
+ 
+-
++static GInitableIface *initable_parent_iface;
+ static void g_network_monitor_portal_iface_init (GNetworkMonitorInterface *iface);
+ static void g_network_monitor_portal_initable_iface_init (GInitableIface *iface);
+ 
+@@ -148,7 +148,7 @@ g_network_monitor_portal_initable_init (GInitable     *initable,
+   nm->priv->proxy = proxy;
+   nm->priv->network_available = glib_network_available_in_sandbox ();
+ 
+-  return TRUE;
++  return initable_parent_iface->init (initable, cancellable, error);
+ }
+ 
+ static void
+@@ -182,5 +182,7 @@ g_network_monitor_portal_iface_init (GNetworkMonitorInterface *monitor_iface)
+ static void
+ g_network_monitor_portal_initable_iface_init (GInitableIface *iface)
+ {
++  initable_parent_iface = g_type_interface_peek_parent (iface);
++
+   iface->init = g_network_monitor_portal_initable_init;
+ }
+--- a/gio/tests/Makefile.am
++++ b/gio/tests/Makefile.am
+@@ -49,6 +49,7 @@ test_programs = \
+ 	monitor					\
+ 	network-address				\
+ 	network-monitor				\
++	network-monitor-race			\
+ 	permission				\
+ 	pollable				\
+ 	proxy-test				\
+diff --git a/gio/tests/network-monitor-race.c b/gio/tests/network-monitor-race.c
+new file mode 100644
+index 000000000..4b92c87a5
+--- /dev/null
++++ b/gio/tests/network-monitor-race.c
+@@ -0,0 +1,92 @@
++/*
++ * Copyright (C) 2018 Red Hat, Inc.
++ *
++ * This library is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License as
++ * published by the Free Software Foundation; either version 2.1 of the
++ * licence, or (at your option) any later version.
++ *
++ * This is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
++ * License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * along with this library; if not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <glib/glib.h>
++#include <gio/gio.h>
++
++#define MAX_RUNS 333
++
++static gboolean
++quit_loop (gpointer user_data)
++{
++  g_main_loop_quit (user_data);
++
++  return FALSE;
++}
++
++static gpointer
++thread_func (gpointer user_data)
++{
++  g_network_monitor_get_default ();
++  g_timeout_add (100, quit_loop, user_data);
++
++  return NULL;
++}
++
++static gboolean
++call_func (gpointer user_data)
++{
++  GThread *thread;
++
++  thread = g_thread_new (NULL, thread_func, user_data);
++  g_thread_unref (thread);
++
++  return FALSE;
++}
++
++/* Test that calling g_network_monitor_get_default() in a thread doesn’t cause
++ * a crash. This is a probabilistic test; since it’s testing a race condition,
++ * it can’t deterministically reproduce the problem. The threading has to
++ * happen in subprocesses, since the result of g_network_monitor_get_default()
++ * is unavoidably cached once created. */
++static void
++test_network_monitor (void)
++{
++  guint ii;
++
++  g_test_bug ("793727");
++
++  if (g_test_subprocess ())
++    {
++       GMainLoop *main_loop;
++
++       main_loop = g_main_loop_new (NULL, FALSE);
++       g_timeout_add (1, call_func, main_loop);
++       g_main_loop_run (main_loop);
++       g_main_loop_unref (main_loop);
++
++       return;
++    }
++
++  for (ii = 0; ii < MAX_RUNS; ii++)
++    {
++       g_test_trap_subprocess (NULL, 0, 0);
++       g_test_trap_assert_passed ();
++    }
++}
++
++int
++main (int argc, char *argv[])
++{
++  g_test_init (&argc, &argv, NULL);
++  g_test_bug_base ("https://bugzilla.gnome.org/show_bug.cgi?id=");
++
++  g_test_add_func ("/network-monitor/create-in-thread",
++                   test_network_monitor);
++
++  return g_test_run ();
++}
+-- 
+2.17.1
+
