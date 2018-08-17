@@ -828,8 +828,8 @@
             "sources": [
                  {
                      "type": "archive",
-                     "url": "https://dri.freedesktop.org/libdrm/libdrm-2.4.91.tar.gz",
-                     "sha256": "c8ea3343d5bfc356550f0b5632403359d050fa09cf05d61e96e73adba0c407a9"
+                     "url": "https://dri.freedesktop.org/libdrm/libdrm-2.4.93.tar.gz",
+                     "sha256": "bc67b2503106155c239c4e455b6718ef1b31675ea51f544c785c0e3295712861"
                  }
             ]
         },
@@ -1515,8 +1515,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://mesa.freedesktop.org/archive/mesa-18.0.4.tar.xz",
-                    "sha256": "1f3bcfe7cef0a5c20dae2b41df5d7e0a985e06be0183fa4d43b6068fcba2920f"
+                    "url": "https://mesa.freedesktop.org/archive/mesa-18.1.6.tar.xz",
+                    "sha256": "bb7ce759069801804fcfb8152da3457f76cd7b4e0096e4870ff5adcb5c894289"
                 },
                 {
                     "type": "patch",
@@ -1525,10 +1525,6 @@
                 {
                     "type": "patch",
                     "path": "mesa-17.2.2-dri-path.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "mesa-dri3-Stricter-SBC-wraparound-handling.patch"
                 }
             ]
         },
