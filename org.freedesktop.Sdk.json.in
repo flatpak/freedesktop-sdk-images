@@ -2056,8 +2056,12 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.12.tar.xz",
-                    "sha256": "75f1a9a8e4e2b28cbc078b50c1fa927ee4ded994d1ade97c5603e2d1f3161cfc"
+                    "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.14.tar.xz",
+                    "sha256": "90af1beaa7bf9e4c52db29ec251ec4fd0a8f2cc185d521ad1f88d01b3a6a17e3"
+                },
+                {
+                    "type": "patch",
+                    "path": "pango-Prevent-an-assertion-with-invalid-Unicode-sequences.patch"
                 }
             ]
         },
