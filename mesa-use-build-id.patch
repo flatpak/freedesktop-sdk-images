@@ -1,0 +1,141 @@
+diff -ur mesa.old/src/util/disk_cache.c mesa/src/util/disk_cache.c
+--- mesa.old/src/util/disk_cache.c	2018-07-27 15:52:17.000000000 +0200
++++ mesa/src/util/disk_cache.c	2018-09-01 21:43:23.820241362 +0200
+@@ -37,6 +37,8 @@
+ #include <pwd.h>
+ #include <errno.h>
+ #include <dirent.h>
++#include <elf.h>
++#include <link.h>
+ #include "zlib.h"
+ 
+ #include "util/crc32.h"
+@@ -1279,4 +1281,81 @@
+    cache->blob_get_cb = get;
+ }
+ 
++bool
++disk_cache_get_function_timestamp(void *ptr, uint32_t* timestamp)
++{
++  int fd = -1;
++  struct stat st;
++  char *elf_start = MAP_FAILED;
++  Dl_info info;
++  struct link_map *ln;
++
++  if (!dladdr1(ptr, &info, (void**)&ln, RTLD_DL_LINKMAP) || !info.dli_fname) {
++    goto cleanup;
++  }
++
++  if (ln->l_name == NULL) {
++    goto cleanup;
++  }
++
++  fd = open(ln->l_name, O_RDONLY);
++  if (fd == -1) {
++    goto cleanup;
++  }
++
++  if (0 != fstat(fd, &st)) {
++    goto cleanup;
++  }
++
++  elf_start = (char*)mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
++  if (elf_start == MAP_FAILED) {
++    goto cleanup;
++  }
++
++  ElfW(Ehdr) *elf = (ElfW(Ehdr) *)elf_start;
++  if (elf->e_shentsize != sizeof(ElfW(Shdr))) {
++    goto cleanup;
++  }
++
++  ElfW(Shdr)* section_table = (ElfW(Shdr)*)(elf_start + elf->e_shoff);
++
++  if (elf->e_shstrndx >= elf->e_shnum) {
++    goto cleanup;
++  }
++
++  ElfW(Shdr)* string_header = section_table + elf->e_shstrndx;
++  char* stringsdata = (char*)elf + string_header->sh_offset;
++
++  for (ElfW(Half) i = 0; i < elf->e_shnum; ++i) {
++    ElfW(Shdr)* header = section_table + i;
++
++    if (header->sh_name >= string_header->sh_size) {
++      goto cleanup;
++    }
++    char *name = stringsdata + header->sh_name;
++    if ((SHT_NOTE == header->sh_type) &&
++	(0 == strncmp(name, ".note.gnu.build-id", 18))) {
++      char *note = (char*)elf + header->sh_offset;
++      ElfW(Nhdr)* note_header = (ElfW(Nhdr)*)note;
++      if (note_header->n_type != NT_GNU_BUILD_ID)
++	continue ;
++      char* note_data = note + sizeof(ElfW(Nhdr)) + note_header->n_namesz;
++      *timestamp = util_hash_crc32(note_data, note_header->n_descsz);
++      munmap((void*)elf_start, st.st_size);
++      close(fd);
++      return true;
++    }
++  }
++
++
++ cleanup:
++  if (elf_start != MAP_FAILED) {
++    munmap((void*)elf_start, st.st_size);
++  }
++  if (fd != -1) {
++    close(fd);
++  }
++  return false;
++}
++
+ #endif /* ENABLE_SHADER_CACHE */
+diff -ur mesa.old/src/util/disk_cache.h mesa/src/util/disk_cache.h
+--- mesa.old/src/util/disk_cache.h	2018-07-27 15:52:17.000000000 +0200
++++ mesa/src/util/disk_cache.h	2018-09-01 21:36:56.795907626 +0200
+@@ -88,22 +88,8 @@
+    return buf;
+ }
+ 
+-#ifdef HAVE_DLFCN_H
+-static inline bool
+-disk_cache_get_function_timestamp(void *ptr, uint32_t* timestamp)
+-{
+-   Dl_info info;
+-   struct stat st;
+-   if (!dladdr(ptr, &info) || !info.dli_fname) {
+-      return false;
+-   }
+-   if (stat(info.dli_fname, &st)) {
+-      return false;
+-   }
+-   *timestamp = st.st_mtime;
+-   return true;
+-}
+-#endif
++bool
++disk_cache_get_function_timestamp(void *ptr, uint32_t* timestamp);
+ 
+ /* Provide inlined stub functions if the shader cache is disabled. */
+ 
+diff -up mesa-7/src/util/Makefile.am.foo mesa-7/src/util/Makefile.am
+--- mesa-7/src/util/Makefile.am.foo	2018-09-04 15:10:59.735305261 +0200
++++ mesa-7/src/util/Makefile.am	2018-09-04 15:11:31.365886150 +0200
+@@ -32,6 +32,7 @@ noinst_LTLIBRARIES = \
+ 
+ AM_CPPFLAGS = \
+ 	$(PTHREAD_CFLAGS) \
++	$(DLOPEN_CFLAGS) \
+ 	-I$(top_srcdir)/include
+ 
+ libmesautil_la_CPPFLAGS = \
+@@ -54,6 +55,7 @@ libmesautil_la_LIBADD = \
+ 	$(PTHREAD_LIBS) \
+ 	$(CLOCK_LIB) \
+ 	$(ZLIB_LIBS) \
++	$(DLOPEN_LIBS) \
+ 	$(LIBATOMIC_LIBS)
+ 
+ libxmlconfig_la_SOURCES = $(XMLCONFIG_FILES)
