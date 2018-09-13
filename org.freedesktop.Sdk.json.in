@@ -41,6 +41,13 @@
             "version": "3.22",
             "download-if": "active-gtk-theme"
         },
+        "org.gtk.Gtk3module" : {
+            "directory": "lib/gtk3-modules",
+            "merge-dirs": "modules",
+            "no-autodownload": true,
+            "subdirectories": true,
+            "version": "3.0"
+        },
         "org.freedesktop.Platform.ffmpeg" : {
             "directory": "lib/ffmpeg",
             "add-ld-path": "lib"
@@ -68,6 +75,7 @@
         "--extension=org.freedesktop.Platform.VAAPI.Intel=autoprune-unless=have-intel-gpu",
         "--env=GI_TYPELIB_PATH=/app/lib/girepository-1.0",
         "--env=GST_PLUGIN_SYSTEM_PATH=/app/lib/gstreamer-1.0:/usr/lib/extensions/gstreamer-1.0:/usr/lib/gstreamer-1.0",
+        "--env=GTK_PATH=/usr/lib/gtk3-modules",
         "--env=XDG_DATA_DIRS=/app/share:/usr/share:/usr/share/runtime/share:/run/host/share",
         "--sdk=org.freedesktop.Sdk//@@SDK_BRANCH@@",
         "--runtime=org.freedesktop.Platform//@@SDK_BRANCH@@"
