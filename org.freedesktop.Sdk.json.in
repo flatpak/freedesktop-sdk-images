@@ -2262,6 +2262,12 @@
                     "type": "archive",
                     "url": "https://ffmpeg.org/releases/ffmpeg-3.4.1.tar.xz",
                     "sha256": "5a77278a63741efa74e26bf197b9bb09ac6381b9757391b922407210f0f991c0"
+                },
+                {
+                    "type": "patch",
+                    "paths": [
+                        "ffmpeg-CVE-2018-6621.patch"
+                    ]
                 }
             ]
         },
