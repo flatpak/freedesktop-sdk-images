@@ -1,0 +1,122 @@
+From 85f8f579ac7aa268290ed7bd3aca90d927a9b7e9 Mon Sep 17 00:00:00 2001
+From: ph10 <ph10@6239d852-aaf2-0410-a92c-79f79f948069>
+Date: Tue, 21 Mar 2017 17:46:21 +0000
+Subject: [PATCH 1/2] Fix 32-bit error buffer size bug in pcre2test (Bugzilla
+ 2079).
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+git-svn-id: svn://vcs.exim.org/pcre2/code/trunk@696 6239d852-aaf2-0410-a92c-79f79f948069
+
+Petr Písař: Ported to 10.23.
+---
+ doc/pcre2api.3       | 10 +++++-----
+ src/pcre2_error.c    |  2 +-
+ src/pcre2test.c      |  7 ++++---
+ testdata/testinput2  |  2 ++
+ testdata/testoutput2 |  3 +++
+
+diff --git a/doc/pcre2api.3 b/doc/pcre2api.3
+index e0a434a..0a3d2ee 100644
+--- a/doc/pcre2api.3
++++ b/doc/pcre2api.3
+@@ -1,4 +1,4 @@
+-.TH PCRE2API 3 "24 December 2016" "PCRE2 10.23"
++.TH PCRE2API 3 "21 March 2017" "PCRE2 10.30"
+ .SH NAME
+ PCRE2 - Perl-compatible regular expressions (revised API)
+ .sp
+@@ -2633,8 +2633,8 @@ The internal recursion limit was reached.
+ A text message for an error code from any PCRE2 function (compile, match, or
+ auxiliary) can be obtained by calling \fBpcre2_get_error_message()\fP. The code
+ is passed as the first argument, with the remaining two arguments specifying a
+-code unit buffer and its length, into which the text message is placed. Note
+-that the message is returned in code units of the appropriate width for the
++code unit buffer and its length in code units, into which the text message is
++placed. The message is returned in code units of the appropriate width for the
+ library that is being used.
+ .P
+ The returned message is terminated with a trailing zero, and the function
+@@ -3321,6 +3321,6 @@ Cambridge, England.
+ .rs
+ .sp
+ .nf
+-Last updated: 23 December 2016
+-Copyright (c) 1997-2016 University of Cambridge.
++Last updated: 21 March 2017
++Copyright (c) 1997-2017 University of Cambridge.
+ .fi
+diff --git a/src/pcre2_error.c b/src/pcre2_error.c
+index 9eab4fc..e25c7e6 100644
+--- a/src/pcre2_error.c
++++ b/src/pcre2_error.c
+@@ -271,7 +271,7 @@ distinct.
+ Arguments:
+   enumber       error number
+   buffer        where to put the message (zero terminated)
+-  size          size of the buffer
++  size          size of the buffer in code units
+ 
+ Returns:        length of message if all is well
+                 negative on error
+diff --git a/src/pcre2test.c b/src/pcre2test.c
+index b6d3ec9..9289656 100644
+--- a/src/pcre2test.c
++++ b/src/pcre2test.c
+@@ -2889,7 +2889,7 @@ if (pbuffer32_size < 4*len + 4)
+   {
+   if (pbuffer32 != NULL) free(pbuffer32);
+   pbuffer32_size = 4*len + 4;
+-  if (pbuffer32_size < 256) pbuffer32_size = 256;
++  if (pbuffer32_size < 512) pbuffer32_size = 512;
+   pbuffer32 = (uint32_t *)malloc(pbuffer32_size);
+   if (pbuffer32 == NULL)
+     {
+@@ -7600,7 +7600,8 @@ if (arg_error != NULL)
+   int errcode;
+   char *endptr;
+ 
+-/* Ensure the relevant non-8-bit buffer is available. */
++/* Ensure the relevant non-8-bit buffer is available. Ensure that it is at 
++least 128 code units, because it is used for retrieving error messages. */
+ 
+ #ifdef SUPPORT_PCRE2_16
+   if (test_mode == PCRE16_MODE)
+@@ -7620,7 +7621,7 @@ if (arg_error != NULL)
+ #ifdef SUPPORT_PCRE2_32
+   if (test_mode == PCRE32_MODE)
+     {
+-    pbuffer32_size = 256;
++    pbuffer32_size = 512;
+     pbuffer32 = (uint32_t *)malloc(pbuffer32_size);
+     if (pbuffer32 == NULL)
+       {
+diff --git a/testdata/testinput2 b/testdata/testinput2
+index 5a77e88..d62e975 100644
+--- a/testdata/testinput2
++++ b/testdata/testinput2
+@@ -5017,4 +5017,6 @@ a)"xI
+ 
+ /(?<!\1((?U)1((?U))))(*F)/never_backslash_c,alt_bsux,anchored,extended
+ 
++/\g{3/
++
+ # End of testinput2 
+diff --git a/testdata/testoutput2 b/testdata/testoutput2
+index 3288424..ebf5fbd 100644
+--- a/testdata/testoutput2
++++ b/testdata/testoutput2
+@@ -15570,6 +15570,9 @@ No match
+ 
+ /(?<!\1((?U)1((?U))))(*F)/never_backslash_c,alt_bsux,anchored,extended
+ 
++/\g{3/
++Failed: error 157 at offset 2: \g is not followed by a braced, angle-bracketed, or quoted name/number or by a plain number
++
+ # End of testinput2 
+ Error -63: PCRE2_ERROR_BADDATA (unknown error number)
+ Error -62: bad serialized data
+-- 
+2.7.4
+

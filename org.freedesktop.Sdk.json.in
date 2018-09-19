@@ -2632,6 +2632,15 @@
                     "type": "archive",
                     "url": "https://ftp.pcre.org/pub/pcre/pcre2-10.23.tar.gz",
                     "sha256": "bd62f955146a41815d6e2ce011bb75740825c32906b06e377f478599f54ee0dd"
+                },
+                {
+                    "type": "patch",
+                    "paths": [
+                        "pcre2-CVE-2017-7186_1.patch",
+                        "pcre2-CVE-2017-7186_2.patch",
+                        "pcre2-CVE-2017-8786_1.patch",
+                        "pcre2-CVE-2017-8786_2.patch"
+                    ]
                 }
             ]
         },
