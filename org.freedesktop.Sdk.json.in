@@ -2034,6 +2034,13 @@
                     "type": "archive",
                     "url": "https://download.gnome.org/sources/libcroco/0.6/libcroco-0.6.12.tar.xz",
                     "sha256": "ddc4b5546c9fb4280a5017e2707fbd4839034ed1aba5b7d4372212f34f84f860"
+                },
+                {
+                    "type": "patch",
+                    "paths": [
+                        "libcroco-CVE-2017-7960.patch",
+                        "libcroco-CVE-2017-7961.patch"
+                    ]
                 }
             ]
         },
