@@ -2257,6 +2257,10 @@
                 "--enable-protocol=file"
             ],
             "post-install": [ "chrpath -d /usr/bin/ffmpeg"],
+            "x-cpe": {
+                /* Doesn't affect our build */
+                "ignored": ["CVE-2017-17555"]
+            },
             "sources": [
                 {
                     "type": "archive",
