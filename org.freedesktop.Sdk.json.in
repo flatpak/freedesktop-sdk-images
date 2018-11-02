@@ -1556,6 +1556,10 @@
                 {
                     "type": "patch",
                     "path": "libva-vdpau-driver-0.7.4-fix_type.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "libva-vdpau-driver-0.7.4-sigfpe-crash.patch"
                 }
             ]
         },
