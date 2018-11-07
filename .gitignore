@@ -6,7 +6,6 @@ org.freedesktop.Platform.GL.mesa-git.json
 org.freedesktop.Platform.GL.mesa-stable.json
 org.freedesktop.Platform.VAAPI.Intel.json
 org.freedesktop.Platform.appdata.xml
-org.freedesktop.Sdk.Extension.gfortran62.json
 org.freedesktop.Sdk.appdata.xml
 org.freedesktop.Sdk.json
 os-release
