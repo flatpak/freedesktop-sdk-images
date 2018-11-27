@@ -1255,10 +1255,10 @@
             ]
         },
         {
-            "name": "llvm6libs",
+            "name": "llvm7libs",
             "buildsystem": "cmake-ninja",
             "builddir": true,
-            "cleanup": ["/lib/llvm6"],
+            "cleanup": ["/usr/lib/llvm7"],
             "build-options" : {
                 "env": {
                     /* Override global values */
@@ -1266,7 +1266,7 @@
                     "CXXFLAGS": "",
                     "LDFLAGS": ""
                 },
-                "prefix": "/usr/lib/llvm6",
+                "prefix": "/usr/lib/llvm7",
                 "arch" : {
                     "i386" : {
                         "config-opts" : [
@@ -1311,8 +1311,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://llvm.org/releases/6.0.0/llvm-6.0.0.src.tar.xz",
-                    "sha256": "1ff53c915b4e761ef400b803f07261ade637b0c269d99569f18040f3dcee4408"
+                    "url": "http://llvm.org/releases/7.0.0/llvm-7.0.0.src.tar.xz",
+                    "sha256": "8bc1f844e6cbde1b652c19c1edebc1864456fd9c78b8c1bea038e51b363fe222"
                 }
             ]
         },
@@ -1454,14 +1454,18 @@
                             "--build=i586-unknown-linux-gnu",
 			    "--with-gallium-drivers=svga,swrast,radeonsi,nouveau,r600,r300,radeonsi,virgl",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965",
-			    "--with-vulkan-drivers=intel,radeon"
+			    "--with-vulkan-drivers=intel,radeon",
+			    "--with-radeonsi-llvm-compiler",
+			    "--enable-nine"
 			]
 		    },
 		    "x86_64" : {
 			"config-opts" : [
 			    "--with-gallium-drivers=svga,swrast,radeonsi,nouveau,r600,r300,radeonsi,virgl",
 			    "--with-dri-drivers=swrast,nouveau,radeon,r200,i915,i965",
-			    "--with-vulkan-drivers=intel,radeon"
+			    "--with-vulkan-drivers=intel,radeon",
+			    "--with-radeonsi-llvm-compiler",
+			    "--enable-nine"
 			]
 		    },
 		    "arm" : {
@@ -1497,7 +1501,7 @@
                 "--enable-glx-tls",
                 "--enable-texture-float=yes",
                 "--enable-llvm",
-                "--with-llvm-prefix=/usr/lib/llvm6",
+                "--with-llvm-prefix=/usr/lib/llvm7",
                 "--disable-llvm-shared-libs",
                 "--enable-dri",
                 "--enable-sysfs"
